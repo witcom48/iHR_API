@@ -259,7 +259,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@REPORTJOB_TODATE", SqlDbType.DateTime); obj_cmd.Parameters["@REPORTJOB_TODATE"].Value = model.reportjob_todate;
                 obj_cmd.Parameters.Add("@REPORTJOB_PAYDATE", SqlDbType.DateTime); obj_cmd.Parameters["@REPORTJOB_PAYDATE"].Value = model.reportjob_paydate;
 
-                obj_cmd.Parameters.Add("@REPORTJOB_LANGUAGE", SqlDbType.Char); obj_cmd.Parameters["@REPORTJOB_LANGUAGE"].Value = model.reportjob_language;
+                obj_cmd.Parameters.Add("@REPORTJOB_LANGUAGE", SqlDbType.VarChar); obj_cmd.Parameters["@REPORTJOB_LANGUAGE"].Value = model.reportjob_language;
                          
                 obj_cmd.Parameters.Add("@COMPANY_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@COMPANY_CODE"].Value = model.company_code;
                 obj_cmd.Parameters.Add("@CREATED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@CREATED_BY"].Value = model.created_by;
