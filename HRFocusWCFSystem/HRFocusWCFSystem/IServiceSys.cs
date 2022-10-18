@@ -1292,6 +1292,11 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "doDeleteMTPlanshiftflexible")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteMTPlanshiftflexible(InputMTPlanshiftflexible input);
+
+        //-- GetCurrent
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTRCurrent(string worker_id, string startdate,string todate);
         
         #endregion
 
@@ -1325,6 +1330,11 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/doUploadTimeInput?fileName={fileName}", ResponseFormat = WebMessageFormat.Json)]
         string doUploadTimeInput(string fileName, Stream stream);
+
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Task<string> UploadStream(Stream stream);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/doReadSimpleTimeInput?fileName={fileName}", ResponseFormat = WebMessageFormat.Json)]

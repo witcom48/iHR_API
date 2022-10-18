@@ -14666,6 +14666,50 @@ namespace HRFocusWCFSystem
         }
         #endregion
 
+        #region TRCurrent
+        public string getTRCurrent(string worker_id, string startdate,string todate)
+        {
+            JObject output = new JObject();
+
+            cls_ctTRCurrent objTRTime = new cls_ctTRCurrent();
+            List<cls_TRCurrent> listTRTime = objTRTime.getDataByFillter(worker_id, startdate,todate);
+
+            JArray array = new JArray();
+
+            if (listTRTime.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRCurrent model in listTRTime)
+                {
+                    JObject json = new JObject();
+                    json.Add("date", model.date.ToString("yyyy-MM-dd"));
+                    json.Add("daytype", model.daytype);
+                    json.Add("shift_code", model.shift_code);
+                    json.Add("shift_name_th", model.shift_name_th);
+                    json.Add("shift_name_en", model.shift_name_en);
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        #endregion
+
         #region MTPlanshiftflexible
         public string getMTPlanshiftflexibleList(string com, string year)
         {
@@ -14989,6 +15033,39 @@ namespace HRFocusWCFSystem
 
         //-- Files manage
         #region Files manage
+
+
+        public async Task<string> UploadStream(Stream stream)
+        {
+            MultipartParser parser = new MultipartParser(stream);
+            JObject output = new JObject();
+            if (parser.Success)
+            {
+                //absolute filename, extension included.
+                var filename = parser.Filename;
+                var filetype = parser.ContentType;
+                var ext = Path.GetExtension(filename);
+                string name = Guid.NewGuid().ToString() + ext;
+                string FilePath = Path.Combine
+                   (ClassLibrary_BPC.Config.PathFileImport + "\\Att\\Import", name);
+                using (var file = File.Create(FilePath))
+                {
+                    await file.WriteAsync(parser.FileContents, 0, parser.FileContents.Length);
+                    output["result"] = "1";
+                    output["filename"] = name;
+                    output["path"] = FilePath;
+                    output["file"] = parser.ToString();
+                    output["Type"] = parser.ContentType;
+                }
+            }
+            else
+            {
+                output["result"] = "0";
+                output["Type"] = parser.ContentType;
+                output["file"] = parser.Success.ToString();
+            }
+            return output.ToString(Formatting.None);
+        }
         public Stream doDownloadFile(string fileName, string fileExtension)
         {
             //string downloadFilePath =
