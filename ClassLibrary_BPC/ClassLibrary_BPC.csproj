@@ -77,6 +77,7 @@
     <Compile Include="hrfocus.controller\cls_ctSYSMainmenu.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTProvince.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTTimeimpformat.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRTimeleaveattachfile.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRWageday.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRCombranch.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPeriod.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="hrfocus.model\cls_TRTimeallw.cs" />
     <Compile Include="hrfocus.model\cls_TRHoliday.cs" />
     <Compile Include="hrfocus.model\cls_MTPlanholiday.cs" />
+    <Compile Include="hrfocus.model\cls_TRTimeleaveattachfile.cs" />
     <Compile Include="hrfocus.model\cls_TRWageday.cs" />
     <Compile Include="hrfocus.model\cls_TREmpleaveacc.cs" />
     <Compile Include="hrfocus.model\cls_TREmpkt20.cs" />

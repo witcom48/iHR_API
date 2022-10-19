@@ -972,6 +972,19 @@ namespace HRFocusWCFSystem
         string doDeleteMTHoliday(InputMTHoliday input);
 
         //-- Leave
+
+        [OperationContract(Name = "doManageTRTimeleaveattachfile")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRTimeleaveattachfile(InputTRTimeattchfile input);
+
+        [OperationContract(Name = "doDeleteTRTimeleaveattachfile")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteTRTimeleaveattachfile(InputTRTimeattchfile input);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTRTimeleaveattachfileList(string company_code, string timeleave_doc);
+
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getMTLeaveList(string com);
