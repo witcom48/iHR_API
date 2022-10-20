@@ -212,6 +212,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", REPORTJOB_REF ");
                 obj_str.Append(", REPORTJOB_TYPE ");
                 obj_str.Append(", REPORTJOB_STATUS ");
+                obj_str.Append(", REPORTJOB_LANGUAGE ");
                 obj_str.Append(", REPORTJOB_FROMDATE ");
                 obj_str.Append(", REPORTJOB_TODATE ");
                 obj_str.Append(", REPORTJOB_PAYDATE ");                
@@ -225,6 +226,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", @REPORTJOB_REF ");
                 obj_str.Append(", @REPORTJOB_TYPE ");
                 obj_str.Append(", @REPORTJOB_STATUS ");
+                obj_str.Append(", @REPORTJOB_LANGUAGE ");
                 obj_str.Append(", @REPORTJOB_FROMDATE ");
                 obj_str.Append(", @REPORTJOB_TODATE ");
                 obj_str.Append(", @REPORTJOB_PAYDATE ");
@@ -244,6 +246,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@REPORTJOB_REF", SqlDbType.VarChar); obj_cmd.Parameters["@REPORTJOB_REF"].Value = reportjob_ref;
                 obj_cmd.Parameters.Add("@REPORTJOB_TYPE", SqlDbType.VarChar); obj_cmd.Parameters["@REPORTJOB_TYPE"].Value = model.reportjob_type;
                 obj_cmd.Parameters.Add("@REPORTJOB_STATUS", SqlDbType.Char); obj_cmd.Parameters["@REPORTJOB_STATUS"].Value = model.reportjob_status;
+                obj_cmd.Parameters.Add("@REPORTJOB_LANGUAGE", SqlDbType.Char); obj_cmd.Parameters["@REPORTJOB_LANGUAGE"].Value = model.reportjob_language;
                 obj_cmd.Parameters.Add("@REPORTJOB_FROMDATE", SqlDbType.DateTime); obj_cmd.Parameters["@REPORTJOB_FROMDATE"].Value = model.reportjob_fromdate;
                 obj_cmd.Parameters.Add("@REPORTJOB_TODATE", SqlDbType.DateTime); obj_cmd.Parameters["@REPORTJOB_TODATE"].Value = model.reportjob_todate;
                 obj_cmd.Parameters.Add("@REPORTJOB_PAYDATE", SqlDbType.DateTime); obj_cmd.Parameters["@REPORTJOB_PAYDATE"].Value = model.reportjob_paydate;                                             

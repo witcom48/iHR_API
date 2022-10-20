@@ -132,6 +132,7 @@ D:\Work\BPC\Project\Webbase\iHR_202208\BackEnd\HRFocusWCFSystem\HRFocusWCFSystem
 D:\Work\BPC\Project\Webbase\iHR_202208\BackEnd\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.csprojResolveAssemblyReference.cache
 D:\Work\BPC\Project\Webbase\iHR_202208\BackEnd\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.dll
 D:\Work\BPC\Project\Webbase\iHR_202208\BackEnd\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.pdb
+<<<<<<< HEAD
 D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll.config
 D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll
 D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.pdb
@@ -144,3 +145,17 @@ D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.xml
 D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.csprojResolveAssemblyReference.cache
 D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.dll
 D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.pdb
+=======
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll.config
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.pdb
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ClassLibrary_BPC.dll
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Google.Authenticator.dll
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.dll
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ClassLibrary_BPC.pdb
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.pdb
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.xml
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.csprojResolveAssemblyReference.cache
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.dll
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.pdb
+>>>>>>> 8fb8ea4fdac81d7f0d7666274765cc46cac8774b
