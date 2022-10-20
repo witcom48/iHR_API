@@ -132,3 +132,15 @@ D:\Work\BPC\Project\Webbase\iHR_202208\BackEnd\HRFocusWCFSystem\HRFocusWCFSystem
 D:\Work\BPC\Project\Webbase\iHR_202208\BackEnd\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.csprojResolveAssemblyReference.cache
 D:\Work\BPC\Project\Webbase\iHR_202208\BackEnd\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.dll
 D:\Work\BPC\Project\Webbase\iHR_202208\BackEnd\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.pdb
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll.config
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.pdb
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ClassLibrary_BPC.dll
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Google.Authenticator.dll
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.dll
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ClassLibrary_BPC.pdb
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.pdb
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.xml
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.csprojResolveAssemblyReference.cache
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.dll
+D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.pdb

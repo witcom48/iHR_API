@@ -4904,6 +4904,7 @@ namespace HRFocusWCFSystem
                 model.reportjob_ref = input.reportjob_ref;
 
                 model.reportjob_status = input.reportjob_status;
+                model.reportjob_language = input.reportjob_language;
                 model.reportjob_type = input.reportjob_type;
 
                 model.reportjob_fromdate = Convert.ToDateTime(input.reportjob_fromdate);
