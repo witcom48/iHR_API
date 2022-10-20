@@ -14983,7 +14983,93 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Dashboard
+        #region Att
+        public string getDashLeaveList(string com)
+        {
+            JObject output = new JObject();
 
+            cls_ctTADashboard objDash = new cls_ctTADashboard();
+            List<cls_TADashboard> listDash = objDash.getDataLeaveByFillter(com);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TADashboard model in listDash)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("timeleave_actualday", model.timeleave_actualday);
+                    json.Add("dep_name_en", model.dep_name_en);
+                    json.Add("dep_name_th", model.dep_name_th);
+                    
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string getDashLateList(string com)
+        {
+            JObject output = new JObject();
+
+            cls_ctTADashboard objDash = new cls_ctTADashboard();
+            List<cls_TADashboard> listDash = objDash.getDataLateByFillter(com);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TADashboard model in listDash)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("late", model.late);
+                    json.Add("dep_name_en", model.dep_name_en);
+                    json.Add("dep_name_th", model.dep_name_th);
+
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        #endregion
 
 
         #endregion
