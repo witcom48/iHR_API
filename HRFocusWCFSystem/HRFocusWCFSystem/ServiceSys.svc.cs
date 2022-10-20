@@ -13473,6 +13473,130 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region TRTimeleave
+
+        public string doManageTRTimeleaveattachfile(InputTRTimeattchfile input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctTRTimeleaveattachfile objTRTimeleaveattch = new cls_ctTRTimeleaveattachfile();
+                cls_TRTimeleaveattachfile model = new cls_TRTimeleaveattachfile();
+
+                model.COMPANY_CODE = input.company_code;
+                model.TIMELEAVE_DOC = input.timeleave_doc;
+                model.FILE_NO = input.file_no;
+                model.FILE_NAME = input.file_name;
+                model.FILE_PATH = input.file_path;
+               
+                model.CREATED_DATE = DateTime.Now;
+                model.CREATED_BY = input.modified_by;
+                model.MODIFIED_DATE = DateTime.Now;
+                model.MODIFIED_BY = input.modified_by;
+
+                bool blnResult = objTRTimeleaveattch.insert(model);
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objTRTimeleaveattch.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+
+        public string doDeleteTRTimeleaveattachfile(InputTRTimeattchfile input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctTRTimeleaveattachfile objTRTimeleaveattch = new cls_ctTRTimeleaveattachfile();
+
+                bool blnResult = objTRTimeleaveattch.delete(input.file_no, input.company_code);
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objTRTimeleaveattch.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string getTRTimeleaveattachfileList(string company_code, string timeleave_doc)
+        {
+            JObject output = new JObject();
+            cls_ctTRTimeleaveattachfile objTRTimeleaveattch = new cls_ctTRTimeleaveattachfile();
+            List<cls_TRTimeleaveattachfile> listTRTimeleaveattch = objTRTimeleaveattch.getData(timeleave_doc,company_code);
+
+            JArray array = new JArray();
+
+            if (listTRTimeleaveattch.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRTimeleaveattachfile model in listTRTimeleaveattch)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("COMPANY_CODE", model.COMPANY_CODE);
+                    json.Add("TIMELEAVE_DOC", model.TIMELEAVE_DOC);
+                    json.Add("FILE_NO", model.FILE_NO);
+                    json.Add("FILE_NAME", model.FILE_NAME);
+                    json.Add("FILE_PATH", model.FILE_PATH);
+                    json.Add("CREATED_DATE", model.CREATED_DATE);
+                    json.Add("CREATED_BY", model.CREATED_BY);
+                    json.Add("MODIFIED_DATE", model.MODIFIED_DATE);
+                    json.Add("MODIFIED_BY", model.MODIFIED_BY);
+              
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
         public string getTRTimeleaveList(string language, string com, string emp, string fromdate, string todate)
         {
             JObject output = new JObject();
@@ -14666,6 +14790,50 @@ namespace HRFocusWCFSystem
         }
         #endregion
 
+        #region TRCurrent
+        public string getTRCurrent(string worker_id, string startdate,string todate)
+        {
+            JObject output = new JObject();
+
+            cls_ctTRCurrent objTRTime = new cls_ctTRCurrent();
+            List<cls_TRCurrent> listTRTime = objTRTime.getDataByFillter(worker_id, startdate,todate);
+
+            JArray array = new JArray();
+
+            if (listTRTime.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRCurrent model in listTRTime)
+                {
+                    JObject json = new JObject();
+                    json.Add("date", model.date.ToString("yyyy-MM-dd"));
+                    json.Add("daytype", model.daytype);
+                    json.Add("shift_code", model.shift_code);
+                    json.Add("shift_name_th", model.shift_name_th);
+                    json.Add("shift_name_en", model.shift_name_en);
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        #endregion
+
         #region MTPlanshiftflexible
         public string getMTPlanshiftflexibleList(string com, string year)
         {
@@ -14989,6 +15157,39 @@ namespace HRFocusWCFSystem
 
         //-- Files manage
         #region Files manage
+
+
+        public async Task<string> UploadStream(Stream stream)
+        {
+            MultipartParser parser = new MultipartParser(stream);
+            JObject output = new JObject();
+            if (parser.Success)
+            {
+                //absolute filename, extension included.
+                var filename = parser.Filename;
+                var filetype = parser.ContentType;
+                var ext = Path.GetExtension(filename);
+                string name = Guid.NewGuid().ToString() + ext;
+                string FilePath = Path.Combine
+                   (HostingEnvironment.MapPath("~/Uploads"), name);
+                using (var file = File.Create(FilePath))
+                {
+                    await file.WriteAsync(parser.FileContents, 0, parser.FileContents.Length);
+                    output["result"] = "1";
+                    output["filename"] = name;
+                    output["path"] = FilePath;
+                    output["file"] = parser.ToString();
+                    output["Type"] = parser.ContentType;
+                }
+            }
+            else
+            {
+                output["result"] = "0";
+                output["Type"] = parser.ContentType;
+                output["file"] = parser.Success.ToString();
+            }
+            return output.ToString(Formatting.None);
+        }
         public Stream doDownloadFile(string fileName, string fileExtension)
         {
             //string downloadFilePath =

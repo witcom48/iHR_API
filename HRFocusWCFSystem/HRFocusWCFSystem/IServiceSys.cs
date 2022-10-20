@@ -972,6 +972,19 @@ namespace HRFocusWCFSystem
         string doDeleteMTHoliday(InputMTHoliday input);
 
         //-- Leave
+
+        [OperationContract(Name = "doManageTRTimeleaveattachfile")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRTimeleaveattachfile(InputTRTimeattchfile input);
+
+        [OperationContract(Name = "doDeleteTRTimeleaveattachfile")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteTRTimeleaveattachfile(InputTRTimeattchfile input);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTRTimeleaveattachfileList(string company_code, string timeleave_doc);
+
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getMTLeaveList(string com);
@@ -1292,6 +1305,11 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "doDeleteMTPlanshiftflexible")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteMTPlanshiftflexible(InputMTPlanshiftflexible input);
+
+        //-- GetCurrent
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTRCurrent(string worker_id, string startdate,string todate);
         
         #endregion
 
@@ -1325,6 +1343,11 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/doUploadTimeInput?fileName={fileName}", ResponseFormat = WebMessageFormat.Json)]
         string doUploadTimeInput(string fileName, Stream stream);
+
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Task<string> UploadStream(Stream stream);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/doReadSimpleTimeInput?fileName={fileName}", ResponseFormat = WebMessageFormat.Json)]
