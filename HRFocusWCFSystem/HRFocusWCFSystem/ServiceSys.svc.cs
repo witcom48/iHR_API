@@ -14982,7 +14982,51 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Dashboard
+        public string getEmpPositionDash(string fromdate, string todate)
+        {
+            JObject output = new JObject();
 
+            DateTime datefrom = Convert.ToDateTime(fromdate);
+            DateTime dateto = Convert.ToDateTime(todate);
+
+            cls_ctMTEmpPositionDash objPoDash = new cls_ctMTEmpPositionDash();
+            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(datefrom, dateto);
+
+            JArray array = new JArray();
+
+            if (listShift.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TREmpPositionDash model in listShift)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("empposition_position", model.empposition_position);
+                    json.Add("position_name_th", model.position_name_th);
+                   
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
 
 
         #endregion
