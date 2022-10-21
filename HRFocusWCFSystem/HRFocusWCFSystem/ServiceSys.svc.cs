@@ -15156,6 +15156,47 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
+        public string getDashEmpAgeList(string com)
+        {
+            JObject output = new JObject();
+
+            cls_ctMTDashboard objDash = new cls_ctMTDashboard();
+            List<cls_MTDashboard> listDash = objDash.getDataEmpAgeByFillter(com);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_MTDashboard model in listDash)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("age", model.age);
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
         #endregion
 
         #region Pay

@@ -15,6 +15,8 @@ namespace ClassLibrary_BPC.hrfocus.model
         public string worker_gender_th { get; set; }
         public string dep_name_th { get; set; }
         public string dep_name_en { get; set; }
+        public string age { get; set; }
+
         
     }
 }

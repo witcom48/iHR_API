@@ -132,5 +132,64 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return this.getDataEmpDep(strCondition);
         }
+
+        private List<cls_MTDashboard> getDataEmpAge(string condition)
+        {
+            List<cls_MTDashboard> list_model = new List<cls_MTDashboard>();
+            cls_MTDashboard model;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT");
+
+                obj_str.Append(" COUNT(WORKER_CODE)as WORKER_CODE");
+                obj_str.Append(", (case when (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 18 and 30 then '18-30'");
+                obj_str.Append(" WHEN (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 31 and 40 then '31-40'");
+                obj_str.Append(" WHEN (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 41 and 55 then '41-55'");
+                obj_str.Append(" ELSE '55+' END)AS AGE");
+                obj_str.Append(" FROM HRM_MT_WORKER");
+
+                obj_str.Append(" WHERE 1=1");
+
+                if (!condition.Equals(""))
+                    obj_str.Append(" " + condition);
+
+                obj_str.Append(" GROUP BY (case when (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 18 and 30 then '18-30'");
+                obj_str.Append(" WHEN (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 31 and 40 then '31-40'");
+                obj_str.Append(" WHEN (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 41 and 55 then '41-55' else '55+' END)");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    model = new cls_MTDashboard();
+
+                    model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
+                    model.age = dr["AGE"].ToString();
+
+                    list_model.Add(model);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(DashEmpDep.getData)" + ex.ToString();
+            }
+
+            return list_model;
+        }
+        public List<cls_MTDashboard> getDataEmpAgeByFillter(string com)
+        {
+            string strCondition = "";
+
+
+            if (!com.Equals(""))
+                strCondition += " AND HRM_MT_WORKER.COMPANY_CODE ='" + com + "'";
+
+            return this.getDataEmpAge(strCondition);
+        }
+
+
     }
 }

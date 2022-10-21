@@ -1317,6 +1317,10 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getDashEmpDepList(string com);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashEmpAgeList(string com);
         #endregion
 
         #region Pay
