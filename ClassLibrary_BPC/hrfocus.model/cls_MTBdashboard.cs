@@ -9,7 +9,8 @@ namespace ClassLibrary_BPC.hrfocus.model
     public class cls_MTBdashboard{
   public cls_MTBdashboard() { }
 
-        public string company_code { get; set; }        
+        public string company_code { get; set; }
+        public string worker_code { get; set; }  
         public int bonus_id { get; set; }
         public string bonus_code { get; set; }
         public string bonus_name_th { get; set; }

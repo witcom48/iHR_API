@@ -14,6 +14,7 @@ namespace ClassLibrary_BPC.hrfocus.model
         public string reportjob_ref { get; set; }
         public string reportjob_type { get; set; }
         public string reportjob_status { get; set; }
+        public string reportjob_language { get; set; }
         public DateTime reportjob_fromdate { get; set; }
         public DateTime reportjob_todate { get; set; }
         public DateTime reportjob_paydate { get; set; }       

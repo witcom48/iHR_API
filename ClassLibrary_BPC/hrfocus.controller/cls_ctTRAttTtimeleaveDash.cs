@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ClassLibrary_BPC.hrfocus.model;
 using System.Data.SqlClient;
 using System.Data;
+
 namespace ClassLibrary_BPC.hrfocus.controller
 {
     public class cls_ctTRAttTtimeleaveDash
@@ -25,10 +26,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
 
 
-        private List<cls_MTEmpGenderDash> getData(string condition)
+        private List<cls_TRAttTtimeleaveDash> getData(string condition)
         {
-            List<cls_MTEmpGenderDash> list_model = new List<cls_MTEmpGenderDash>();
-            cls_MTEmpGenderDash model;
+            List<cls_TRAttTtimeleaveDash> list_model = new List<cls_TRAttTtimeleaveDash>();
+            cls_TRAttTtimeleaveDash model;
             try
             {
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
@@ -52,7 +53,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 foreach (DataRow dr in dt.Rows)
                 {
-                    model = new cls_MTEmpGenderDash();
+                    model = new cls_TRAttTtimeleaveDash();
 
                     model.TIMELEAVE_ACTUALDAY = Convert.ToInt32(dr["TIMELEAVE_ACTUALDAY"]);
                     model.DEP_NAME_EN = dr["DEP_NAME_EN"].ToString();

@@ -4904,6 +4904,7 @@ namespace HRFocusWCFSystem
                 model.reportjob_ref = input.reportjob_ref;
 
                 model.reportjob_status = input.reportjob_status;
+                model.reportjob_language = input.reportjob_language;
                 model.reportjob_type = input.reportjob_type;
 
                 model.reportjob_fromdate = Convert.ToDateTime(input.reportjob_fromdate);
@@ -14982,30 +14983,33 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Dashboard
-        public string getEmpPositionDash(string fromdate, string todate)
+
+        
+        #region Att
+        public string getDashLeaveList(string com,string fromdate, string todate)
         {
             JObject output = new JObject();
 
             DateTime datefrom = Convert.ToDateTime(fromdate);
             DateTime dateto = Convert.ToDateTime(todate);
 
-            cls_ctMTEmpPositionDash objPoDash = new cls_ctMTEmpPositionDash();
-            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(datefrom, dateto);
+            cls_ctTADashboard objDash = new cls_ctTADashboard();
+            List<cls_TADashboard> listDash = objDash.getDataLeaveByFillter(com, datefrom,dateto);
 
             JArray array = new JArray();
 
-            if (listShift.Count > 0)
+            if (listDash.Count > 0)
             {
                 int index = 1;
 
-                foreach (cls_TREmpPositionDash model in listShift)
+                foreach (cls_TADashboard model in listDash)
                 {
                     JObject json = new JObject();
 
-                    json.Add("worker_code", model.worker_code);
-                    json.Add("empposition_position", model.empposition_position);
-                    json.Add("position_name_th", model.position_name_th);
-                   
+                    json.Add("timeleave_actualday", model.timeleave_actualday);
+                    json.Add("dep_name_en", model.dep_name_en);
+                    json.Add("dep_name_th", model.dep_name_th);
+                    
 
                     json.Add("index", index);
 
@@ -15028,6 +15032,461 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
         }
 
+        public string getDashLateList(string com, string fromdate, string todate)
+        {
+            JObject output = new JObject();
+
+            DateTime datefrom = Convert.ToDateTime(fromdate);
+            DateTime dateto = Convert.ToDateTime(todate);
+
+            cls_ctTADashboard objDash = new cls_ctTADashboard();
+            List<cls_TADashboard> listDash = objDash.getDataLateByFillter(com,datefrom,dateto);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TADashboard model in listDash)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("late", model.late);
+                    json.Add("dep_name_en", model.dep_name_en);
+                    json.Add("dep_name_th", model.dep_name_th);
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        #endregion
+
+        #region Emp
+        public string getEmpPositionDash(string fromdate, string todate)
+        {
+            JObject output = new JObject();
+
+
+            DateTime datefrom = Convert.ToDateTime(fromdate);
+            DateTime dateto = Convert.ToDateTime(todate);
+
+            cls_ctMTEmpPositionDash objPoDash = new cls_ctMTEmpPositionDash();
+            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(datefrom, dateto);
+
+            JArray array = new JArray();
+
+            if (listShift.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TREmpPositionDash model in listShift)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("empposition_position", model.empposition_position);
+                    json.Add("position_name_th", model.position_name_th);
+
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string getDashGenderList(string com)
+        {
+            JObject output = new JObject();
+
+            cls_ctMTDashboard objDash = new cls_ctMTDashboard();
+            List<cls_MTDashboard> listDash = objDash.getDataGenderByFillter(com);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_MTDashboard model in listDash)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("worker_gender_en", model.worker_gender_en);
+                    json.Add("worker_gender_th", model.worker_gender_th);
+
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string getDashEmpDepList(string com)
+        {
+            JObject output = new JObject();
+
+            cls_ctMTDashboard objDash = new cls_ctMTDashboard();
+            List<cls_MTDashboard> listDash = objDash.getDataEmpDepByFillter(com);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_MTDashboard model in listDash)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("dep_name_th", model.dep_name_th);
+                    json.Add("dep_name_en", model.dep_name_en);
+
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string getDashEmpAgeList(string com)
+        {
+            JObject output = new JObject();
+
+            cls_ctMTDashboard objDash = new cls_ctMTDashboard();
+            List<cls_MTDashboard> listDash = objDash.getDataEmpAgeByFillter(com);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_MTDashboard model in listDash)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("age", model.age);
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string getDashEmpWorkAgeList(string com)
+        {
+            JObject output = new JObject();
+
+            cls_ctMTDashboard objDash = new cls_ctMTDashboard();
+            List<cls_MTDashboard> listDash = objDash.getDataEmpWorkAgeByFillter(com);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_MTDashboard model in listDash)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("age", model.age);
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        #endregion
+
+        #region Pay
+        public string getDashItemINList(string com, string fromdate, string todate)
+        {
+            JObject output = new JObject();
+
+            DateTime datefrom = Convert.ToDateTime(fromdate);
+            DateTime dateto = Convert.ToDateTime(todate);
+
+            cls_ctTRDashboard objDash = new cls_ctTRDashboard();
+            List<cls_TRDashboard> listDash = objDash.getDataItemINByFillter(com,datefrom,dateto);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRDashboard model in listDash)
+                {
+                    JObject json = new JObject();
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("amount", model.amount);
+                    json.Add("item_name_th", model.item_name_th);
+                    json.Add("item_name_en", model.item_name_en);
+                    json.Add("item_code", model.item_code);
+
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string getDashItemDEList(string com, string fromdate, string todate)
+        {
+            JObject output = new JObject();
+
+            DateTime datefrom = Convert.ToDateTime(fromdate);
+            DateTime dateto = Convert.ToDateTime(todate);
+
+            cls_ctTRDashboard objDash = new cls_ctTRDashboard();
+            List<cls_TRDashboard> listDash = objDash.getDataItemDEByFillter(com,datefrom,dateto);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRDashboard model in listDash)
+                {
+                    JObject json = new JObject();
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("amount", model.amount);
+                    json.Add("item_name_th", model.item_name_th);
+                    json.Add("item_name_en", model.item_name_en);
+                    json.Add("item_code", model.item_code);
+
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string getDashItemOTDepList(string fromdate,string todate)
+        {
+            JObject output = new JObject();
+
+            DateTime datefrom = Convert.ToDateTime(fromdate);
+            DateTime dateto = Convert.ToDateTime(todate);
+
+            cls_ctTRDashboard objDash = new cls_ctTRDashboard();
+            List<cls_TRDashboard> listDash = objDash.getDataOTDepByFillter(datefrom , dateto);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRDashboard model in listDash)
+                {
+                    JObject json = new JObject();
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("before_min", model.before_min);
+                    json.Add("normal_min", model.normal_min);
+                    json.Add("after_min", model.after_min);
+                    json.Add("dep_name_th", model.dep_name_th);
+                    json.Add("dep_name_en", model.dep_name_en);
+
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string getDashItemOTPoList(string com,string fromdate, string todate)
+        {
+            JObject output = new JObject();
+
+            DateTime datefrom = Convert.ToDateTime(fromdate);
+            DateTime dateto = Convert.ToDateTime(todate);
+
+            cls_ctTRDashboard objDash = new cls_ctTRDashboard();
+            List<cls_TRDashboard> listDash = objDash.getDataOTPoByFillter(com,datefrom, dateto);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRDashboard model in listDash)
+                {
+                    JObject json = new JObject();
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("before_min", model.before_min);
+                    json.Add("normal_min", model.normal_min);
+                    json.Add("after_min", model.after_min);
+                    json.Add("empposition_position", model.empposition_position);
+                    json.Add("position_name_th", model.position_name_th);
+                    json.Add("position_name_en", model.position_name_en);
+
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        #endregion
 
         #endregion
 

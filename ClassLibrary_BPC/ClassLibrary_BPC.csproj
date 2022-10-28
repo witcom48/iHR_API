@@ -65,9 +65,12 @@
     <Compile Include="hrfocus.controller\cls_ctMTEmpGenderDash.cs" />
     <Compile Include="hrfocus.controller\cls_ctTREmpOtpositionDash.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTEmpPositionDash.cs" />
+    <Compile Include="hrfocus.controller\cls_ctMTDashboard.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPlanshiftflexible.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPlantimeallw.cs" />
     <Compile Include="hrfocus.controller\cls_ctSYSReportjob.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTADashboard.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRDashboard.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPaypf.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPayPtimecardDash.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPayPtimeleaveDash.cs" />
@@ -178,9 +181,12 @@
     <Compile Include="hrfocus.model\cls_MTEmpGenderDash.cs" />
     <Compile Include="hrfocus.model\cls_TREmpOtpositionDash.cs" />
     <Compile Include="hrfocus.model\cls_TREmpPositionDash.cs" />
+    <Compile Include="hrfocus.model\cls_MTDashboard.cs" />
     <Compile Include="hrfocus.model\cls_MTPlanshiftflexible.cs" />
     <Compile Include="hrfocus.model\cls_MTPlantimeallw.cs" />
     <Compile Include="hrfocus.model\cls_SYSReportjob.cs" />
+    <Compile Include="hrfocus.model\cls_TADashboard.cs" />
+    <Compile Include="hrfocus.model\cls_TRDashboard.cs" />
     <Compile Include="hrfocus.model\cls_TRPaypf.cs" />
     <Compile Include="hrfocus.model\cls_TRPayPtimecardDash.cs" />
     <Compile Include="hrfocus.model\cls_TRPayPtimeleaveDash.cs" />
