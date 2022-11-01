@@ -2036,6 +2036,15 @@ namespace HRFocusWCFSystem
 
                         output["result_link"] = link;
                     }
+                        //SSO
+                    else if (input.task_type.Trim().Equals("TRN_SSO"))
+                    {
+                        cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
+                        string link = srvPay.doExportSso(input.company_code, intTaskID.ToString());
+
+                        output["result_link"] = link;
+                    }
+                        //SSO
                     else if (input.task_type.Trim().Equals("TRN_TAX"))
                     {
                         cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
@@ -3722,7 +3731,7 @@ namespace HRFocusWCFSystem
                 {
                     JObject json = new JObject();
 
-                    json.Add("company_code", model.company_code);
+                    json.Add("company_code", model.combank_bankaccoynt);
                     json.Add("combank_id", model.combank_id);
                     json.Add("combank_bankcode", model.combank_bankcode);
                     json.Add("combank_bankaccount", model.combank_bankaccount);
@@ -3776,7 +3785,7 @@ namespace HRFocusWCFSystem
 
                     foreach (cls_TRCombank item in jsonArray)
                     {                        
-                        item.company_code = company_code;
+                        item.combank_bankaccoynt = company_code;
 
                         item.modified_by = input.modified_by;
                         blnResult = objBank.insert(item);

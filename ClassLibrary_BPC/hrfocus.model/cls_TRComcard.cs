@@ -16,7 +16,8 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         public int comcard_id { get; set; }
         public string comcard_code { get; set; }
-
+        
+        public string combank_bankaccount { get; set; }
         public string card_type { get; set; }
 
         public DateTime comcard_issue { get; set; }
