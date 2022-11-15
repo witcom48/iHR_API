@@ -1387,6 +1387,10 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string doAuthen(string usr, string pwd, string token);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string doGetQR2Factor(string com, string usr, string token);
         
         [OperationContract]
         [WebGet(UriTemplate = "File/{fileName}/{fileExtension}")]

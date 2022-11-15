@@ -4828,6 +4828,9 @@ namespace HRFocusWCFSystem
                     json.Add("reportjob_fromdate", model.reportjob_fromdate);
                     json.Add("reportjob_todate", model.reportjob_todate);
                     json.Add("reportjob_paydate", model.reportjob_paydate);
+
+                    json.Add("reportjob_language", model.reportjob_language);
+
                     json.Add("created_by", model.created_by);
                     json.Add("created_date", model.created_date);
                    
@@ -15818,13 +15821,48 @@ namespace HRFocusWCFSystem
 
         //private void 
 
+        public string doGetQR2Factor(string com, string usr, string token)
+        {
+            JObject output = new JObject();
+            try
+            {
+                JObject json = new JObject();
+
+                TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                string UserUniqueKey = usr + key;
+                var setupInfo = tfa.GenerateSetupCode("iHR Authenticator", usr, UserUniqueKey, 300, 300);
+                var barcodeImageUrl = setupInfo.QrCodeSetupImageUrl;
+                var setupCode = setupInfo.ManualEntryKey;
+
+
+                json.Add("barcode", barcodeImageUrl);
+                json.Add("setupcode", setupCode);
+                json.Add("uniquekey", UserUniqueKey);
+
+                JArray array = new JArray();
+                array.Add(json);
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
         public string doVerify(string usr, string token)
         {
             JObject output = new JObject();
             try
             {
                 TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
-                string UserUniqueKey = usr;
+                //string UserUniqueKey = usr;
+                string UserUniqueKey = usr + key;
                 bool isValid = TwoFacAuth.ValidateTwoFactorPIN(UserUniqueKey, token);
                 if (isValid)
                 {

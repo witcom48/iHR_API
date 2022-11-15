@@ -42,6 +42,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", REPORTJOB_FROMDATE");
                 obj_str.Append(", REPORTJOB_TODATE");
                 obj_str.Append(", REPORTJOB_PAYDATE");
+
+                obj_str.Append(", REPORTJOB_LANGUAGE");
+
                 obj_str.Append(", CREATED_BY");
                 obj_str.Append(", CREATED_DATE");
 
@@ -70,6 +73,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.reportjob_paydate = Convert.ToDateTime(dr["REPORTJOB_PAYDATE"]);
 
                     model.reportjob_ref = Convert.ToString(dr["REPORTJOB_REF"]);
+
+                    model.reportjob_language = Convert.ToString(dr["REPORTJOB_LANGUAGE"]);
 
                     model.created_by = dr["CREATED_BY"].ToString();
                     model.created_date = Convert.ToDateTime(dr["CREATED_DATE"]);
@@ -215,7 +220,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", REPORTJOB_LANGUAGE ");
                 obj_str.Append(", REPORTJOB_FROMDATE ");
                 obj_str.Append(", REPORTJOB_TODATE ");
-                obj_str.Append(", REPORTJOB_PAYDATE ");                
+                obj_str.Append(", REPORTJOB_PAYDATE ");
                 obj_str.Append(", COMPANY_CODE ");
                 obj_str.Append(", CREATED_BY ");
                 obj_str.Append(", CREATED_DATE ");            
@@ -249,7 +254,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@REPORTJOB_LANGUAGE", SqlDbType.Char); obj_cmd.Parameters["@REPORTJOB_LANGUAGE"].Value = model.reportjob_language;
                 obj_cmd.Parameters.Add("@REPORTJOB_FROMDATE", SqlDbType.DateTime); obj_cmd.Parameters["@REPORTJOB_FROMDATE"].Value = model.reportjob_fromdate;
                 obj_cmd.Parameters.Add("@REPORTJOB_TODATE", SqlDbType.DateTime); obj_cmd.Parameters["@REPORTJOB_TODATE"].Value = model.reportjob_todate;
-                obj_cmd.Parameters.Add("@REPORTJOB_PAYDATE", SqlDbType.DateTime); obj_cmd.Parameters["@REPORTJOB_PAYDATE"].Value = model.reportjob_paydate;                                             
+                obj_cmd.Parameters.Add("@REPORTJOB_PAYDATE", SqlDbType.DateTime); obj_cmd.Parameters["@REPORTJOB_PAYDATE"].Value = model.reportjob_paydate;
                 obj_cmd.Parameters.Add("@COMPANY_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@COMPANY_CODE"].Value = model.company_code;
                 obj_cmd.Parameters.Add("@CREATED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@CREATED_BY"].Value = model.created_by;
                 obj_cmd.Parameters.Add("@CREATED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@CREATED_DATE"].Value = DateTime.Now;

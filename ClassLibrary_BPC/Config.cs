@@ -8,9 +8,9 @@ namespace ClassLibrary_BPC
 {
     public class Config
     {
-        static public string Database = "HRM";
-        static public string Userid = "Test";
 
+        static public string Database = "HRM";
+        static public string Userid = "sa";
         static public string Server = "DESKTOP-26DFGM6";
         static public string Password = "password@1";
         //static public string Database = "HRM";
