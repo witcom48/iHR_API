@@ -1317,14 +1317,16 @@ namespace HRFocusWCFSystem
         //-- Dashboard
         //-- ********************
         #region Dashboard
+        
+
         #region Att
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getDashLeaveList(string com);
+        string getDashLeaveList(string com, string fromdate, string todate);
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getDashLateList(string com);
+        string getDashLateList(string com, string fromdate, string todate);
         #endregion
 
         #region Emp
@@ -1343,6 +1345,10 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getDashEmpWorkAgeList(string com);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getEmpPositionDash(string fromdate, string todate);
         #endregion
 
         #region Pay

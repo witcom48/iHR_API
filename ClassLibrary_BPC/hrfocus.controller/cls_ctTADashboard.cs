@@ -70,13 +70,15 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_TADashboard> getDataLeaveByFillter(string com)
+        public List<cls_TADashboard> getDataLeaveByFillter(string com, DateTime datefrom, DateTime dateto)
         {
             string strCondition = "";
 
-
-            if (!com.Equals(""))
                 strCondition += " AND HRM_TR_TIMELEAVE.COMPANY_CODE ='" + com + "'";
+
+                if (!datefrom.Equals("") || !dateto.Equals(""))
+                    strCondition += " AND (HRM_TR_TIMELEAVE.TIMELEAVE_FROMDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "'";
+                    strCondition += "  OR HRM_TR_TIMELEAVE.TIMELEAVE_TODATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')";
 
             return this.getDataLeave(strCondition);
         }
@@ -127,13 +129,14 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_TADashboard> getDataLateByFillter(string com)
+        public List<cls_TADashboard> getDataLateByFillter(string com, DateTime datefrom, DateTime dateto)
         {
             string strCondition = "";
 
-
-            if (!com.Equals(""))
                 strCondition += " AND HRM_TR_TIMECARD.COMPANY_CODE ='" + com + "'";
+
+                if (!datefrom.Equals("") || !dateto.Equals(""))
+                    strCondition += " AND (HRM_TR_TIMECARD.TIMECARD_WORKDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "' )";
 
             return this.getDataLate(strCondition);
         }

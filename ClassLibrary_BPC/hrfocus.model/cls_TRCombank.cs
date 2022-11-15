@@ -9,9 +9,10 @@ namespace ClassLibrary_BPC.hrfocus.model
     public class cls_TRCombank
     {
         public cls_TRCombank() { }
+        //public string panytran_ssocom { get; }
 
         public string company_code { get; set; }
-       
+      
         public int combank_id { get; set; }
         public string combank_bankcode { get; set; }
         public string combank_bankaccount { get; set; }       

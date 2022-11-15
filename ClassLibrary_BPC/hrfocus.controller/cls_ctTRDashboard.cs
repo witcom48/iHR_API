@@ -34,7 +34,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("SELECT");
 
-                obj_str.Append(" SUM(HRM_TR_PAYITEM.PAYITEM_AMOUNT) as AMOUNT");
+                obj_str.Append(" COUNT(WORKER_CODE)as WORKER_CODE");
+                obj_str.Append(" ,SUM(HRM_TR_PAYITEM.PAYITEM_AMOUNT) as AMOUNT");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_TH");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_EN");
                 obj_str.Append(", HRM_TR_PAYITEM.ITEM_CODE");
@@ -55,6 +56,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 {
                     model = new cls_TRDashboard();
 
+                    model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
                     model.amount = Convert.ToInt32(dr["AMOUNT"]);
                     model.item_name_en = dr["ITEM_NAME_EN"].ToString();
                     model.item_name_th = dr["ITEM_NAME_TH"].ToString();
@@ -92,8 +94,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
                 obj_str.Append("SELECT");
+                obj_str.Append(" COUNT(WORKER_CODE)as WORKER_CODE");
 
-                obj_str.Append(" SUM(HRM_TR_PAYITEM.PAYITEM_AMOUNT) as AMOUNT");
+                obj_str.Append(", SUM(HRM_TR_PAYITEM.PAYITEM_AMOUNT) as AMOUNT");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_TH");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_EN");
                 obj_str.Append(", HRM_TR_PAYITEM.ITEM_CODE");
@@ -113,7 +116,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 foreach (DataRow dr in dt.Rows)
                 {
                     model = new cls_TRDashboard();
-
+                    model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
                     model.amount = Convert.ToInt32(dr["AMOUNT"]);
                     model.item_name_en = dr["ITEM_NAME_EN"].ToString();
                     model.item_name_th = dr["ITEM_NAME_TH"].ToString();
@@ -151,6 +154,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
                 obj_str.Append("SELECT");
+                obj_str.Append(" COUNT(WORKER_CODE)as WORKER_CODE");
 
                 obj_str.Append(" ISNULL(SUM(HRM_TR_TIMECARD.TIMECARD_BEFORE_MIN),'' )as BEFORE_MIN");
                 obj_str.Append(", ISNULL(SUM(CASE WHEN (HRM_TR_TIMECARD.TIMECARD_DAYTYPE) = 'O' THEN HRM_TR_TIMECARD.TIMECARD_WORK1_MIN else null END),'') AS NORMAL_MIN");
@@ -173,7 +177,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 foreach (DataRow dr in dt.Rows)
                 {
                     model = new cls_TRDashboard();
-
+                    model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
                     model.before_min = Convert.ToInt32(dr["BEFORE_MIN"]);
                     model.normal_min = Convert.ToInt32(dr["NORMAL_MIN"]);
                     model.after_min = Convert.ToInt32(dr["AFTER_MIN"]);
@@ -211,6 +215,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
                 obj_str.Append("SELECT");
+                obj_str.Append(" COUNT(WORKER_CODE)as WORKER_CODE");
 
                 obj_str.Append(" ISNULL(SUM(HRM_TR_TIMECARD.TIMECARD_BEFORE_MIN),'' )as BEFORE_MIN");
                 obj_str.Append(", ISNULL(SUM(CASE WHEN (HRM_TR_TIMECARD.TIMECARD_DAYTYPE) = 'O' THEN HRM_TR_TIMECARD.TIMECARD_WORK1_MIN else null END),'') AS NORMAL_MIN");
@@ -234,7 +239,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 foreach (DataRow dr in dt.Rows)
                 {
                     model = new cls_TRDashboard();
-
+                    model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
                     model.before_min = Convert.ToInt32(dr["BEFORE_MIN"]);
                     model.normal_min = Convert.ToInt32(dr["NORMAL_MIN"]);
                     model.after_min = Convert.ToInt32(dr["AFTER_MIN"]);
