@@ -58,10 +58,13 @@
     <Compile Include="Config.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTBank.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTBonus.cs" />
+    <Compile Include="hrfocus.controller\cls_ctMTDashboard.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPlanshiftflexible.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPlantimeallw.cs" />
     <Compile Include="hrfocus.controller\cls_ctSYSReportjob.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRCurrent.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTADashboard.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRDashboard.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPaypf.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRShiftflexible.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRTimeallw.cs" />
@@ -163,10 +166,13 @@
     <Compile Include="hrfocus.controller\cls_ctMTPlanshift.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPlanschedule.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRTimecard.cs" />
+    <Compile Include="hrfocus.model\cls_MTDashboard.cs" />
     <Compile Include="hrfocus.model\cls_MTPlanshiftflexible.cs" />
     <Compile Include="hrfocus.model\cls_MTPlantimeallw.cs" />
     <Compile Include="hrfocus.model\cls_SYSReportjob.cs" />
     <Compile Include="hrfocus.model\cls_TRCurrent.cs" />
+    <Compile Include="hrfocus.model\cls_TADashboard.cs" />
+    <Compile Include="hrfocus.model\cls_TRDashboard.cs" />
     <Compile Include="hrfocus.model\cls_TRPaypf.cs" />
     <Compile Include="hrfocus.model\cls_TRShiftflexible.cs" />
     <Compile Include="hrfocus.model\cls_SYSReportjobwhose.cs" />

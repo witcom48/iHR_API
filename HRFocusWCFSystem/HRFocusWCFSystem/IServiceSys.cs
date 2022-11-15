@@ -1313,6 +1313,58 @@ namespace HRFocusWCFSystem
         
         #endregion
 
+        //-- ********************
+        //-- Dashboard
+        //-- ********************
+        #region Dashboard
+        #region Att
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashLeaveList(string com);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashLateList(string com);
+        #endregion
+
+        #region Emp
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashGenderList(string com);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashEmpDepList(string com);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashEmpAgeList(string com);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashEmpWorkAgeList(string com);
+        #endregion
+
+        #region Pay
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashItemINList(string com, string fromdate, string todate);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashItemDEList(string com, string fromdate, string todate);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashItemOTDepList(string fromdate, string todate);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getDashItemOTPoList(string com, string fromdate, string todate);
+
+        #endregion
+        #endregion
+
         //-- SummaryWage
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]

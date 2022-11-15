@@ -861,6 +861,8 @@ namespace HRFocusWCFSystem
         [DataMember]
         public string reportjob_status { get; set; }
         [DataMember]
+        public string reportjob_language { get; set; }
+        [DataMember]
         public string reportjob_fromdate { get; set; }
         [DataMember]
         public string reportjob_todate { get; set; }
