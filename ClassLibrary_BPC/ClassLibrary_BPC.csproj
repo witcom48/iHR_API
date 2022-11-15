@@ -30,14 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Interop.Microsoft.Office.Core">
-      <HintPath>..\HR-KIOSK\bin\Debug\Interop.Microsoft.Office.Core.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Interop.Microsoft.Office.Interop.Excel">
-      <HintPath>..\HR-KIOSK\bin\Debug\Interop.Microsoft.Office.Interop.Excel.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -69,6 +61,7 @@
     <Compile Include="hrfocus.controller\cls_ctMTPlanshiftflexible.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPlantimeallw.cs" />
     <Compile Include="hrfocus.controller\cls_ctSYSReportjob.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRCurrent.cs" />
     <Compile Include="hrfocus.controller\cls_ctTADashboard.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRDashboard.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPaypf.cs" />
@@ -88,6 +81,7 @@
     <Compile Include="hrfocus.controller\cls_ctSYSMainmenu.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTProvince.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTTimeimpformat.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRTimeleaveattachfile.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRWageday.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRCombranch.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPeriod.cs" />
@@ -185,6 +179,7 @@
     <Compile Include="hrfocus.model\cls_MTPlanshiftflexible.cs" />
     <Compile Include="hrfocus.model\cls_MTPlantimeallw.cs" />
     <Compile Include="hrfocus.model\cls_SYSReportjob.cs" />
+    <Compile Include="hrfocus.model\cls_TRCurrent.cs" />
     <Compile Include="hrfocus.model\cls_TADashboard.cs" />
     <Compile Include="hrfocus.model\cls_TRDashboard.cs" />
     <Compile Include="hrfocus.model\cls_TRPaypf.cs" />
@@ -195,6 +190,7 @@
     <Compile Include="hrfocus.model\cls_TRTimeallw.cs" />
     <Compile Include="hrfocus.model\cls_TRHoliday.cs" />
     <Compile Include="hrfocus.model\cls_MTPlanholiday.cs" />
+    <Compile Include="hrfocus.model\cls_TRTimeleaveattachfile.cs" />
     <Compile Include="hrfocus.model\cls_TRWageday.cs" />
     <Compile Include="hrfocus.model\cls_TREmpleaveacc.cs" />
     <Compile Include="hrfocus.model\cls_TREmpkt20.cs" />

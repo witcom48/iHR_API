@@ -845,7 +845,24 @@ namespace HRFocusWCFSystem
         [DataMember]
         public int index { get; set; }
     }
-
+    [DataContract]
+    public class InputTRTimeattchfile
+    {
+        [DataMember]
+        public string company_code { get; set; }
+        [DataMember]
+        public string timeleave_doc { get; set; }
+        [DataMember]
+        public string file_no { get; set; }
+        [DataMember]
+        public string file_name { get; set; }
+        [DataMember]
+        public string file_path { get; set; }     
+        [DataMember]
+        public string modified_by { get; set; }
+        [DataMember]
+        public DateTime modified_date { get; set; }
+    }
     [DataContract]
     public class InputTRTimeot
     {
