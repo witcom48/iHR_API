@@ -36,19 +36,21 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("SELECT ");
 
+                obj_str.Append("COUNT(WORKER_CODE)as WORKER_CODE");
                 obj_str.Append("SUM(HRM_TR_PAYITEM.PAYITEM_AMOUNT) as AMOUNT");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_TH");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_EN");
                 obj_str.Append(", HRM_TR_PAYITEM.ITEM_CODE");
                 obj_str.Append(" from HRM_TR_PAYITEM");
                 obj_str.Append(" inner join HRM_MT_ITEM on HRM_TR_PAYITEM.ITEM_CODE = HRM_MT_ITEM.ITEM_CODE");
-                obj_str.Append(" where HRM_TR_PAYITEM.COMPANY_CODE = 'APT' AND HRM_MT_ITEM.ITEM_TYPE = 'IN'");
+                
 
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
+                obj_str.Append(" AND HRM_MT_ITEM.ITEM_TYPE = 'IN'");
                 obj_str.Append("GROUP BY HRM_MT_ITEM.ITEM_NAME_TH,HRM_MT_ITEM.ITEM_NAME_EN,HRM_TR_PAYITEM.ITEM_CODE");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());

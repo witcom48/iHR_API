@@ -24,7 +24,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             Obj_conn.doClose();
         }
 
-        private List<cls_TADashboard> getDataLeave(string condition)
+        private List<cls_TADashboard> getDashLeaveList(string condition)
         {
             List<cls_TADashboard> list_model = new List<cls_TADashboard>();
             cls_TADashboard model;
@@ -34,12 +34,12 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("SELECT");
 
-                obj_str.Append(" COUNT(HRM_TR_TIMELEAVE.TIMELEAVE_ACTUALDAY) as TIMELEAVE_ACTUALDAY");
+                obj_str.Append(" COUNT(HRM_TR_TIMELEAVE.TIMELEAVE_ACTUALDAY) as WORKER_CODE");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_EN");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_TH");
                 obj_str.Append(" from HRM_TR_TIMELEAVE");
-                obj_str.Append(" INNER JOIN HRM_TR_EMPDEP on HRM_TR_TIMELEAVE.WORKER_CODE = HRM_TR_EMPDEP.WORKER_CODE");
-                obj_str.Append(" INNER JOIN HRM_MT_DEP on HRM_TR_EMPDEP.EMPDEP_LEVEL01 = HRM_MT_DEP.DEP_CODE");
+                obj_str.Append(" inner join HRM_TR_EMPDEP on HRM_TR_TIMELEAVE.WORKER_CODE = HRM_TR_EMPDEP.WORKER_CODE");
+                obj_str.Append(" inner join HRM_MT_DEP on HRM_TR_EMPDEP.EMPDEP_LEVEL01 = HRM_MT_DEP.DEP_CODE");
 
                 obj_str.Append(" WHERE 1=1");
 
@@ -54,7 +54,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 {
                     model = new cls_TADashboard();
 
-                    model.timeleave_actualday = Convert.ToInt32(dr["TIMELEAVE_ACTUALDAY"]);
+                    
+                    model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
                     model.dep_name_en = dr["DEP_NAME_EN"].ToString();
                     model.dep_name_th = dr["DEP_NAME_TH"].ToString();
                     
@@ -64,23 +65,22 @@ namespace ClassLibrary_BPC.hrfocus.controller
             }
             catch (Exception ex)
             {
-                Message = "ERROR::(Position.getData)" + ex.ToString();
+                Message = "ERROR::(TRDashboard.getData)" + ex.ToString();
             }
 
             return list_model;
         }
 
-        public List<cls_TADashboard> getDataLeaveByFillter(string com, DateTime datefrom, DateTime dateto)
+        public List<cls_TADashboard> getDataLeaveByFillter(string com)
         {
-            string strCondition = "";
+            
 
-                strCondition += " AND HRM_TR_TIMELEAVE.COMPANY_CODE ='" + com + "'";
+                string strCondition = "";
 
-                if (!datefrom.Equals("") || !dateto.Equals(""))
-                    strCondition += " AND (HRM_TR_TIMELEAVE.TIMELEAVE_FROMDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "'";
-                    strCondition += "  OR HRM_TR_TIMELEAVE.TIMELEAVE_TODATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')";
 
-            return this.getDataLeave(strCondition);
+                if (!com.Equals(""))
+                    strCondition += " AND HRM_TR_TIMELEAVE.COMPANY_CODE ='" + com + "'";
+                    return this.getDashLeaveList(strCondition);
         }
 
         private List<cls_TADashboard> getDataLate(string condition)
@@ -93,7 +93,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("SELECT");
 
-                obj_str.Append(" COUNT(HRM_TR_TIMECARD.TIMECARD_LATE_MIN) as LATE");
+                obj_str.Append(" COUNT(HRM_TR_TIMECARD.TIMECARD_LATE_MIN) as WORKER_CODE");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_EN");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_TH");
                 obj_str.Append(" from HRM_TR_TIMECARD");
@@ -104,7 +104,6 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
-                obj_str.Append(" AND (HRM_TR_TIMECARD.TIMECARD_LATE_MIN !='0' AND HRM_TR_TIMECARD.TIMECARD_LATE_MIN_APP !='0' )");
                 obj_str.Append(" GROUP BY HRM_MT_DEP.DEP_NAME_EN,HRM_MT_DEP.DEP_NAME_TH ");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
@@ -112,8 +111,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 foreach (DataRow dr in dt.Rows)
                 {
                     model = new cls_TADashboard();
-
-                    model.late = Convert.ToInt32(dr["LATE"]);
+                    model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
+                
                     model.dep_name_en = dr["DEP_NAME_EN"].ToString();
                     model.dep_name_th = dr["DEP_NAME_TH"].ToString();
 
@@ -123,20 +122,19 @@ namespace ClassLibrary_BPC.hrfocus.controller
             }
             catch (Exception ex)
             {
-                Message = "ERROR::(Position.getData)" + ex.ToString();
+                Message = "ERROR::(TRDashboard.getData)" + ex.ToString();
             }
 
             return list_model;
         }
 
-        public List<cls_TADashboard> getDataLateByFillter(string com, DateTime datefrom, DateTime dateto)
+        public List<cls_TADashboard> getDataLateByFillter(string com)
         {
             string strCondition = "";
 
-                strCondition += " AND HRM_TR_TIMECARD.COMPANY_CODE ='" + com + "'";
+            strCondition += " AND HRM_TR_TIMECARD.COMPANY_CODE ='" + com + "' " + "  AND HRM_TR_TIMECARD.TIMECARD_LATE_MIN !='" + 0 + "'" +" AND HRM_TR_TIMECARD.TIMECARD_LATE_MIN_APP !='" + 0 + "'";
 
-                if (!datefrom.Equals("") || !dateto.Equals(""))
-                    strCondition += " AND (HRM_TR_TIMECARD.TIMECARD_WORKDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "' )";
+   
 
             return this.getDataLate(strCondition);
         }
