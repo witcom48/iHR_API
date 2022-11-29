@@ -1385,6 +1385,17 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "doChangePass")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doChangePass(InputMTWorker input);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doTest(req input);
+
+
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", UriTemplate = "/doUploadExcel?fileName={fileName}", ResponseFormat = WebMessageFormat.Json)]
+        Task<string> doUploadExcel(string fileName, Stream stream);
+        
         
     }
 

@@ -1837,6 +1837,10 @@ namespace HRFocusWCFSystem
                     {
                         json.Add("task_detail", model.taskdetail_process);
                     }
+                    else if (model.task_type.Equals("IMP_XLS"))
+                    {
+                        json.Add("task_detail", model.task_note);
+                    }
                     else
                     {
                         json.Add("task_detail", model.taskdetail_process + " (" + model.taskdetail_fromdate.ToString("dd/MM/yy") + "-" + model.taskdetail_todate.ToString("dd/MM/yy") + ":" + model.taskdetail_paydate.ToString("dd/MM/yy") + ")");
@@ -2049,6 +2053,12 @@ namespace HRFocusWCFSystem
                         string link = srvPay.doExportPF(input.company_code, intTaskID.ToString());
 
                         output["result_link"] = link;
+                    }
+                    else if (input.task_type.Trim().Equals("IMP_XLS"))
+                    {
+                        cls_srvImport srvImport = new cls_srvImport();
+                        string link = srvImport.doImportExcel(input.company_code, intTaskID.ToString());
+
                     }
                 }
                 else
@@ -15958,7 +15968,72 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
         }
 
+        public string doTest(req input)
+        {
+            JObject output = new JObject();
+            output["success"] = true;
+            output["message"] = "Retrieved data successfully";
+            return output.ToString(Formatting.None);
+        }
 
+        //-- F add 28/11/2022
+        public async Task<string> doUploadExcel(string fileName, Stream stream)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                Regex regex = new Regex("(^-+)|(^content-)|(^$)|(^submit)", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
+
+                string FilePath = Path.Combine
+                   (ClassLibrary_BPC.Config.PathFileImport + "\\Imports", fileName);
+               
+                MultipartParser parser = new MultipartParser(stream);
+                
+                if (parser.Success)
+                {
+                    //absolute filename, extension included.
+                    var filename = parser.Filename;
+                    var filetype = parser.ContentType;
+                    var ext = Path.GetExtension(filename);
+                   
+                    using (var file = File.Create(FilePath))
+                    {
+                        await file.WriteAsync(parser.FileContents, 0, parser.FileContents.Length);
+                        output["result"] = "1";                      
+                        output["result_text"] = FilePath;
+                    
+                    }
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = parser.ContentType;                  
+                }
+                
+
+                output["result"] = "1";
+                output["result_text"] = "0";
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        
+    }
+
+    [DataContract]
+    public class req
+    {
+        [DataMember(Order = 0)]
+        public string usname { get; set; }
+        [DataMember(Order = 1)]
+        public string pwd { get; set; }
     }
 
     
