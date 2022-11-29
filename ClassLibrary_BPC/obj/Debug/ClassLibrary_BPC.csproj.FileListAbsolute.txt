@@ -139,3 +139,4 @@ D:\IHR\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.csproj.GenerateResour
 D:\IHR\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.dll
 D:\IHR\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.pdb
 >>>>>>> 8fb8ea4fdac81d7f0d7666274765cc46cac8774b
+D:\Work\BPC\Project\Webbase\iHR_202208\BackEnd\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.csproj.ResolveComReference.cache
