@@ -77,7 +77,7 @@ namespace ClassLibrary_BPC.hrfocus.service
             bool blnResult = false;
 
             cls_ctMTTask objMTTask = new cls_ctMTTask();
-            List<cls_MTTask> listMTTask = objMTTask.getDataByFillter(com, taskid, "IMP_TIME", "");
+            List<cls_MTTask> listMTTask = objMTTask.getDataByFillter(com, taskid, "IMP_XLS", "");
             List<string> listError = new List<string>();
 
             if (listMTTask.Count > 0)

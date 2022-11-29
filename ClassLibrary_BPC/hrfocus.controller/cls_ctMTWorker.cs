@@ -361,7 +361,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             try
             {
                 //-- Check data old
-                if (this.checkDataOld(model.worker_id.ToString()))
+                if (this.checkDataOld(model.company_code, model.worker_code))
                 {
                     bool blnResult = this.update(model);
 
