@@ -78,7 +78,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public List<cls_TRCombank> getDataByFillter(string com)
         {
-            string strCondition = " AND COMPANY_CODE='" + com + "'";
+            string strCondition = "";
+            strCondition += " AND COMPANY_CODE='" + com + "'";
+            //strCondition += " AND COMBANK_BANKCODE IN (" + bankcode + ") ";
                                     
             return this.getData(strCondition);
         }

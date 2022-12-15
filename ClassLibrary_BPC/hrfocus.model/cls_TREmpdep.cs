@@ -20,6 +20,23 @@ namespace ClassLibrary_BPC.hrfocus.model
             this.empdep_level05 = "";
         
         }
+        /// <summary>
+        /// worker
+        /// </summary>
+
+
+
+        public int worker_id { get; set; }
+
+        public string worker_card { get; set; }
+
+        public string worker_initial { get; set; }
+
+        public string worker_fname_th { get; set; }
+        public string worker_lname_th { get; set; }
+
+        public string worker_fname_en { get; set; }
+        public string worker_lname_en { get; set; }
 
         public string company_code { get; set; }
         public string worker_code { get; set; }

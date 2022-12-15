@@ -17,9 +17,10 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ExcelLibrary">
+      <HintPath>C:\Users\sukawit.s\Downloads\ExcelLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -64,6 +68,7 @@
     <Compile Include="hrfocus.controller\cls_ctTRCurrent.cs" />
     <Compile Include="hrfocus.controller\cls_ctTADashboard.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRDashboard.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRPaybank.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPaypf.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPayPtimecardDash.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPayPtimeleaveDash.cs" />
@@ -182,6 +187,7 @@
     <Compile Include="hrfocus.model\cls_TRCurrent.cs" />
     <Compile Include="hrfocus.model\cls_TADashboard.cs" />
     <Compile Include="hrfocus.model\cls_TRDashboard.cs" />
+    <Compile Include="hrfocus.model\cls_TRPaybank.cs" />
     <Compile Include="hrfocus.model\cls_TRPaypf.cs" />
     <Compile Include="hrfocus.model\cls_TRPayPtimecardDash.cs" />
     <Compile Include="hrfocus.model\cls_TRPayPtimeleaveDash.cs" />
@@ -291,8 +297,13 @@
     <Compile Include="hrfocus.model\cls_TRPlanschedule.cs" />
     <Compile Include="hrfocus.model\cls_TRTimecard.cs" />
     <Compile Include="hrfocus.service\cls_srvAuthen.cs" />
+    <Compile Include="hrfocus.service\cls_srvImport.cs" />
     <Compile Include="hrfocus.service\cls_srvProcessPayroll.cs" />
     <Compile Include="hrfocus.service\cls_srvProcessTime.cs" />
+    <Compile Include="hrfocus.service\MultipartParser.cs" />
+    <Compile Include="hrfocus.service\MultipartParser_2.cs" />
+    <Compile Include="hrfocus.service\MultipartParser_3.cs" />
+    <Compile Include="hrfocus.service\MultipartParser_4.cs" />
     <Compile Include="hrfocus.utility\cls_ctConnection.cs" />
     <Compile Include="hrfocus.utility\cls_Hash.cs" />
     <Compile Include="hrfocus.utility\cls_StyleDataGridView.cs" />
@@ -300,7 +311,9 @@
     <Compile Include="Initial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmExportData.resx" />
   </ItemGroup>

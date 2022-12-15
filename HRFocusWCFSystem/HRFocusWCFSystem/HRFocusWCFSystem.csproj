@@ -83,6 +83,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="MultipartParser.cs" />
+    <Compile Include="paybank.cs" />
     <Compile Include="ServiceSys.svc.cs">
       <DependentUpon>ServiceSys.svc</DependentUpon>
     </Compile>

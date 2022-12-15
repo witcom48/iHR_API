@@ -259,7 +259,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_conn.doClose();
 
-                blnResult = true;
+                
             }
             catch (Exception ex)
             {              

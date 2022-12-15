@@ -120,14 +120,14 @@ namespace ClassLibrary_BPC.hrfocus.controller
             strCondition += " AND HRM_TR_PAYITEM.PAYITEM_DATE='" + date.ToString("MM/dd/yyyy") + "'";
 
             if (!emp.Equals(""))
-                strCondition += " AND HRM_TR_PAYITEM.WORKER_CODE='" + emp + "'";
+                strCondition += " AND HRM_TR_PAYITEM.WORKER_CODE=" + emp + "";
 
             if (!item.Equals(""))
                 strCondition += " AND HRM_TR_PAYITEM.ITEM_CODE='" + item + "'";
 
             if (!item_type.Equals(""))
             {
-                strCondition += " AND HRM_TR_PAYITEM.ITEM_CODE IN (SELECT ITEM_CODE FROM HRM_MT_ITEM WHERE COMPANY_CODE='" + com + "' AND ITEM_TYPE='" + item_type + "')";
+                strCondition += " AND HRM_TR_PAYITEM.ITEM_CODE IN (SELECT ITEM_CODE FROM HRM_MT_ITEM WHERE COMPANY_CODE='" + com + "' AND ITEM_CODE='" + item_type + "')";
             }
 
             return this.getData(language, strCondition);

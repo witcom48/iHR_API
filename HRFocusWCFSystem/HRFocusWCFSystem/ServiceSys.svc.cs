@@ -26,7 +26,7 @@ namespace HRFocusWCFSystem
 
     
     
-    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]   
+    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
 
     public class ServiceSys : IServiceSys
     {
@@ -1837,6 +1837,12 @@ namespace HRFocusWCFSystem
                     {
                         json.Add("task_detail", model.taskdetail_process);
                     }
+
+                    else if (model.task_type.Equals("IMP_XLS"))
+                    {
+                        json.Add("task_detail", model.task_note);
+                    }
+
                     else
                     {
                         json.Add("task_detail", model.taskdetail_process + " (" + model.taskdetail_fromdate.ToString("dd/MM/yy") + "-" + model.taskdetail_todate.ToString("dd/MM/yy") + ":" + model.taskdetail_paydate.ToString("dd/MM/yy") + ")");
@@ -2054,13 +2060,21 @@ namespace HRFocusWCFSystem
                         output["result_link"] = link;
                     }
                         //BANK
+                    //SSF
+                    else if (input.task_type.Trim().Equals("TRN_SSF"))
+                    {
+                        cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
+                        string link = srvPay.doExportSSF(input.company_code, intTaskID.ToString());
+                        output["result_link"] = link;
+                    }
+                    //SSF
 
                         //SSO
                     else if (input.task_type.Trim().Equals("TRN_SSO"))
                     {
                         cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
                         string link = srvPay.doExportSso(input.company_code, intTaskID.ToString());
-
+                        //string link = srvPay.doExportSso(input.company_code, intTaskID.ToString());
                         output["result_link"] = link;
                     }
                         //SSO
@@ -2093,6 +2107,20 @@ namespace HRFocusWCFSystem
 
                         output["result_link"] = link;
                     }
+                    //IMP_XLS
+                    else if (input.task_type.Trim().Equals("IMP_XLS"))
+                    {
+                        cls_srvImport srvImport = new cls_srvImport();
+                        string link = srvImport.doImportExcel(input.company_code, intTaskID.ToString());
+
+                    }
+
+                 
+
+                    //IMP_XLS
+                   
+
+
                 }
                 else
                 {
@@ -3766,11 +3794,11 @@ namespace HRFocusWCFSystem
                 {
                     JObject json = new JObject();
 
-<<<<<<< HEAD
+
             
-=======
+
                     json.Add("company_code", model.combank_bankaccount);
->>>>>>> ee5c1d0f18a52c35db5a6c38d00613b92ce776e6
+
                     json.Add("combank_id", model.combank_id);
                     json.Add("combank_bankcode", model.combank_bankcode);
                     json.Add("combank_bankaccount", model.combank_bankaccount);
@@ -3824,11 +3852,9 @@ namespace HRFocusWCFSystem
 
                     foreach (cls_TRCombank item in jsonArray)
                     {                        
-<<<<<<< HEAD
-                       
-=======
+
                         item.combank_bankaccount = company_code;
->>>>>>> ee5c1d0f18a52c35db5a6c38d00613b92ce776e6
+
 
                         item.modified_by = input.modified_by;
                         blnResult = objBank.insert(item);
@@ -5545,7 +5571,7 @@ namespace HRFocusWCFSystem
 
                     json.Add("comcard_id", model.comcard_id);
                     json.Add("comcard_code", model.comcard_code);
-                    json.Add("card_type", model.bank_code);
+                   
                     json.Add("comcard_issue", model.comcard_issue);
                     json.Add("comcard_expire", model.comcard_expire);
 
@@ -5588,7 +5614,6 @@ namespace HRFocusWCFSystem
 
                 model.comcard_id = input.comcard_id;
                 model.comcard_code = input.comcard_code;
-                model.bank_code = input.card_type;
                 model.comcard_issue = Convert.ToDateTime(input.comcard_issue);
                 model.comcard_expire = Convert.ToDateTime(input.comcard_expire);
                 model.company_code = input.company_code;
@@ -8609,6 +8634,61 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Payroll
+
+
+        //paybank
+        public string getpaybank(string com)
+        {
+            JObject output = new JObject();
+
+            //cls_ctTRPaybank objProvident = new cls_ctTRPaybank();
+            //List<cls_TRPaybank> listProvident = objpaybank.getDataByFillter(com, "", "");
+
+            cls_ctTRPaybank objPaybank = new cls_ctTRPaybank();
+            List<cls_TRPaybank> list_paybank = objPaybank.getDataByFillter(com, strEmp);
+
+            JArray array = new JArray();
+
+            if (list_paybank.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRPaybank model in list_paybank)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("paybank_code", model.paybank_code);
+                    json.Add("paybank_bankcode", model.paybank_bankcode);
+                    json.Add("paybank_bankaccount", model.paybank_bankaccount);
+                    json.Add("paybank_bankamount", model.paybank_bankamount);
+
+                    //json.Add("modified_by", model.modified_by);
+
+                    json.Add("modified_by", model.modified_by);
+                    json.Add("modified_date", model.modified_date);
+                   
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+
 
         #region MTProvident
         public string getMTProvidentList(string com)
@@ -16500,9 +16580,76 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
+        public string strEmp { get; set; }
+
+
+        public string doTest(req input)
+        {
+            JObject output = new JObject();
+            output["success"] = true;
+            output["message"] = "Retrieved data successfully";
+            return output.ToString(Formatting.None);
+        }
+
+        //-- F add 28/11/2022
+        public async Task<string> doUploadExcel(string fileName, Stream stream)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                Regex regex = new Regex("(^-+)|(^content-)|(^$)|(^submit)", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
+
+                string FilePath = Path.Combine
+                   (ClassLibrary_BPC.Config.PathFileImport + "\\Imports", fileName);
+
+                MultipartParser parser = new MultipartParser(stream);
+
+                if (parser.Success)
+                {
+                    //absolute filename, extension included.
+                    var filename = parser.Filename;
+                    var filetype = parser.ContentType;
+                    var ext = Path.GetExtension(filename);
+
+                    using (var file = File.Create(FilePath))
+                    {
+                        await file.WriteAsync(parser.FileContents, 0, parser.FileContents.Length);
+                        output["result"] = "1";
+                        output["result_text"] = FilePath;
+
+                    }
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = parser.ContentType;
+                }
+
+
+                output["result"] = "1";
+                output["result_text"] = "0";
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+        }
 
 
     }
 
-    
+    [DataContract]
+    public class req
+    {
+        [DataMember(Order = 0)]
+        public string usname { get; set; }
+        [DataMember(Order = 1)]
+        public string pwd { get; set; }
+    }
+
+
 }

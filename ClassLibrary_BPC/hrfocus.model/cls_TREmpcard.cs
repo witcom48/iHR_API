@@ -8,8 +8,30 @@ namespace ClassLibrary_BPC.hrfocus.model
 {
     public class cls_TREmpcard
     {
-        public cls_TREmpcard() { this.empcard_code = ""; }
+        public cls_TREmpcard() 
+        { this.empcard_code = ""; }
+        /// <summary>
+        /// worker
+        /// </summary>
 
+       
+
+        public int worker_id { get; set; }
+     
+        public string worker_card { get; set; }
+
+        public string worker_initial { get; set; }
+
+        public string worker_fname_th { get; set; }
+        public string worker_lname_th { get; set; }
+
+        public string worker_fname_en { get; set; }
+        public string worker_lname_en { get; set; }
+
+
+        /// <summary>
+        /// TREmpcard
+        /// </summary>
         public string company_code { get; set; }
         public string worker_code { get; set; }
 
