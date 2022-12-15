@@ -157,6 +157,7 @@ D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.cspr
 D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.dll
 D:\IHR\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.pdb
 D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ExcelLibrary.dll
+<<<<<<< HEAD
 D:\job\colne ล่าสุด1\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll.config
 D:\job\colne ล่าสุด1\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll
 D:\job\colne ล่าสุด1\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.pdb
@@ -183,3 +184,5 @@ D:\api\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.xml
 D:\api\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.csprojResolveAssemblyReference.cache
 D:\api\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.dll
 D:\api\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.pdb
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e

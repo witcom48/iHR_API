@@ -54,9 +54,13 @@ namespace ClassLibrary_BPC.hrfocus.service
             {
 
                 var da = new OleDbDataAdapter("SELECT * FROM [Sheet1$]", xlConn);
+<<<<<<< HEAD
           
                 da.Fill(dt);
                 
+=======
+                da.Fill(dt);
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
             }
             catch (Exception ex)
@@ -118,8 +122,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     cls_ctMTWorker objWorker = new cls_ctMTWorker();
                                     cls_MTWorker model = new cls_MTWorker();
 
+<<<<<<< HEAD
                                     if (dr["com"].ToString().Equals(""))
                                         continue;
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                     model.company_code = dr["com"].ToString();
 
                                     model.worker_code = dr["emp_code"].ToString();
@@ -180,10 +187,20 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             break;
 
+<<<<<<< HEAD
                     }
 
                     //EM002
                     
+=======
+                        case "EM002":
+                            break;
+
+                    }
+
+                    //EM002
+                    {
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                        
                         switch (import_code)
                         {
@@ -195,16 +212,27 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     foreach (DataRow dr in dt.Rows)
                                     {
                                         //com	emp_code	emp_card	initial_code	firstname_th	lastname_th	firstname_en	lastname_en	
+<<<<<<< HEAD
                                         // EMPCARD_CODE	CARD_TYPE	EMPCARD_ISSUE	EMPCARD_EXPIRE	
+=======
+                                        // EMPCARD_CODE	CARD_TYPE	EMPCARD_ISSUE	EMPCARD_EXPIRE	CREATED_DATE	MODIFIED_DATE
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
 
                                         cls_ctTREmpcard objEmpcard = new cls_ctTREmpcard();
                                         cls_TREmpcard model = new cls_TREmpcard();
+<<<<<<< HEAD
 
 
 
                                         if (dr["com"].ToString().Equals(""))
                                             continue;
+=======
+                                        
+
+                                        
+
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -214,7 +242,10 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.worker_lname_th = dr["lastname_th"].ToString();
                                         model.worker_fname_en = dr["firstname_en"].ToString();
                                         model.worker_lname_en = dr["lastname_en"].ToString();
+<<<<<<< HEAD
 
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.empcard_code = dr["empcard_code"].ToString();
                                         model.card_type = dr["card_type"].ToString();
                                         model.empcard_issue = Convert.ToDateTime(dr["empcard_issue"]);
@@ -250,6 +281,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
+<<<<<<< HEAD
   
 
                         }
@@ -257,6 +289,16 @@ namespace ClassLibrary_BPC.hrfocus.service
                     //EM002
                     //EM003
                     
+=======
+                            case "EM003":
+                                break;
+
+                        }
+                    }
+                    //EM002
+                    //EM003
+                    {
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
                         switch (import_code)
                         {
@@ -274,8 +316,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpdep objEmpdep = new cls_ctTREmpdep();
                                         cls_TREmpdep model = new cls_TREmpdep();
 
+<<<<<<< HEAD
                                         if (dr["com"].ToString().Equals(""))
                                             continue;
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -303,7 +348,11 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
                                         model.created_date = Convert.ToDateTime(dr["created_date"]);
+<<<<<<< HEAD
                                        
+=======
+                                        model.modified_date = Convert.ToDateTime(dr["modified_date"]);
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
                                        
 
@@ -335,12 +384,24 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
+<<<<<<< HEAD
                         }
                     
 
                     //
 
                     
+=======
+                            case "EM004":
+                                break;
+
+                        }
+                    }
+
+                    //
+
+                    {
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
                         switch (import_code)
                         {
@@ -358,8 +419,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpaddress objEmpaddress = new cls_ctTREmpaddress();
                                         cls_TREmpaddress model = new cls_TREmpaddress();
 
+<<<<<<< HEAD
                                         if (dr["com"].ToString().Equals(""))
                                             continue;
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -370,7 +434,10 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.worker_fname_en = dr["firstname_en"].ToString();
                                         model.worker_lname_en = dr["lastname_en"].ToString();
 
+<<<<<<< HEAD
                                         model.empaddress_type = dr["empaddress_type"].ToString();
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.empaddress_no = dr["empaddress_no"].ToString();
                                         model.empaddress_moo = dr["empaddress_moo"].ToString();
                                         model.empaddress_soi = dr["empaddress_soi"].ToString();
@@ -415,15 +482,27 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
+<<<<<<< HEAD
 
 
                         }
                     
+=======
+                            case "EM005":
+                                break;
+
+                        }
+                    }
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
                     //
                     //EM005
 
+<<<<<<< HEAD
                     
+=======
+                    {
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
                         switch (import_code)
                         {
@@ -441,8 +520,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpposition objPosition = new cls_ctTREmpposition();
                                         cls_TREmpposition model = new cls_TREmpposition();
 
+<<<<<<< HEAD
                                         if (dr["com"].ToString().Equals(""))
                                             continue;
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -487,6 +569,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
+<<<<<<< HEAD
 
 
                         }
@@ -494,6 +577,16 @@ namespace ClassLibrary_BPC.hrfocus.service
                     //EM006
 
                     
+=======
+                            case "EM006":
+                                break;
+
+                        }
+                    }
+                    //EM006
+
+                    {
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
                         switch (import_code)
                         {
@@ -511,8 +604,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpreduce objEmpreduce = new cls_ctTREmpreduce();
                                         cls_TREmpreduce model = new cls_TREmpreduce();
 
+<<<<<<< HEAD
                                         if (dr["com"].ToString().Equals(""))
                                             continue;
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -557,6 +653,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
+<<<<<<< HEAD
 
 
                         }
@@ -564,6 +661,16 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                     //EM007
                     
+=======
+                            case "EM07":
+                                break;
+
+                        }
+                    }
+
+                    //EM007
+                    {
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
                         switch (import_code)
                         {
@@ -581,8 +688,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpfamily objEmpfamily = new cls_ctTREmpfamily();
                                         cls_TREmpfamily model = new cls_TREmpfamily();
 
+<<<<<<< HEAD
                                         if (dr["com"].ToString().Equals(""))
                                             continue;
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -634,12 +744,24 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
+<<<<<<< HEAD
                        }
                     
 
                     //
                     //EM008
                     
+=======
+                            case "EM008":
+                                break;
+
+                        }
+                    }
+
+                    //
+                    //EM008
+                    {
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
                         switch (import_code)
                         {
@@ -657,8 +779,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpbenefit objEmpbenefit = new cls_ctTREmpbenefit();
                                         cls_TREmpbenefit model = new cls_TREmpbenefit();
 
+<<<<<<< HEAD
                                         if (dr["com"].ToString().Equals(""))
                                             continue;
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -679,9 +804,15 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.empbenefit_paytype = dr["empbenefit_paytype"].ToString();
                                         
 
+<<<<<<< HEAD
                                         model.empbenefit_breakreason = dr["empbenefit_breakreason"].ToString();
                                         model.empbenefit_conditionpay = dr["empbenefit_conditionpay"].ToString();
                                         model.empbenefit_payfirst = dr["empbenefit_payfirst"].ToString();
+=======
+                                        model.empbenefit_breakreason = dr["empbenefit_breakreason  "].ToString();
+                                        model.empbenefit_conditionpay = dr["empbenefit_conditionpay"].ToString();
+                                        model.empbenefit_payfirst = dr["empbenefit_payfirst  "].ToString();
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         
                                         model.modified_by = task.modified_by;
                                         model.empbenefit_break = model.empbenefit_break;
@@ -711,6 +842,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
+<<<<<<< HEAD
 
                         }
                     
@@ -718,6 +850,17 @@ namespace ClassLibrary_BPC.hrfocus.service
                     //
                     //EM009
                     
+=======
+                            case "EM009":
+                                break;
+
+                        }
+                    }
+
+                    //
+                    //EM009
+                    {
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
                         switch (import_code)
                         {
@@ -734,8 +877,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpeducation objEmpeducation = new cls_ctTREmpeducation();
                                         cls_TREmpeducation model = new cls_TREmpeducation();
 
+<<<<<<< HEAD
                                         if (dr["com"].ToString().Equals(""))
                                             continue;
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -787,12 +933,23 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
+<<<<<<< HEAD
 
                         }
                     
 
                     //EM010
                     
+=======
+                            case "EM010":
+                                break;
+
+                        }
+                    }
+
+                    //EM010
+                    {
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
 
                         switch (import_code)
                         {
@@ -810,8 +967,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmptraining objEmptraining = new cls_ctTREmptraining();
                                         cls_TREmptraining model = new cls_TREmptraining();
 
+<<<<<<< HEAD
                                         if (dr["com"].ToString().Equals(""))
                                             continue;
+=======
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -870,7 +1030,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                         }
                     }
 
+<<<<<<< HEAD
                 
+=======
+                }
+>>>>>>> edcaab52bafa4da156b0858ae52505db8a8a073e
                 catch (Exception ex)
                 {
                     strResult = ex.ToString();
