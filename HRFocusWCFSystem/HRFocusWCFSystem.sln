@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HRFocusWCFSystem", "HRFocusWCFSystem\HRFocusWCFSystem.csproj", "{9DED54B6-4D9E-4428-85D2-5E5D7B145B9E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary_BPC", "..\ClassLibrary_BPC\ClassLibrary_BPC.csproj", "{84DDA107-0DC1-4484-81ED-627F3BD9A2B3}"

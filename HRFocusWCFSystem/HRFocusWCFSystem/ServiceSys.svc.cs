@@ -26,7 +26,7 @@ namespace HRFocusWCFSystem
 
     
     
-    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]   
+    [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
 
     public class ServiceSys : IServiceSys
     {
@@ -1837,6 +1837,12 @@ namespace HRFocusWCFSystem
                     {
                         json.Add("task_detail", model.taskdetail_process);
                     }
+
+                    else if (model.task_type.Equals("IMP_XLS"))
+                    {
+                        json.Add("task_detail", model.task_note);
+                    }
+
                     else
                     {
                         json.Add("task_detail", model.taskdetail_process + " (" + model.taskdetail_fromdate.ToString("dd/MM/yy") + "-" + model.taskdetail_todate.ToString("dd/MM/yy") + ":" + model.taskdetail_paydate.ToString("dd/MM/yy") + ")");
@@ -2003,32 +2009,49 @@ namespace HRFocusWCFSystem
                 {
                     output["result"] = "1";
                     output["result_text"] = "0";
-
+                    //SUM_TAX
                     if (input.task_type.Trim().Equals("CAL_TAX"))
                     {
                         cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
                         srvPay.doCalculateTax(input.company_code, intTaskID.ToString());
                     }
+                    //SUM_TAX
+
+
+                    //SUM_TIME
                     else if (input.task_type.Trim().Equals("SUM_TIME"))
                     {
                         cls_srvProcessTime srvTime = new cls_srvProcessTime();
                         srvTime.doSummarizeTime(input.company_code, intTaskID.ToString());
                     }
+                        //SUM_TIME
+
+
+
+                    //TIME
                     else if (input.task_type.Trim().Equals("CAL_TIME"))
                     {
                         cls_srvProcessTime srvTime = new cls_srvProcessTime();
                         srvTime.doCalculateTime(input.company_code, intTaskID.ToString());
                     }
+                    //TIME
                     else if (input.task_type.Trim().Equals("IMP_TIME"))
                     {
                         cls_srvProcessTime srvTime = new cls_srvProcessTime();
                         srvTime.doImportTime(input.company_code, intTaskID.ToString());
                     }
+                    //TIME
+
+
+                    //BONUS
                     else if (input.task_type.Trim().Equals("CAL_BONUS"))
                     {
                         cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
                         srvPay.doCalculateBonus(input.company_code, intTaskID.ToString());
                     }
+                    //BONUS
+
+                    //BANK
                     else if (input.task_type.Trim().Equals("TRN_BANK"))
                     {
                         cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
@@ -2036,15 +2059,27 @@ namespace HRFocusWCFSystem
 
                         output["result_link"] = link;
                     }
+                        //BANK
+                    //SSF
+                    else if (input.task_type.Trim().Equals("TRN_SSF"))
+                    {
+                        cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
+                        string link = srvPay.doExportSSF(input.company_code, intTaskID.ToString());
+                        output["result_link"] = link;
+                    }
+                    //SSF
+
                         //SSO
                     else if (input.task_type.Trim().Equals("TRN_SSO"))
                     {
                         cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
                         string link = srvPay.doExportSso(input.company_code, intTaskID.ToString());
-
+                        //string link = srvPay.doExportSso(input.company_code, intTaskID.ToString());
                         output["result_link"] = link;
                     }
                         //SSO
+
+                        //ATX
                     else if (input.task_type.Trim().Equals("TRN_TAX"))
                     {
                         cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
@@ -2052,6 +2087,19 @@ namespace HRFocusWCFSystem
 
                         output["result_link"] = link;
                     }
+                    //ATX
+
+                    //SAP
+                    else if (input.task_type.Trim().Equals("TRN_SAP"))
+                    {
+                        cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
+                        string link = srvPay.doExportSap(input.company_code, intTaskID.ToString());
+
+                        output["result_link"] = link;
+                    }
+                    //SAP
+
+                        //APF
                     else if (input.task_type.Trim().Equals("TRN_PF"))
                     {
                         cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
@@ -2059,6 +2107,20 @@ namespace HRFocusWCFSystem
 
                         output["result_link"] = link;
                     }
+                    //IMP_XLS
+                    else if (input.task_type.Trim().Equals("IMP_XLS"))
+                    {
+                        cls_srvImport srvImport = new cls_srvImport();
+                        string link = srvImport.doImportExcel(input.company_code, intTaskID.ToString());
+
+                    }
+
+                 
+
+                    //IMP_XLS
+                   
+
+
                 }
                 else
                 {
@@ -2077,6 +2139,7 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
 
         }
+
         public string doDeleteMTTask(InputMTTask input)
         {
             JObject output = new JObject();
@@ -3731,7 +3794,11 @@ namespace HRFocusWCFSystem
                 {
                     JObject json = new JObject();
 
+
+            
+
                     json.Add("company_code", model.combank_bankaccount);
+
                     json.Add("combank_id", model.combank_id);
                     json.Add("combank_bankcode", model.combank_bankcode);
                     json.Add("combank_bankaccount", model.combank_bankaccount);
@@ -3785,7 +3852,9 @@ namespace HRFocusWCFSystem
 
                     foreach (cls_TRCombank item in jsonArray)
                     {                        
+
                         item.combank_bankaccount = company_code;
+
 
                         item.modified_by = input.modified_by;
                         blnResult = objBank.insert(item);
@@ -5502,7 +5571,7 @@ namespace HRFocusWCFSystem
 
                     json.Add("comcard_id", model.comcard_id);
                     json.Add("comcard_code", model.comcard_code);
-                    json.Add("card_type", model.card_type);
+                   
                     json.Add("comcard_issue", model.comcard_issue);
                     json.Add("comcard_expire", model.comcard_expire);
 
@@ -5545,7 +5614,6 @@ namespace HRFocusWCFSystem
 
                 model.comcard_id = input.comcard_id;
                 model.comcard_code = input.comcard_code;
-                model.card_type = input.card_type;
                 model.comcard_issue = Convert.ToDateTime(input.comcard_issue);
                 model.comcard_expire = Convert.ToDateTime(input.comcard_expire);
                 model.company_code = input.company_code;
@@ -8566,6 +8634,61 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Payroll
+
+
+        //paybank
+        public string getpaybank(string com)
+        {
+            JObject output = new JObject();
+
+            //cls_ctTRPaybank objProvident = new cls_ctTRPaybank();
+            //List<cls_TRPaybank> listProvident = objpaybank.getDataByFillter(com, "", "");
+
+            cls_ctTRPaybank objPaybank = new cls_ctTRPaybank();
+            List<cls_TRPaybank> list_paybank = objPaybank.getDataByFillter(com, strEmp);
+
+            JArray array = new JArray();
+
+            if (list_paybank.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRPaybank model in list_paybank)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("paybank_code", model.paybank_code);
+                    json.Add("paybank_bankcode", model.paybank_bankcode);
+                    json.Add("paybank_bankaccount", model.paybank_bankaccount);
+                    json.Add("paybank_bankamount", model.paybank_bankamount);
+
+                    //json.Add("modified_by", model.modified_by);
+
+                    json.Add("modified_by", model.modified_by);
+                    json.Add("modified_date", model.modified_date);
+                   
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+
 
         #region MTProvident
         public string getMTProvidentList(string com)
@@ -15166,15 +15289,12 @@ namespace HRFocusWCFSystem
 
         
         #region Att
-        public string getDashLeaveList(string com,string fromdate, string todate)
+        public string getDashLeaveList(string com)
         {
             JObject output = new JObject();
 
-            DateTime datefrom = Convert.ToDateTime(fromdate);
-            DateTime dateto = Convert.ToDateTime(todate);
-
             cls_ctTADashboard objDash = new cls_ctTADashboard();
-            List<cls_TADashboard> listDash = objDash.getDataLeaveByFillter(com, datefrom,dateto);
+            List<cls_TADashboard> listDash = objDash.getDataLeaveByFillter(com);
 
             JArray array = new JArray();
 
@@ -15185,8 +15305,7 @@ namespace HRFocusWCFSystem
                 foreach (cls_TADashboard model in listDash)
                 {
                     JObject json = new JObject();
-
-                    json.Add("timeleave_actualday", model.timeleave_actualday);
+                    json.Add("worker_code", model.worker_code);
                     json.Add("dep_name_en", model.dep_name_en);
                     json.Add("dep_name_th", model.dep_name_th);
                     
@@ -15212,15 +15331,14 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
         }
 
-        public string getDashLateList(string com, string fromdate, string todate)
+        public string getDashLateList(string com)
         {
             JObject output = new JObject();
 
-            DateTime datefrom = Convert.ToDateTime(fromdate);
-            DateTime dateto = Convert.ToDateTime(todate);
+            
 
             cls_ctTADashboard objDash = new cls_ctTADashboard();
-            List<cls_TADashboard> listDash = objDash.getDataLateByFillter(com,datefrom,dateto);
+            List<cls_TADashboard> listDash = objDash.getDataLateByFillter(com);
 
             JArray array = new JArray();
 
@@ -15231,8 +15349,8 @@ namespace HRFocusWCFSystem
                 foreach (cls_TADashboard model in listDash)
                 {
                     JObject json = new JObject();
-
-                    json.Add("late", model.late);
+                    json.Add("WORKER_CODE", model.worker_code);
+                   
                     json.Add("dep_name_en", model.dep_name_en);
                     json.Add("dep_name_th", model.dep_name_th);
 
@@ -15349,12 +15467,12 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
-        public string getDashEmpDepList(string com)
+        public string getDashEmpDepList(string com) 
         {
             JObject output = new JObject();
 
             cls_ctMTDashboard objDash = new cls_ctMTDashboard();
-            List<cls_MTDashboard> listDash = objDash.getDataEmpDepByFillter(com);
+            List<cls_MTDashboard > listDash = objDash.getDataEmpDepByFillter(com);
 
             JArray array = new JArray();
 
@@ -15391,7 +15509,7 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
-        public string getDashEmpAgeList(string com)
+        public string getDashEmpAgeList(string com) 
         {
             JObject output = new JObject();
 
@@ -15431,8 +15549,9 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
+      
 
-        public string getDashEmpWorkAgeList(string com)
+        public string getDashEmpWorkAgeList(string com) 
         {
             JObject output = new JObject();
 
@@ -15476,15 +15595,58 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Pay
-        public string getDashItemINList(string com, string fromdate, string todate)
+        public string getDashItemINList(string com)
         {
             JObject output = new JObject();
 
-            DateTime datefrom = Convert.ToDateTime(fromdate);
-            DateTime dateto = Convert.ToDateTime(todate);
+            cls_ctTRDashboard objDash = new cls_ctTRDashboard();
+            List<cls_TRDashboard> listDash = objDash.getDataItemINByFillter(com);
+
+            JArray array = new JArray();
+
+            if (listDash.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRDashboard model in listDash)
+                {
+                    JObject json = new JObject();
+                    json.Add("WORKER_CODE", model.worker_code);
+                    json.Add("AMOUNT", model.amount);
+                    json.Add("ITEM_NAME_EN", model.item_name_en);
+                    json.Add("ITEM_NAME_TH", model.item_name_th);
+                    json.Add("ITEM_CODE", model.item_code);
+
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string getDashItemDEList(string com)
+        {
+            JObject output = new JObject();
+
+            
 
             cls_ctTRDashboard objDash = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDash = objDash.getDataItemINByFillter(com,datefrom,dateto);
+            List<cls_TRDashboard> listDash = objDash.getDataItemDEByFillte(com);
 
             JArray array = new JArray();
 
@@ -15523,7 +15685,7 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
         }
 
-        public string getDashItemDEList(string com, string fromdate, string todate)
+        public string getDashItemOTDepList(string fromdate, string todate)
         {
             JObject output = new JObject();
 
@@ -15531,7 +15693,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctTRDashboard objDash = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDash = objDash.getDataItemDEByFillter(com,datefrom,dateto);
+            List<cls_TRDashboard> listDash = objDash.getDataOTDepByFillter(datefrom, dateto);
 
             JArray array = new JArray();
 
@@ -15543,56 +15705,6 @@ namespace HRFocusWCFSystem
                 {
                     JObject json = new JObject();
                     json.Add("worker_code", model.worker_code);
-                    json.Add("amount", model.amount);
-                    json.Add("item_name_th", model.item_name_th);
-                    json.Add("item_name_en", model.item_name_en);
-                    json.Add("item_code", model.item_code);
-
-
-                    json.Add("index", index);
-
-                    index++;
-
-                    array.Add(json);
-                }
-
-                output["result"] = "1";
-                output["result_text"] = "1";
-                output["data"] = array;
-            }
-            else
-            {
-                output["result"] = "0";
-                output["result_text"] = "Data not Found";
-                output["data"] = array;
-            }
-
-            return output.ToString(Formatting.None);
-        }
-
-        public string getDashItemOTDepList(string fromdate,string todate)
-        {
-            JObject output = new JObject();
-
-            DateTime datefrom = Convert.ToDateTime(fromdate);
-            DateTime dateto = Convert.ToDateTime(todate);
-
-            cls_ctTRDashboard objDash = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDash = objDash.getDataOTDepByFillter(datefrom , dateto);
-
-            JArray array = new JArray();
-
-            if (listDash.Count > 0)
-            {
-                int index = 1;
-
-                foreach (cls_TRDashboard model in listDash)
-                {
-                    JObject json = new JObject();
-                    json.Add("worker_code", model.worker_code);
-                    json.Add("before_min", model.before_min);
-                    json.Add("normal_min", model.normal_min);
-                    json.Add("after_min", model.after_min);
                     json.Add("dep_name_th", model.dep_name_th);
                     json.Add("dep_name_en", model.dep_name_en);
 
@@ -15668,6 +15780,236 @@ namespace HRFocusWCFSystem
         }
         #endregion
 
+        #endregion
+
+        //-- Packate
+        #region Packate
+        public string getPackageList()
+        {
+            JObject output = new JObject();
+
+            cls_ctSYSPackage objPackage = new cls_ctSYSPackage();
+            List<cls_SYSPackage> listPackage = objPackage.getData();
+            Authen objAuthen = new Authen();
+            JArray array = new JArray();
+
+            if (listPackage.Count > 0)
+            {
+
+
+                int index = 1;
+
+                foreach (cls_SYSPackage model in listPackage)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("package_ref", model.package_ref);
+                    json.Add("packege_name", objAuthen.Decrypt(model.packege_name));
+                    json.Add("packege_com", objAuthen.Decrypt(model.packege_com).Split('C')[1]);
+                    json.Add("packege_branch", objAuthen.Decrypt(model.packege_branch).Split('B')[1]);
+                    json.Add("packege_emp", objAuthen.Decrypt(model.packege_emp).Split('E')[1]);
+                    json.Add("packege_user", objAuthen.Decrypt(model.packege_user).Split('U')[1]);
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageSYSPackage(InputPackate input)
+        {
+            JObject output = new JObject();
+            Authen objAuthen = new Authen();
+
+            try
+            {
+                cls_ctSYSPackage objPackage = new cls_ctSYSPackage();
+                cls_SYSPackage model = new cls_SYSPackage();
+                model.package_ref = input.package_ref;
+                model.packege_name = objAuthen.Encrypt_Password(input.package_name);
+                model.packege_com = objAuthen.Encrypt_Password("C"+input.package_com);
+                model.packege_branch = objAuthen.Encrypt_Password("B" + input.package_branch);
+                model.packege_emp = objAuthen.Encrypt_Password("E" + input.package_emp);
+                model.packege_user = objAuthen.Encrypt_Password("U" + input.package_user);
+
+                bool strResult = objPackage.insert(model);
+
+                if (strResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objPackage.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteSYSPackate(string package_ref)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctSYSPackage objPackage = new cls_ctSYSPackage();
+
+                bool blnResult = objPackage.delete(package_ref);
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objPackage.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
+        //-- Allow
+        #region Allow
+        public string getAllowList()
+        {
+            JObject output = new JObject();
+
+            cls_ctSYSAllow objAllow = new cls_ctSYSAllow();
+            List<cls_SYSAllow> listAllowe = objAllow.getData();
+            JArray array = new JArray();
+
+            if (listAllowe.Count > 0)
+            {
+
+
+                int index = 1;
+
+                foreach (cls_SYSAllow model in listAllowe)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("allow_ip", model.allow_ip);
+                    json.Add("allow_port", model.allow_port);
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageSYSAllow(InputAllow input)
+        {
+            JObject output = new JObject();;
+
+            try
+            {
+                cls_ctSYSAllow objAllow = new cls_ctSYSAllow();
+                cls_SYSAllow model = new cls_SYSAllow();
+                model.allow_ip = input.allow_ip;
+                model.allow_port = input.allow_port;
+
+                bool strResult = objAllow.insert(model);
+
+                if (strResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objAllow.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteSYSAllow(string ip, string port)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctSYSAllow objAllow = new cls_ctSYSAllow();
+
+                bool blnResult = objAllow.delete(ip,port);
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objAllow.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
         #endregion
 
         //-- Files manage
@@ -15881,7 +16223,6 @@ namespace HRFocusWCFSystem
 
 
         #endregion
-
 
         //private void 
 
@@ -16222,7 +16563,6 @@ namespace HRFocusWCFSystem
         }
         #endregion
 
-
         //-- Login self services
         public string doLogin(string usr, string pwd, string token)
         {
@@ -16327,8 +16667,6 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
 
         }
-
-
 
         //-- Self services
         public string getShfitDetail(string com, string emp, string workdate, string language)
@@ -16468,9 +16806,75 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
+        public string strEmp { get; set; }
+
+        public string doTest(req input)
+        {
+            JObject output = new JObject();
+            output["success"] = true;
+            output["message"] = "Retrieved data successfully";
+            return output.ToString(Formatting.None);
+        }
+
+        //-- F add 28/11/2022
+        public async Task<string> doUploadExcel(string fileName, Stream stream)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                Regex regex = new Regex("(^-+)|(^content-)|(^$)|(^submit)", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
+
+                string FilePath = Path.Combine
+                   (ClassLibrary_BPC.Config.PathFileImport + "\\Imports", fileName);
+
+                MultipartParser parser = new MultipartParser(stream);
+
+                if (parser.Success)
+                {
+                    //absolute filename, extension included.
+                    var filename = parser.Filename;
+                    var filetype = parser.ContentType;
+                    var ext = Path.GetExtension(filename);
+
+                    using (var file = File.Create(FilePath))
+                    {
+                        await file.WriteAsync(parser.FileContents, 0, parser.FileContents.Length);
+                        output["result"] = "1";
+                        output["result_text"] = FilePath;
+
+                    }
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = parser.ContentType;
+                }
+
+
+                output["result"] = "1";
+                output["result_text"] = "0";
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+        }
 
 
     }
 
-    
+    [DataContract]
+    public class req
+    {
+        [DataMember(Order = 0)]
+        public string usname { get; set; }
+        [DataMember(Order = 1)]
+        public string pwd { get; set; }
+    }
+
+
 }

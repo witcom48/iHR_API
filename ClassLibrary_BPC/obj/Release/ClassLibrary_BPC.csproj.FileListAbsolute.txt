@@ -65,3 +65,4 @@ D:\iHR_API\ClassLibrary_BPC\obj\Release\ClassLibrary_BPC.frmExportData.resources
 D:\iHR_API\ClassLibrary_BPC\obj\Release\ClassLibrary_BPC.csproj.GenerateResource.Cache
 D:\iHR_API\ClassLibrary_BPC\obj\Release\ClassLibrary_BPC.dll
 D:\iHR_API\ClassLibrary_BPC\obj\Release\ClassLibrary_BPC.pdb
+D:\iHR_API\ClassLibrary_BPC\bin\Release\ExcelLibrary.dll

@@ -198,11 +198,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
         public bool insert(cls_TREmpposition model)
         {
             bool blnResult = false;
+            
             try
             {
                 //-- Check data old
                 if (this.checkDataOld(model.company_code, model.worker_code, model.empposition_date))
                 {
+
                     return this.update(model);
                 }
 

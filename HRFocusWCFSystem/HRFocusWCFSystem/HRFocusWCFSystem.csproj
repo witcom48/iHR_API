@@ -75,6 +75,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authen.cs" />
     <Compile Include="cls_DataContract_payroll.cs" />
     <Compile Include="cls_DataContract_system.cs" />
     <Compile Include="cls_DataContract_attendance.cs" />
@@ -83,6 +84,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="MultipartParser.cs" />
+    <Compile Include="paybank.cs" />
     <Compile Include="ServiceSys.svc.cs">
       <DependentUpon>ServiceSys.svc</DependentUpon>
     </Compile>
@@ -109,6 +111,9 @@
       <Project>{84dda107-0dc1-4484-81ed-627f3bd9a2b3}</Project>
       <Name>ClassLibrary_BPC</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

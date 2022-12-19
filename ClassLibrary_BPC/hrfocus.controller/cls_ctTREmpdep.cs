@@ -233,6 +233,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 //-- Check data old
                 if (this.checkDataOld(model.company_code, model.worker_code, model.empdep_date))
                 {
+
                     return this.update(model);
                 }
 

@@ -672,5 +672,29 @@ namespace HRFocusWCFSystem
         [DataMember]
         public int index { get; set; }
     }
+    [DataContract]
+    public class InputPackate
+    {
+        [DataMember]
+        public string package_ref { get; set; }
+        [DataMember]
+        public string package_name { get; set; }
+        [DataMember]
+        public int package_com { get; set; }
+        [DataMember]
+        public string package_branch { get; set; }
+        [DataMember]
+        public string package_emp { get; set; }
+        [DataMember]
+        public string package_user { get; set; }
+    }
+    [DataContract]
+    public class InputAllow
+    {
+        [DataMember]
+        public string allow_ip { get; set; }
+        [DataMember]
+        public string allow_port { get; set; }
+    }
 
 }
