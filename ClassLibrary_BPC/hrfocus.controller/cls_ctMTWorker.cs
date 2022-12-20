@@ -368,7 +368,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     if (blnResult)
                         return model.worker_code;
                 }
-
+                cls_ctSYSPackage Package = new cls_ctSYSPackage();
+                List<cls_SYSPackage> listPackage =   Package.getData();
                 cls_ctConnection obj_conn = new cls_ctConnection();
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
