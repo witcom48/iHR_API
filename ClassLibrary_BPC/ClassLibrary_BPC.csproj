@@ -17,9 +17,10 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -176,6 +177,7 @@
     <Compile Include="hrfocus.model\cls_MTBdashboard.cs" />
     <Compile Include="hrfocus.model\cls_SYSAllow.cs" />
     <Compile Include="hrfocus.model\cls_SYSPackage.cs" />
+    <Compile Include="hrfocus.model\cls_SYSUsepackage.cs" />
     <Compile Include="hrfocus.model\cls_TRAttTimecardDash.cs" />
     <Compile Include="hrfocus.model\cls_TRAttTtimeleaveDash.cs" />
     <Compile Include="hrfocus.model\cls_TREmpEempdepDash.cs" />

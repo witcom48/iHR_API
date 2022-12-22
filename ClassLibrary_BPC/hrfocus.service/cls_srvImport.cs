@@ -72,9 +72,7 @@ namespace ClassLibrary_BPC.hrfocus.service
         public string doImportExcel(string com, string taskid)
         {
             string strResult = "";
-
-            bool blnResult = false;
-
+            string ggg = "";
             cls_ctMTTask objMTTask = new cls_ctMTTask();
             List<cls_MTTask> listMTTask = objMTTask.getDataByFillter(com, taskid, "IMP_XLS", "");
             List<string> listError = new List<string>();
@@ -82,7 +80,8 @@ namespace ClassLibrary_BPC.hrfocus.service
             if (listMTTask.Count > 0)
             {
                 cls_MTTask task = listMTTask[0];
-
+                try
+                {
                 task.task_start = DateTime.Now;
 
                 cls_ctMTTask objTaskDetail = new cls_ctMTTask();
@@ -93,8 +92,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 string fileName = task_detail.taskdetail_process;
 
-                try
-                {
+
                     string import_code = fileName.Substring(0, 5);
 
                     int success = 0;
@@ -103,8 +101,9 @@ namespace ClassLibrary_BPC.hrfocus.service
                     switch (import_code)
                     {
                         case "EM001":
-
-                            DataTable dt = doReadExcel(fileName);
+                            try
+                            {
+                                DataTable dt = doReadExcel(fileName);
                             if (dt.Rows.Count > 0)
                             {
                                 foreach (DataRow dr in dt.Rows)
@@ -152,8 +151,13 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     model.flag = model.flag;
 
                                     string strID = objWorker.insert(model);
+                                    if (strID.Equals("limit")){
+                                        objStr.Append("Limit License");
+                                        ggg += strID;
+                                        break;
+                                    }
 
-                                    if (!strID.Equals(""))
+                                    if (strID.Equals("yes"))
                                     {
                                         success++;
                                     }
@@ -164,7 +168,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 }
 
-                                strResult = "";
+                                strResult = "TTTT" + ggg;
 
                                 if (success > 0)
                                     strResult += "Success : " + success.ToString();
@@ -172,6 +176,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 if (objStr.Length > 0)
                                     strResult += " Fail : " + objStr.ToString();
 
+                            }
+                            }
+                            catch (Exception ex)
+                            {
+                                strResult = "ERROR::(Read Xcel)" + ex.ToString();
                             }
 
                             break;

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using ClassLibrary_BPC.hrfocus.model;
 using System.Data.SqlClient;
 using System.Data;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace ClassLibrary_BPC.hrfocus.controller
 {
@@ -168,16 +170,45 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return blnResult;
         }
-
-        public bool insert(cls_TRCombranch model)
+        public int branchcount()
         {
-            bool blnResult = false;
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("select COUNT(COMBRANCH_ID) as branchcount from HRM_TR_COMBRANCH");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(HRM_TR_COMBRANCH.count)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+        public string insert(cls_TRCombranch model)
+        {
+            string blnResult = "";
             try
             {
                 //-- Check data old
                 if (this.checkDataOld(model.combranch_code))
                 {
                     return this.update(model);
+                }
+                cls_ctSYSPackage Package = new cls_ctSYSPackage();
+                var branchcounts = this.branchcount();
+                List<cls_SYSPackage> listPackage = Package.getData();
+                if (Convert.ToInt32(this.Decrypt(listPackage[0].packege_branch).Split('B')[1]) <= branchcounts)
+                {
+                    return "limit";
                 }
 
                 cls_ctConnection obj_conn = new cls_ctConnection();
@@ -222,7 +253,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.ExecuteNonQuery();
 
                 obj_conn.doClose();
-                blnResult = true;
+                blnResult = "yes";
             }
             catch (Exception ex)
             {
@@ -232,9 +263,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return blnResult;
         }
 
-        public bool update(cls_TRCombranch model)
+        public string update(cls_TRCombranch model)
         {
-            bool blnResult = false;
+            string blnResult = "";
             try
             {
                 cls_ctConnection obj_conn = new cls_ctConnection();
@@ -271,7 +302,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_conn.doClose();
 
-                blnResult = true;
+                blnResult = "yes";
             }
             catch (Exception ex)
             {
@@ -279,6 +310,28 @@ namespace ClassLibrary_BPC.hrfocus.controller
             }
 
             return blnResult;
+        }
+        private const string ENCRYPTION_KEY = "d42262e6-17c0-45da-bc34-1bd04f8b6928";
+        private readonly byte[] SALT = Encoding.ASCII.GetBytes(ENCRYPTION_KEY.Length.ToString());
+        public string Decrypt(string inputText)
+        {
+            RijndaelManaged rijndaelCipher = new RijndaelManaged();
+            byte[] encryptedData = Convert.FromBase64String(inputText);
+            PasswordDeriveBytes secretKey = new PasswordDeriveBytes(ENCRYPTION_KEY, SALT);
+
+            using (ICryptoTransform decryptor = rijndaelCipher.CreateDecryptor(secretKey.GetBytes(32), secretKey.GetBytes(16)))
+            {
+                using (MemoryStream memoryStream = new MemoryStream(encryptedData))
+                {
+                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                    {
+                        byte[] plainText = new byte[encryptedData.Length];
+                        int decryptedCount = cryptoStream.Read(plainText, 0, plainText.Length);
+                        return Encoding.Unicode.GetString(plainText, 0, decryptedCount);
+                    }
+                }
+            }
+
         }
     }
 }

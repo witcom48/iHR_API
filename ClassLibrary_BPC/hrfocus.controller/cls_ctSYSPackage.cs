@@ -58,6 +58,40 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return list_model;
         }
+
+        public List<cls_SYSUsepackage> getUse()
+        {
+            List<cls_SYSUsepackage> list_model = new List<cls_SYSUsepackage>();
+            cls_SYSUsepackage model;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT ISNULL(COUNT(WORKER_ID),0) AS empcount");
+                obj_str.Append(" ,ISNULL((select COUNT(COMPANY_ID) FROM HRM_MT_COMPANY),0) AS comcount");
+                obj_str.Append(" ,ISNULL((select COUNT(ACCOUNT_ID) FROM HRM_SYS_ACCOUNT),0) AS usercount");
+                obj_str.Append(" ,ISNULL((select COUNT(COMBRANCH_ID) FROM HRM_TR_COMBRANCH),0) AS branchcount FROM HRM_MT_WORKER");
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    model = new cls_SYSUsepackage();
+
+                    model.com = dr["comcount"].ToString();
+                    model.branch = dr["branchcount"].ToString();
+                    model.emp = dr["empcount"].ToString();
+                    model.user = dr["usercount"].ToString();
+                    list_model.Add(model);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(HRM_MT_WORKER.getUse)" + ex.ToString();
+            }
+
+            return list_model;
+        }
         public bool checkDataOld()
         {
             bool blnResult = false;

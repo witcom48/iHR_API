@@ -573,9 +573,16 @@ namespace HRFocusWCFSystem
                 model.modified_by = input.modified_by;
                 model.flag = model.flag;
 
-                bool blnResult = objCom.insert(model);
+                string blnResult = objCom.insert(model);
 
-                if (blnResult)
+                if (blnResult.Equals("limit"))
+                {
+                    output["result"] = "2";
+                    output["result_text"] = "Limit License";
+                    return output.ToString(Formatting.None);
+                }
+
+                if (!blnResult.Equals(""))
                 {
                     //-- Comcards
                     string card_data = input.card_data;
@@ -2112,7 +2119,7 @@ namespace HRFocusWCFSystem
                     {
                         cls_srvImport srvImport = new cls_srvImport();
                         string link = srvImport.doImportExcel(input.company_code, intTaskID.ToString());
-
+                        output["result_link"] = link;
                     }
 
                  
@@ -3451,9 +3458,15 @@ namespace HRFocusWCFSystem
                 model.modified_by = input.modified_by;
                 model.flag = model.flag;
 
-                bool blnResult = objCombranch.insert(model);
+                string blnResult = objCombranch.insert(model);
+                if (blnResult.Equals("limit"))
+                {
+                    output["result"] = "2";
+                    output["result_text"] = "Limit License";
+                    return output.ToString(Formatting.None);
+                }
 
-                if (blnResult)
+                if (!blnResult.Equals(""))
                 {
                     output["result"] = "1";
                     output["result_text"] = "0";
@@ -4156,9 +4169,16 @@ namespace HRFocusWCFSystem
                 model.modified_by = input.modified_by;
                 model.flag = model.flag;
 
-                bool blnResult = objAccount.insert(model);
+                string blnResult = objAccount.insert(model);
 
-                if (blnResult)
+                if (blnResult.Equals("limit"))
+                {
+                    output["result"] = "2";
+                    output["result_text"] = "Limit License";
+                    return output.ToString(Formatting.None);
+                }
+
+                if (blnResult.Equals("yes"))
                 {
                     output["result"] = "1";
                     output["result_text"] = "0";
@@ -5402,6 +5422,14 @@ namespace HRFocusWCFSystem
                 model.flag = model.flag;
 
                 string strResult = objWorker.insert(model);
+
+                if (strResult.Equals("limit"))
+                {
+                    output["result"] = "2";
+                    output["result_text"] = "Limit License";
+                    return output.ToString(Formatting.None);
+
+                }
 
                 if (!strResult.Equals(""))
                 {
@@ -15790,6 +15818,7 @@ namespace HRFocusWCFSystem
 
             cls_ctSYSPackage objPackage = new cls_ctSYSPackage();
             List<cls_SYSPackage> listPackage = objPackage.getData();
+            List<cls_SYSUsepackage> listPackageUse = objPackage.getUse();
             Authen objAuthen = new Authen();
             JArray array = new JArray();
 
@@ -15797,11 +15826,10 @@ namespace HRFocusWCFSystem
             {
 
 
-                int index = 1;
+                JObject json = new JObject();
 
                 foreach (cls_SYSPackage model in listPackage)
                 {
-                    JObject json = new JObject();
 
                     json.Add("package_ref", model.package_ref);
                     json.Add("packege_name", objAuthen.Decrypt(model.packege_name));
@@ -15809,10 +15837,14 @@ namespace HRFocusWCFSystem
                     json.Add("packege_branch", objAuthen.Decrypt(model.packege_branch).Split('B')[1]);
                     json.Add("packege_emp", objAuthen.Decrypt(model.packege_emp).Split('E')[1]);
                     json.Add("packege_user", objAuthen.Decrypt(model.packege_user).Split('U')[1]);
-                    json.Add("index", index);
+                }
+                foreach (cls_SYSUsepackage model in listPackageUse)
+                {
 
-                    index++;
-
+                    json.Add("com", model.com);
+                    json.Add("branch", model.branch);
+                    json.Add("emp", model.emp);
+                    json.Add("user", model.user);
                     array.Add(json);
                 }
 
