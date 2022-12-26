@@ -696,5 +696,17 @@ namespace HRFocusWCFSystem
         [DataMember]
         public string allow_port { get; set; }
     }
+    [DataContract]
+    public class InputTopic
+    {
+        [DataMember]
+        public string topic_id { get; set; }
+        [DataMember]
+        public string detail { get; set; }
+        [DataMember]
+        public string status { get; set; }
+        [DataMember]
+        public string create_by { get; set; }
+    }
 
 }

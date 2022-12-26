@@ -15809,6 +15809,119 @@ namespace HRFocusWCFSystem
         #endregion
 
         #endregion
+        // -- Topic
+        #region Topic
+        public string getTopicList(string emp)
+        {
+            JObject output = new JObject();
+
+            cls_ctSYSTopic objTopic = new cls_ctSYSTopic();
+            List<cls_SYSTopic> listTopic = objTopic.getDataTopicByFillter(emp);
+            JArray array = new JArray();
+
+            if (listTopic.Count > 0)
+            {
+
+
+                int index = 1;
+                foreach (cls_SYSTopic model in listTopic)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("topic_id", model.topic_id);
+                    json.Add("detail", model.detail);
+                    json.Add("status", model.status.Equals("True")?"1":"0");
+                    json.Add("create_by", model.create_by);
+                    json.Add("create_date", model.create_date.ToString("dd-MM-yyyy"));
+                    json.Add("index", index);
+                    index++;
+
+                    array.Add(json);
+
+                }
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageSYSTopic(InputTopic input)
+        {
+            JObject output = new JObject();
+            Authen objAuthen = new Authen();
+
+            try
+            {
+                cls_ctSYSTopic objTopic = new cls_ctSYSTopic();
+                cls_SYSTopic model = new cls_SYSTopic();
+                model.topic_id = input.topic_id;
+                model.detail = input.detail;
+                model.status = input.status;
+                model.create_by = input.create_by;
+
+                bool strResult = objTopic.insert(model);
+
+                if (strResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objTopic.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteSYSTopic(string id)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctSYSTopic objTopic = new cls_ctSYSTopic();
+
+                bool blnResult = objTopic.delete(id);
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objTopic.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
 
         //-- Packate
         #region Packate

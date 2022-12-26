@@ -1378,6 +1378,20 @@ namespace HRFocusWCFSystem
         #endregion
 
 
+        //-- Topic
+        #region Topic
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTopicList(string emp);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageSYSTopic(InputTopic input);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteSYSTopic(string id);
+        #endregion
         //-- Package
         #region Package
         [OperationContract]
@@ -1394,7 +1408,7 @@ namespace HRFocusWCFSystem
         #endregion
 
         //-- Allow
-        #region Package
+        #region Allow
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getAllowList();

@@ -125,7 +125,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
         public List<cls_SYSAccount> getData(string username, string password)
         {
             string strCondition = " AND ACCOUNT_USR='" + username.Replace("'", "").Replace(",", "").Replace("=", "") + "'";
-            strCondition += " AND ACCOUNT_PWD='" + password.Replace("'", "").Replace(",", "").Replace("=", "") + "'";
+            strCondition += " AND ACCOUNT_PWD='" + this.Encrypt_Password(password) + "'";
             return this.getData(strCondition);
         }
 
@@ -369,10 +369,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append(", ACCOUNT_LOCK=@ACCOUNT_LOCK ");
 
-                obj_str.Append(", ACCOUNT_NEWDATA=@ACCOUNT_NEWDATA ");
-                obj_str.Append(", ACCOUNT_EDITDATA=@ACCOUNT_EDITDATA ");
-                obj_str.Append(", ACCOUNT_DELETEDATA=@ACCOUNT_DELETEDATA ");
-                obj_str.Append(", ACCOUNT_VIEWSALARY=@ACCOUNT_VIEWSALARY ");
+                //obj_str.Append(", ACCOUNT_NEWDATA=@ACCOUNT_NEWDATA ");
+                //obj_str.Append(", ACCOUNT_EDITDATA=@ACCOUNT_EDITDATA ");
+                //obj_str.Append(", ACCOUNT_DELETEDATA=@ACCOUNT_DELETEDATA ");
+                //obj_str.Append(", ACCOUNT_VIEWSALARY=@ACCOUNT_VIEWSALARY ");
 
                 obj_str.Append(", ACCOUNT_MONTHLY=@ACCOUNT_MONTHLY ");
                 obj_str.Append(", ACCOUNT_DAILY=@ACCOUNT_DAILY ");
