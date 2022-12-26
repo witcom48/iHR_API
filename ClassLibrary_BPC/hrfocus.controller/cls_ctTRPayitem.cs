@@ -120,7 +120,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             strCondition += " AND HRM_TR_PAYITEM.PAYITEM_DATE='" + date.ToString("MM/dd/yyyy") + "'";
 
             if (!emp.Equals(""))
-                strCondition += " AND HRM_TR_PAYITEM.WORKER_CODE=" + emp + "";
+                strCondition += " AND HRM_TR_PAYITEM.WORKER_CODE='" + emp + "'";
 
             if (!item.Equals(""))
                 strCondition += " AND HRM_TR_PAYITEM.ITEM_CODE='" + item + "'";
