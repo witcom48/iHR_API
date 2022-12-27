@@ -1422,6 +1422,7 @@ namespace HRFocusWCFSystem
         string doDeleteSYSAllow(string ip,string port);
         #endregion
 
+
         //-- SummaryWage
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
