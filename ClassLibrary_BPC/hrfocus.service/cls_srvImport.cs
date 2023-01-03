@@ -54,7 +54,9 @@ namespace ClassLibrary_BPC.hrfocus.service
             {
 
                 var da = new OleDbDataAdapter("SELECT * FROM [Sheet1$]", xlConn);
+          
                 da.Fill(dt);
+                
 
             }
             catch (Exception ex)
@@ -115,6 +117,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     cls_ctMTWorker objWorker = new cls_ctMTWorker();
                                     cls_MTWorker model = new cls_MTWorker();
 
+                                    if (dr["com"].ToString().Equals(""))
+                                        continue;
                                     model.company_code = dr["com"].ToString();
 
                                     model.worker_code = dr["emp_code"].ToString();
@@ -185,13 +189,10 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             break;
 
-                        case "EM002":
-                            break;
-
                     }
 
                     //EM002
-                    {
+                    
                        
                         switch (import_code)
                         {
@@ -203,15 +204,16 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     foreach (DataRow dr in dt.Rows)
                                     {
                                         //com	emp_code	emp_card	initial_code	firstname_th	lastname_th	firstname_en	lastname_en	
-                                        // EMPCARD_CODE	CARD_TYPE	EMPCARD_ISSUE	EMPCARD_EXPIRE	CREATED_DATE	MODIFIED_DATE
+                                        // EMPCARD_CODE	CARD_TYPE	EMPCARD_ISSUE	EMPCARD_EXPIRE	
 
 
                                         cls_ctTREmpcard objEmpcard = new cls_ctTREmpcard();
                                         cls_TREmpcard model = new cls_TREmpcard();
-                                        
 
-                                        
 
+
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -256,14 +258,13 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
-                            case "EM003":
-                                break;
+  
 
                         }
-                    }
+                    
                     //EM002
                     //EM003
-                    {
+                    
 
                         switch (import_code)
                         {
@@ -281,6 +282,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpdep objEmpdep = new cls_ctTREmpdep();
                                         cls_TREmpdep model = new cls_TREmpdep();
 
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -308,7 +311,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
                                         model.created_date = Convert.ToDateTime(dr["created_date"]);
-                                        model.modified_date = Convert.ToDateTime(dr["modified_date"]);
+                                       
 
                                        
 
@@ -340,15 +343,12 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
-                            case "EM004":
-                                break;
-
                         }
-                    }
+                    
 
                     //
 
-                    {
+                    
 
                         switch (import_code)
                         {
@@ -366,6 +366,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpaddress objEmpaddress = new cls_ctTREmpaddress();
                                         cls_TREmpaddress model = new cls_TREmpaddress();
 
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -376,6 +378,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.worker_fname_en = dr["firstname_en"].ToString();
                                         model.worker_lname_en = dr["lastname_en"].ToString();
 
+                                        model.empaddress_type = dr["empaddress_type"].ToString();
                                         model.empaddress_no = dr["empaddress_no"].ToString();
                                         model.empaddress_moo = dr["empaddress_moo"].ToString();
                                         model.empaddress_soi = dr["empaddress_soi"].ToString();
@@ -420,16 +423,15 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
-                            case "EM005":
-                                break;
+
 
                         }
-                    }
+                    
 
                     //
                     //EM005
 
-                    {
+                    
 
                         switch (import_code)
                         {
@@ -447,6 +449,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpposition objPosition = new cls_ctTREmpposition();
                                         cls_TREmpposition model = new cls_TREmpposition();
 
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -491,14 +495,13 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
-                            case "EM006":
-                                break;
+
 
                         }
-                    }
+                    
                     //EM006
 
-                    {
+                    
 
                         switch (import_code)
                         {
@@ -516,6 +519,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpreduce objEmpreduce = new cls_ctTREmpreduce();
                                         cls_TREmpreduce model = new cls_TREmpreduce();
 
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -560,14 +565,13 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
-                            case "EM07":
-                                break;
+
 
                         }
-                    }
+                    
 
                     //EM007
-                    {
+                    
 
                         switch (import_code)
                         {
@@ -585,6 +589,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpfamily objEmpfamily = new cls_ctTREmpfamily();
                                         cls_TREmpfamily model = new cls_TREmpfamily();
 
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -636,15 +642,12 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
-                            case "EM008":
-                                break;
-
-                        }
-                    }
+                       }
+                    
 
                     //
                     //EM008
-                    {
+                    
 
                         switch (import_code)
                         {
@@ -662,6 +665,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpbenefit objEmpbenefit = new cls_ctTREmpbenefit();
                                         cls_TREmpbenefit model = new cls_TREmpbenefit();
 
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -682,9 +687,9 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.empbenefit_paytype = dr["empbenefit_paytype"].ToString();
                                         
 
-                                        model.empbenefit_breakreason = dr["empbenefit_breakreason  "].ToString();
+                                        model.empbenefit_breakreason = dr["empbenefit_breakreason"].ToString();
                                         model.empbenefit_conditionpay = dr["empbenefit_conditionpay"].ToString();
-                                        model.empbenefit_payfirst = dr["empbenefit_payfirst  "].ToString();
+                                        model.empbenefit_payfirst = dr["empbenefit_payfirst"].ToString();
                                         
                                         model.modified_by = task.modified_by;
                                         model.empbenefit_break = model.empbenefit_break;
@@ -714,15 +719,13 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
-                            case "EM009":
-                                break;
 
                         }
-                    }
+                    
 
                     //
                     //EM009
-                    {
+                    
 
                         switch (import_code)
                         {
@@ -739,6 +742,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmpeducation objEmpeducation = new cls_ctTREmpeducation();
                                         cls_TREmpeducation model = new cls_TREmpeducation();
 
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -790,14 +795,12 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
 
-                            case "EM010":
-                                break;
 
                         }
-                    }
+                    
 
                     //EM010
-                    {
+                    
 
                         switch (import_code)
                         {
@@ -815,6 +818,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         cls_ctTREmptraining objEmptraining = new cls_ctTREmptraining();
                                         cls_TREmptraining model = new cls_TREmptraining();
 
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
@@ -871,9 +876,454 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
                         }
+                    //10
+                        //EM011
+
+
+                        switch (import_code)
+                        {
+                            case "EM011":
+
+                                DataTable dt = doReadExcel(fileName);
+                                if (dt.Rows.Count > 0)
+                                {
+                                    foreach (DataRow dr in dt.Rows)
+                                    {
+                                        //com	emp_code	emp_card	initial_code	firstname_th	lastname_th	firstname_en	lastname_en	emptype_code	emp_gender	emp_birthday	emp_startdate	
+                                        //amount  incamount  incpercent   date  reason
+
+                                        cls_ctTREmpsalary objEmpsalary = new cls_ctTREmpsalary();
+                                        cls_TREmpsalary model = new cls_TREmpsalary();
+
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
+                                        model.company_code = dr["com"].ToString();
+
+                                        model.worker_code = dr["emp_code"].ToString();
+                                        model.worker_card = dr["emp_card"].ToString();
+                                        model.worker_initial = dr["initial_code"].ToString();
+                                        model.worker_fname_th = dr["firstname_th"].ToString();
+                                        model.worker_lname_th = dr["lastname_th"].ToString();
+                                        model.worker_fname_en = dr["firstname_en"].ToString();
+                                        model.worker_lname_en = dr["lastname_en"].ToString();
+
+                                        model.empsalary_amount = Convert.ToDouble(dr["amount"]);
+                                        model.empsalary_incamount = Convert.ToDouble(dr["incamount"]);
+                                        model.empsalary_incpercent = Convert.ToDouble(dr["incpercent"]);
+                                        model.empsalary_date = Convert.ToDateTime(dr["date"]);
+                                        model.empsalary_reason = dr["reason"].ToString();
+
+
+                                        model.modified_by = task.modified_by;
+                                        model.flag = model.flag;
+
+                                        bool strID = objEmpsalary.insert(model);
+
+                                        if (!strID.Equals(""))
+                                        {
+                                            success++;
+                                        }
+                                        else
+                                        {
+                                            objStr.Append(model.company_code + "-" + model.worker_code);
+                                        }
+
+                                    }
+
+                                    strResult = "";
+
+                                    if (success > 0)
+                                        strResult += "Success : " + success.ToString();
+
+                                    if (objStr.Length > 0)
+                                        strResult += " Fail : " + objStr.ToString();
+
+                                }
+
+                                break;
+
+
+                        }
+
+
+                        //EM011
+
+                        //EM012
+
+
+                        switch (import_code)
+                        {
+                            case "EM012":
+
+                                DataTable dt = doReadExcel(fileName);
+                                if (dt.Rows.Count > 0)
+                                {
+                                    foreach (DataRow dr in dt.Rows)
+                                    {
+                                        //com	emp_code	emp_card	initial_code	firstname_th	lastname_th	firstname_en	lastname_en	emptype_code	emp_gender	emp_birthday	emp_startdate	
+                                        //provident_code empprovident_card empprovident_entry  empprovident_start
+
+                                        cls_ctTREmpprovident objEmpprovident = new cls_ctTREmpprovident();
+                                        cls_TREmpprovident model = new cls_TREmpprovident();
+
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
+                                        model.company_code = dr["com"].ToString();
+
+                                        model.worker_code = dr["emp_code"].ToString();
+                                        model.worker_card = dr["emp_card"].ToString();
+                                        model.worker_initial = dr["initial_code"].ToString();
+                                        model.worker_fname_th = dr["firstname_th"].ToString();
+                                        model.worker_lname_th = dr["lastname_th"].ToString();
+                                        model.worker_fname_en = dr["firstname_en"].ToString();
+                                        model.worker_lname_en = dr["lastname_en"].ToString();
+
+
+
+                                        model.provident_code = dr["provident_code"].ToString();
+                                        model.empprovident_card = dr["empprovident_card"].ToString();
+                                        model.empprovident_entry = Convert.ToDateTime(dr["entry"]);
+                                        model.empprovident_start = Convert.ToDateTime(dr["start"]);
+                                        model.empprovident_end = Convert.ToDateTime(dr["end"]);
+
+
+                                        model.modified_by = task.modified_by;
+                                        model.flag = model.flag;
+
+                                        bool strID = objEmpprovident.insert(model);
+
+                                        if (!strID.Equals(""))
+                                        {
+                                            success++;
+                                        }
+                                        else
+                                        {
+                                            objStr.Append(model.company_code + "-" + model.worker_code);
+                                        }
+
+                                    }
+
+                                    strResult = "";
+
+                                    if (success > 0)
+                                        strResult += "Success : " + success.ToString();
+
+                                    if (objStr.Length > 0)
+                                        strResult += " Fail : " + objStr.ToString();
+
+                                }
+
+                                break;
+
+
+                        }
+
+
+                    //EM012
+
+                        //EM013
+
+
+                        switch (import_code)
+                        {
+                            case "EM013":
+
+                                DataTable dt = doReadExcel(fileName);
+                                if (dt.Rows.Count > 0)
+                                {
+                                    foreach (DataRow dr in dt.Rows)
+                                    {
+                                        //com	emp_code	emp_card	initial_code	firstname_th	lastname_th	firstname_en	lastname_en	emptype_code	emp_gender	emp_birthday	emp_startdate	
+                                        //at position  start finish reasonchange
+
+                                        cls_ctTREmpexperience objEmpexperience = new cls_ctTREmpexperience();
+                                        cls_TREmpexperience model = new cls_TREmpexperience();
+
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
+                                        model.company_code = dr["com"].ToString();
+
+                                        model.worker_code = dr["emp_code"].ToString();
+                                        model.worker_card = dr["emp_card"].ToString();
+                                        model.worker_initial = dr["initial_code"].ToString();
+                                        model.worker_fname_th = dr["firstname_th"].ToString();
+                                        model.worker_lname_th = dr["lastname_th"].ToString();
+                                        model.worker_fname_en = dr["firstname_en"].ToString();
+                                        model.worker_lname_en = dr["lastname_en"].ToString();
+
+
+
+                                        model.empexperience_at = dr["at"].ToString();
+                                        model.empexperience_position = dr["position"].ToString();
+                                        model.empexperience_start = Convert.ToDateTime(dr["start"]);
+                                        model.empexperience_finish = Convert.ToDateTime(dr["finish"]);
+                                        model.empexperience_reasonchange = dr["reasonchange"].ToString();
+
+
+                                        model.modified_by = task.modified_by;
+                                        model.flag = model.flag;
+
+                                        bool strID = objEmpexperience.insert(model);
+
+                                        if (!strID.Equals(""))
+                                        {
+                                            success++;
+                                        }
+                                        else
+                                        {
+                                            objStr.Append(model.company_code + "-" + model.worker_code);
+                                        }
+
+                                    }
+
+                                    strResult = "";
+
+                                    if (success > 0)
+                                        strResult += "Success : " + success.ToString();
+
+                                    if (objStr.Length > 0)
+                                        strResult += " Fail : " + objStr.ToString();
+
+                                }
+
+                                break;
+
+
+                        }
+
+
+                    //EM013
+
+                        //EM014
+
+
+                        switch (import_code)
+                        {
+                            case "EM014":
+
+                                DataTable dt = doReadExcel(fileName);
+                                if (dt.Rows.Count > 0)
+                                {
+                                    foreach (DataRow dr in dt.Rows)
+                                    {
+                                        //com	emp_code	emp_card	initial_code	firstname_th	lastname_th	firstname_en	lastname_en	emptype_code	emp_gender	emp_birthday	emp_startdate	
+                                        //
+
+                                        cls_ctTREmplocation objEmplocation = new cls_ctTREmplocation();
+                                        cls_TREmplocation model = new cls_TREmplocation();
+
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
+                                        model.company_code = dr["com"].ToString();
+
+                                        model.worker_code = dr["emp_code"].ToString();
+                                        model.worker_card = dr["emp_card"].ToString();
+                                        model.worker_initial = dr["initial_code"].ToString();
+                                        model.worker_fname_th = dr["firstname_th"].ToString();
+                                        model.worker_lname_th = dr["lastname_th"].ToString();
+                                        model.worker_fname_en = dr["firstname_en"].ToString();
+                                        model.worker_lname_en = dr["lastname_en"].ToString();
+
+
+
+
+                                        model.location_code = dr["location_code"].ToString();
+                                        model.emplocation_startdate = Convert.ToDateTime(dr["emplocation_startdate"]);
+                                        model.emplocation_enddate = Convert.ToDateTime(dr["emplocation_enddate"]);
+                                        model.emplocation_note = dr["emplocation_note"].ToString();
+                                       
+
+
+
+                                        model.modified_by = task.modified_by;
+                                        model.flag = model.flag;
+
+                                        bool strID = objEmplocation.insert(model);
+
+                                        if (!strID.Equals(""))
+                                        {
+                                            success++;
+                                        }
+                                        else
+                                        {
+                                            objStr.Append(model.company_code + "-" + model.worker_code);
+                                        }
+
+                                    }
+
+                                    strResult = "";
+
+                                    if (success > 0)
+                                        strResult += "Success : " + success.ToString();
+
+                                    if (objStr.Length > 0)
+                                        strResult += " Fail : " + objStr.ToString();
+
+                                }
+
+                                break;
+
+
+                        }
+
+
+                    //EM014
+
+                        //EM015
+
+
+                        switch (import_code)
+                        {
+                            case "EM015":
+
+                                DataTable dt = doReadExcel(fileName);
+                                if (dt.Rows.Count > 0)
+                                {
+                                    foreach (DataRow dr in dt.Rows)
+                                    {
+                                        //com	emp_code	emp_card	initial_code	firstname_th	lastname_th	firstname_en	lastname_en	emptype_code	emp_gender	emp_birthday	emp_startdate	
+                                        //start finish  note location reason
+
+                                        cls_ctTREmpawpt objpawpt = new cls_ctTREmpawpt();
+                                        cls_TREmpawpt model = new cls_TREmpawpt();
+
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
+                                        model.company_code = dr["com"].ToString();
+
+                                        model.worker_code = dr["emp_code"].ToString();
+                                        model.worker_card = dr["emp_card"].ToString();
+                                        model.worker_initial = dr["initial_code"].ToString();
+                                        model.worker_fname_th = dr["firstname_th"].ToString();
+                                        model.worker_lname_th = dr["lastname_th"].ToString();
+                                        model.worker_fname_en = dr["firstname_en"].ToString();
+                                        model.worker_lname_en = dr["lastname_en"].ToString();
+
+
+
+                                        model.empawpt_start = Convert.ToDateTime(dr["start"]);
+                                        model.empawpt_finish = Convert.ToDateTime(dr["finish"]);
+                                        model.empawpt_location = dr["location"].ToString();
+                                        model.empawpt_reason = dr["reason"].ToString();
+                                        model.empawpt_note = dr["note"].ToString();
+                                        model.empawpt_type = dr["empawpt_type"].ToString();
+
+
+
+                                        model.modified_by = task.modified_by;
+                                        model.flag = model.flag;
+
+                                        bool strID = objpawpt.insert(model);
+
+                                        if (!strID.Equals(""))
+                                        {
+                                            success++;
+                                        }
+                                        else
+                                        {
+                                            objStr.Append(model.company_code + "-" + model.worker_code);
+                                        }
+
+                                    }
+
+                                    strResult = "";
+
+                                    if (success > 0)
+                                        strResult += "Success : " + success.ToString();
+
+                                    if (objStr.Length > 0)
+                                        strResult += " Fail : " + objStr.ToString();
+
+                                }
+
+                                break;
+
+
+                        }
+
+
+                    //EM015
+
+                        //EM016
+
+
+                        switch (import_code)
+                        {
+                            case "EM016":
+
+                                DataTable dt = doReadExcel(fileName);
+                                if (dt.Rows.Count > 0)
+                                {
+                                    foreach (DataRow dr in dt.Rows)
+                                    {
+                                        //com	emp_code	emp_card	initial_code	firstname_th	lastname_th	firstname_en	lastname_en	emptype_code	emp_gender	emp_birthday	emp_startdate	
+                                        //start finish location reason note
+
+                                        cls_ctTREmpawpt objEmpawpt = new cls_ctTREmpawpt();
+                                        cls_TREmpawpt model = new cls_TREmpawpt();
+
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
+                                        model.company_code = dr["com"].ToString();
+
+                                        model.worker_code = dr["emp_code"].ToString();
+                                        model.worker_card = dr["emp_card"].ToString();
+                                        model.worker_initial = dr["initial_code"].ToString();
+                                        model.worker_fname_th = dr["firstname_th"].ToString();
+                                        model.worker_lname_th = dr["lastname_th"].ToString();
+                                        model.worker_fname_en = dr["firstname_en"].ToString();
+                                        model.worker_lname_en = dr["lastname_en"].ToString();
+
+
+
+                                        //model.empawpt_no = Convert.ToInt32(dr["empawpt_no"]);
+                                        model.empawpt_start = Convert.ToDateTime(dr["start"]);
+                                        model.empawpt_finish = Convert.ToDateTime(dr["finish"]);
+                                        model.empawpt_location = dr["location"].ToString();
+                                        model.empawpt_reason = dr["reason"].ToString();
+                                        model.empawpt_note = dr["note"].ToString();
+                                        model.empawpt_type = dr["empawpt_type"].ToString();
+                                       
+                                        
+
+
+
+                                        model.modified_by = task.modified_by;
+                                        model.flag = model.flag;
+
+                                        bool strID = objEmpawpt.insert(model);
+
+                                        if (!strID.Equals(""))
+                                        {
+                                            success++;
+                                        }
+                                        else
+                                        {
+                                            objStr.Append(model.company_code + "-" + model.worker_code);
+                                        }
+
+                                    }
+
+                                    strResult = "";
+
+                                    if (success > 0)
+                                        strResult += "Success : " + success.ToString();
+
+                                    if (objStr.Length > 0)
+                                        strResult += " Fail : " + objStr.ToString();
+
+                                }
+
+                                break;
+
+
+                        }
+
+
+                    //EM016
                     }
 
-                }
+                
                 catch (Exception ex)
                 {
                     strResult = ex.ToString();

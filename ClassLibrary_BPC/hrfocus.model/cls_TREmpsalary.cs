@@ -12,6 +12,9 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         public string company_code { get; set; }
         public string worker_code { get; set; }
+        public string worker_card { get; set; }
+
+        
 
         public int empsalary_id { get; set; }
         public double empsalary_amount { get; set; }
