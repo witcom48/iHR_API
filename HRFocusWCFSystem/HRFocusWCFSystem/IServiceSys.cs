@@ -1372,7 +1372,7 @@ namespace HRFocusWCFSystem
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getDashItemOTPoList(string com, string fromdate, string todate);
+        string getDashItemOTPoList(string fromdate, string todate);
 
         #endregion
         #endregion

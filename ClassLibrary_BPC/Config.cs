@@ -12,7 +12,7 @@ namespace ClassLibrary_BPC
         static public string Database = "HRM";
         //static public string Userid = "sa";
         //static public string Server = ".\\SQLEXPRESS";
-        static public string Password = "Sql2019**";
+        static public string Password = "Sql2019***";
         //static public string Database = "HRM";
         static public string Userid = "Test";
 

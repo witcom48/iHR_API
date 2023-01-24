@@ -15400,7 +15400,7 @@ namespace HRFocusWCFSystem
                     JObject json = new JObject();
 
                     json.Add("worker_code", model.worker_code);
-                    json.Add("empposition_position", model.empposition_position);
+                    json.Add("position_name_en", model.position_name_en);
                     json.Add("position_name_th", model.position_name_th);
 
 
@@ -15658,7 +15658,7 @@ namespace HRFocusWCFSystem
                 {
                     JObject json = new JObject();
                     json.Add("worker_code", model.worker_code);
-                    json.Add("amount", model.amount);
+                    //json.Add("amount", model.amount);
                     json.Add("item_name_th", model.item_name_th);
                     json.Add("item_name_en", model.item_name_en);
                     json.Add("item_code", model.item_code);
@@ -15705,6 +15705,7 @@ namespace HRFocusWCFSystem
                 {
                     JObject json = new JObject();
                     json.Add("worker_code", model.worker_code);
+                    //json.Add("before_min", model.before_min);
                     json.Add("dep_name_th", model.dep_name_th);
                     json.Add("dep_name_en", model.dep_name_en);
 
@@ -15730,28 +15731,27 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
         }
 
-        public string getDashItemOTPoList(string com,string fromdate, string todate)
+        public string getDashItemOTPoList(string fromdate, string todate)
         {
             JObject output = new JObject();
 
             DateTime datefrom = Convert.ToDateTime(fromdate);
             DateTime dateto = Convert.ToDateTime(todate);
 
-            cls_ctTRDashboard objDash = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDash = objDash.getDataOTPoByFillter(com,datefrom, dateto);
+            cls_ctTRDashboard objDashh = new cls_ctTRDashboard();
+            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom, dateto);
 
             JArray array = new JArray();
 
-            if (listDash.Count > 0)
+            if (listDashh.Count > 0)
             {
                 int index = 1;
 
-                foreach (cls_TRDashboard model in listDash)
+                foreach (cls_TRDashboard model in listDashh)
                 {
                     JObject json = new JObject();
                     json.Add("worker_code", model.worker_code);
                     json.Add("before_min", model.before_min);
-                    json.Add("normal_min", model.normal_min);
                     json.Add("after_min", model.after_min);
                     json.Add("empposition_position", model.empposition_position);
                     json.Add("position_name_th", model.position_name_th);
