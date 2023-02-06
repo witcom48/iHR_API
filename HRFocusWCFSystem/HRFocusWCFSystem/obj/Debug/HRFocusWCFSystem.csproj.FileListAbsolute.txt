@@ -1,1 +1,13 @@
 D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.csprojResolveAssemblyReference.cache
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll.config
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.pdb
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ClassLibrary_BPC.dll
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ExcelLibrary.dll
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Google.Authenticator.dll
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.dll
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ClassLibrary_BPC.pdb
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.pdb
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.xml
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.dll
+D:\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.pdb
