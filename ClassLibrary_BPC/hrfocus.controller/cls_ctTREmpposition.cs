@@ -114,7 +114,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             }
             catch (Exception ex)
             {
-                Message = "ERROR::(Empdep.checkDataOld)" + ex.ToString();
+                Message = "ERROR::(Empposition.checkDataOld)" + ex.ToString();
             }
 
             return blnResult;
@@ -140,6 +140,35 @@ namespace ClassLibrary_BPC.hrfocus.controller
             catch (Exception ex)
             {
                 Message = "ERROR::(Empposition.getNextID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
+
+        public int getID(string com, string empid, DateTime date)
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT EMPPOSITION_ID ");
+                obj_str.Append(" FROM HRM_TR_EMPPOSITION");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + empid + "'");
+                obj_str.Append(" AND EMPPOSITION_DATE='" + date.ToString("MM/dd/yyyy") + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Empposition.getID)" + ex.ToString();
             }
 
             return intResult;
@@ -189,7 +218,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             catch (Exception ex)
             {
                 blnResult = false;
-                Message = "ERROR::(Empdep.clear)" + ex.ToString();
+                Message = "ERROR::(Empposition.clear)" + ex.ToString();
             }
 
             return blnResult;
@@ -267,6 +296,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public bool update(cls_TREmpposition model)
         {
+            string strResult = model.empposition_id.ToString();
             bool blnResult = false;
             try
             {
@@ -276,8 +306,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("UPDATE HRM_TR_EMPPOSITION SET ");
 
-                obj_str.Append(" EMPPOSITION_DATE=@EMPPOSITION_DATE ");
-                obj_str.Append(", EMPPOSITION_POSITION=@EMPPOSITION_POSITION ");    
+                obj_str.Append(" EMPPOSITION_POSITION=@EMPPOSITION_POSITION ");    
                 obj_str.Append(", EMPPOSITION_REASON=@EMPPOSITION_REASON ");
 
                 obj_str.Append(", MODIFIED_BY=@MODIFIED_BY ");
@@ -285,11 +314,16 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", FLAG=@FLAG ");
 
                 obj_str.Append(" WHERE EMPPOSITION_ID=@EMPPOSITION_ID ");
-                               
+                obj_str.Append(" AND WORKER_CODE=@WORKER_CODE ");
+                obj_str.Append(" AND EMPPOSITION_DATE=@EMPPOSITION_DATE ");
+
                 obj_conn.doConnect();
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
-
+                if (model.empposition_id == 0)
+                {
+                    strResult = this.getID(model.company_code, model.worker_code, model.empposition_date).ToString();
+                }
                 obj_cmd.Parameters.Add("@EMPPOSITION_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@EMPPOSITION_DATE"].Value = model.empposition_date;
                 obj_cmd.Parameters.Add("@EMPPOSITION_POSITION", SqlDbType.VarChar); obj_cmd.Parameters["@EMPPOSITION_POSITION"].Value = model.empposition_position;
                 obj_cmd.Parameters.Add("@EMPPOSITION_REASON", SqlDbType.VarChar); obj_cmd.Parameters["@EMPPOSITION_REASON"].Value = model.empposition_reason;
@@ -297,8 +331,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@MODIFIED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@MODIFIED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
                 obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit); obj_cmd.Parameters["@FLAG"].Value = false;
+                obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
 
-                obj_cmd.Parameters.Add("@EMPPOSITION_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPPOSITION_ID"].Value = model.empposition_id;
+                obj_cmd.Parameters.Add("@EMPPOSITION_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPPOSITION_ID"].Value = strResult;
 
                 obj_cmd.ExecuteNonQuery();
 

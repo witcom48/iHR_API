@@ -15,6 +15,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 {
     public class cls_srvImport
     {
+        public string TEST = "";
         private static DataTable doConvertCSVtoDataTable(string path)
         {
             DataTable dt = new DataTable();
@@ -61,7 +62,7 @@ namespace ClassLibrary_BPC.hrfocus.service
             }
             catch (Exception ex)
             {
-
+                TEST = ex.ToString();
             }
             finally
             {
@@ -208,12 +209,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
                                         model.empcard_code = dr["empcard_code"].ToString();
                                         model.card_type = dr["card_type"].ToString();
@@ -279,14 +280,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
-                                        model.worker_code = dr["worker_code"].ToString();
+                                        //model.worker_code = dr["worker_code"].ToString();
                                         
                                         model.empdep_date = Convert.ToDateTime(dr["empdep_date"]);
                                         model.empdep_level01 = dr["empdep_level01"].ToString();
@@ -302,7 +303,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.empdep_reason = dr["empdep_reason"].ToString();
 
 
-                                        model.created_date = Convert.ToDateTime(dr["created_date"]);
+                                        //model.created_date = Convert.ToDateTime(dr["created_date"]);
                                        
 
                                        
@@ -363,12 +364,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
                                         model.empaddress_type = dr["empaddress_type"].ToString();
                                         model.empaddress_no = dr["empaddress_no"].ToString();
@@ -446,12 +447,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
                                         model.empposition_date = Convert.ToDateTime(dr["empposition_date"]);
                                         model.empposition_position = dr["empposition_position"].ToString();
@@ -516,12 +517,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
 
                                         model.reduce_type = dr["reduce_type"].ToString();
@@ -586,12 +587,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
 
                                         model.empfamily_code = dr["empfamily_code"].ToString();
@@ -632,6 +633,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 }
 
+                                strResult = TEST;
                                 break;
 
                        }
@@ -662,12 +664,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
                                         model.item_code = dr["item_code"].ToString();
                                         model.empbenefit_startdate = Convert.ToDateTime(dr["empbenefit_startdate"]);
@@ -739,12 +741,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
 
 
@@ -815,12 +817,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
 
                                         model.emptraining_start = Convert.ToDateTime(dr["emptraining_start"]);
@@ -892,12 +894,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
                                         model.empsalary_amount = Convert.ToDouble(dr["amount"]);
                                         model.empsalary_incamount = Convert.ToDouble(dr["incamount"]);
@@ -963,12 +965,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
 
 
@@ -1036,12 +1038,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
 
 
@@ -1109,12 +1111,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
 
 
@@ -1184,12 +1186,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
 
 
@@ -1259,12 +1261,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.company_code = dr["com"].ToString();
 
                                         model.worker_code = dr["emp_code"].ToString();
-                                        model.worker_card = dr["emp_card"].ToString();
-                                        model.worker_initial = dr["initial_code"].ToString();
-                                        model.worker_fname_th = dr["firstname_th"].ToString();
-                                        model.worker_lname_th = dr["lastname_th"].ToString();
-                                        model.worker_fname_en = dr["firstname_en"].ToString();
-                                        model.worker_lname_en = dr["lastname_en"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
 
 
 
