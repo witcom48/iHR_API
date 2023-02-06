@@ -11,6 +11,8 @@ namespace ClassLibrary_BPC.hrfocus.model
         public cls_MTDashboard() { }
 
         public int worker_code { get; set; }
+        public string position_name_th { get; set; }
+        public string position_name_en { get; set; }
         public string worker_gender_en { get; set; }
         public string worker_gender_th { get; set; }
         public string dep_name_th { get; set; }

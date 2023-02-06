@@ -145,7 +145,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
                 obj_str.Append("SELECT MAX(EMPCARD_ID) ");
-                obj_str.Append(" FROM HRM_TR_EMPCARDD");             
+                obj_str.Append(" FROM HRM_TR_EMPCARD");             
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -157,6 +157,33 @@ namespace ClassLibrary_BPC.hrfocus.controller
             catch (Exception ex)
             {
                 Message = "ERROR::(Empcard.getNextID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
+        public int getID(string com, string empid)
+        {
+            int intResult = 1;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT EMPCARD_ID ");
+                obj_str.Append(" FROM HRM_TR_EMPCARD");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + empid + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Empcard.getID)" + ex.ToString();
             }
 
             return intResult;
@@ -291,6 +318,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public bool update(cls_TREmpcard model)
         {
+            string strResult = model.empcard_id.ToString();
             bool blnResult = false;
             try
             {
@@ -309,12 +337,17 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", FLAG=@FLAG ");
 
                 obj_str.Append(" WHERE EMPCARD_ID=@EMPCARD_ID ");
-               
+                obj_str.Append(" AND WORKER_CODE=@WORKER_CODE ");
+                obj_str.Append(" AND CARD_TYPE=@CARD_TYPE ");
+
                 
                 obj_conn.doConnect();
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
-
+                if (model.empcard_id == 0)
+                {
+                    strResult = this.getID(model.company_code, model.worker_code).ToString();
+                }
                 obj_cmd.Parameters.Add("@EMPCARD_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@EMPCARD_CODE"].Value = model.empcard_code;
 
                 obj_cmd.Parameters.Add("@EMPCARD_ISSUE", SqlDbType.DateTime); obj_cmd.Parameters["@EMPCARD_ISSUE"].Value = model.empcard_issue;
@@ -324,7 +357,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
                 obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit); obj_cmd.Parameters["@FLAG"].Value = false;
 
-                obj_cmd.Parameters.Add("@EMPCARD_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPCARD_ID"].Value = model.empcard_id;
+                obj_cmd.Parameters.Add("@EMPCARD_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPCARD_ID"].Value = strResult;
+                obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
+                obj_cmd.Parameters.Add("@CARD_TYPE", SqlDbType.VarChar); obj_cmd.Parameters["@CARD_TYPE"].Value = model.card_type;
 
                 obj_cmd.ExecuteNonQuery();
 

@@ -143,6 +143,35 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return intResult;
         }
 
+
+        public int getID(string com, string empid, string type)
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT EMPREDUCE_ID ");
+                obj_str.Append(" FROM HRM_TR_EMPREDUCE");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + empid + "'");
+                obj_str.Append(" AND REDUCE_TYPE='" + type + "'");
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Empreduce.getID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
+
         public bool delete(string id)
         {
             bool blnResult = true;
@@ -261,6 +290,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public bool update(cls_TREmpreduce model)
         {
+            string strResult = model.empreduce_id.ToString();
             bool blnResult = false;
             try
             {
@@ -271,25 +301,34 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append("UPDATE HRM_TR_EMPREDUCE SET ");
 
                 obj_str.Append(" EMPREDUCE_AMOUNT=@EMPREDUCE_AMOUNT ");
-              
+
                 obj_str.Append(", MODIFIED_BY=@MODIFIED_BY ");
                 obj_str.Append(", MODIFIED_DATE=@MODIFIED_DATE ");
                 obj_str.Append(", FLAG=@FLAG ");
 
                 obj_str.Append(" WHERE EMPREDUCE_ID=@EMPREDUCE_ID ");
-               
+                obj_str.Append(" AND WORKER_CODE=@WORKER_CODE ");
+                obj_str.Append(" AND REDUCE_TYPE=@REDUCE_TYPE ");
+
                 
                 obj_conn.doConnect();
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
+                if (model.empreduce_id == 0)
+                {
+                    strResult = this.getID(model.company_code, model.worker_code, model.reduce_type).ToString();
+                }
+
 
                 obj_cmd.Parameters.Add("@EMPREDUCE_AMOUNT", SqlDbType.Decimal); obj_cmd.Parameters["@EMPREDUCE_AMOUNT"].Value = model.empreduce_amount;
 
                 obj_cmd.Parameters.Add("@MODIFIED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@MODIFIED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
                 obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit); obj_cmd.Parameters["@FLAG"].Value = false;
+                obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
 
-                obj_cmd.Parameters.Add("@EMPREDUCE_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPREDUCE_ID"].Value = model.empreduce_id;
+                obj_cmd.Parameters.Add("@EMPREDUCE_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPREDUCE_ID"].Value = strResult;
+                obj_cmd.Parameters.Add("@REDUCE_TYPE", SqlDbType.VarChar); obj_cmd.Parameters["@REDUCE_TYPE"].Value = model.reduce_type;
 
                 obj_cmd.ExecuteNonQuery();
 

@@ -191,7 +191,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 if (dt.Rows.Count > 0)
                 {
-                    intResult = Convert.ToInt32(dt.Rows[0][0]) + 1;
+                    intResult = Convert.ToInt32(dt.Rows[0][0]) + 1 ;
                 }
             }
             catch (Exception ex)
@@ -216,12 +216,41 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 if (dt.Rows.Count > 0)
                 {
-                    intResult = Convert.ToInt32(dt.Rows[0][0]) + 1;
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
                 }
             }
             catch (Exception ex)
             {
                 Message = "ERROR::(Empbenefit.getNextID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
+
+        public int getID(string com, string empid, DateTime effdate)
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT EMPBENEFIT_ID ");
+                obj_str.Append(" FROM HRM_TR_EMPBENEFIT");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + empid + "'");
+                obj_str.Append(" AND EMPBENEFIT_STARTDATE='" + effdate.ToString("MM/dd/yyyy") + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Empbenefit.getID)" + ex.ToString();
             }
 
             return intResult;
@@ -381,6 +410,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public bool update(cls_TREmpbenefit model)
         {
+            string strResult = model.empbenefit_id.ToString();
             bool blnResult = false;
             try
             {
@@ -391,9 +421,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
               
                 obj_str.Append("UPDATE HRM_TR_EMPBENEFIT SET ");
 
-                obj_str.Append(" ITEM_CODE=@ITEM_CODE ");
-                obj_str.Append(", EMPBENEFIT_AMOUNT=@EMPBENEFIT_AMOUNT ");
-                obj_str.Append(", EMPBENEFIT_STARTDATE=@EMPBENEFIT_STARTDATE ");
+               
+                obj_str.Append(" EMPBENEFIT_AMOUNT=@EMPBENEFIT_AMOUNT ");
                 obj_str.Append(", EMPBENEFIT_ENDDATE=@EMPBENEFIT_ENDDATE ");
                 obj_str.Append(", EMPBENEFIT_REASON=@EMPBENEFIT_REASON ");
                 obj_str.Append(", EMPBENEFIT_NOTE=@EMPBENEFIT_NOTE ");
@@ -410,15 +439,19 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", FLAG=@FLAG ");
 
                 obj_str.Append(" WHERE EMPBENEFIT_ID=@EMPBENEFIT_ID ");
-               
+                obj_str.Append(" AND WORKER_CODE=@WORKER_CODE ");
+                obj_str.Append(" AND ITEM_CODE=@ITEM_CODE ");
+                obj_str.Append(" AND EMPBENEFIT_STARTDATE=@EMPBENEFIT_STARTDATE ");
                 
                 obj_conn.doConnect();
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
-
-                obj_cmd.Parameters.Add("@ITEM_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@ITEM_CODE"].Value = model.item_code;
+                if (model.empbenefit_id == 0)
+                {
+                    strResult = this.getID(model.company_code, model.worker_code, model.empbenefit_startdate ).ToString();
+                }
                 obj_cmd.Parameters.Add("@EMPBENEFIT_AMOUNT", SqlDbType.Decimal); obj_cmd.Parameters["@EMPBENEFIT_AMOUNT"].Value = model.empbenefit_amount;
-                obj_cmd.Parameters.Add("@EMPBENEFIT_STARTDATE", SqlDbType.DateTime); obj_cmd.Parameters["@EMPBENEFIT_STARTDATE"].Value = model.empbenefit_startdate;
+                
                 obj_cmd.Parameters.Add("@EMPBENEFIT_ENDDATE", SqlDbType.DateTime); obj_cmd.Parameters["@EMPBENEFIT_ENDDATE"].Value = model.empbenefit_enddate;
                 obj_cmd.Parameters.Add("@EMPBENEFIT_REASON", SqlDbType.VarChar); obj_cmd.Parameters["@EMPBENEFIT_REASON"].Value = model.empbenefit_reason;
                 obj_cmd.Parameters.Add("@EMPBENEFIT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@EMPBENEFIT_NOTE"].Value = model.empbenefit_note;
@@ -435,7 +468,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
                 obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit); obj_cmd.Parameters["@FLAG"].Value = false;
 
-                obj_cmd.Parameters.Add("@EMPBENEFIT_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPBENEFIT_ID"].Value = model.empbenefit_id;
+                obj_cmd.Parameters.Add("@EMPBENEFIT_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPBENEFIT_ID"].Value = strResult;
+                obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
+                obj_cmd.Parameters.Add("@ITEM_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@ITEM_CODE"].Value = model.item_code;
+                obj_cmd.Parameters.Add("@EMPBENEFIT_STARTDATE", SqlDbType.DateTime); obj_cmd.Parameters["@EMPBENEFIT_STARTDATE"].Value = model.empbenefit_startdate;
 
                 obj_cmd.ExecuteNonQuery();
 

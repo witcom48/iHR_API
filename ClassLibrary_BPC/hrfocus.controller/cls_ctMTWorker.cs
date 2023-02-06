@@ -253,10 +253,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
             {
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
-                obj_str.Append("SELECT WORKER_ID");
+                obj_str.Append("SELECT WORKER_CODE");
                 obj_str.Append(" FROM HRM_MT_WORKER");
                 obj_str.Append(" WHERE 1=1 ");                
-                obj_str.Append(" AND WORKER_ID='" + id + "'");
+                obj_str.Append(" AND WORKER_CODE='" + id + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -314,7 +314,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
                 obj_str.Append("SELECT MAX(WORKER_ID) ");
-                obj_str.Append(" FROM HRM_MT_WORKER");             
+                obj_str.Append(" FROM HRM_MT_WORKER");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -326,6 +326,33 @@ namespace ClassLibrary_BPC.hrfocus.controller
             catch (Exception ex)
             {
                 Message = "ERROR::(Worker.getNextID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
+        public int getID( string com, string empid)
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT WORKER_ID ");
+                obj_str.Append(" FROM HRM_MT_WORKER");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + empid + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Worker.getID)" + ex.ToString();
             }
 
             return intResult;
@@ -384,7 +411,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             try
             {
                 //-- Check data old
-                if (this.checkDataOld(model.worker_id.ToString()))
+                if (this.checkDataOld(model.worker_code.ToString()))
                 {
                     bool blnResult = this.update(model);
 
@@ -552,6 +579,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public bool update(cls_MTWorker model)
         {
+            string strResult = model.worker_id.ToString();
             bool blnResult = false;
             try
             {
@@ -603,7 +631,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 
                 obj_conn.doConnect();
 
-                SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());                              
+                SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
+
+                if (model.worker_id == 0) {
+                    strResult = this.getID(model.company_code,model.worker_code).ToString();
+                }
+
+                
                 
                 obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
                 obj_cmd.Parameters.Add("@WORKER_CARD", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CARD"].Value = model.worker_card;
@@ -643,7 +677,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
                 obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit); obj_cmd.Parameters["@FLAG"].Value = false;
 
-                obj_cmd.Parameters.Add("@WORKER_ID", SqlDbType.Int); obj_cmd.Parameters["@WORKER_ID"].Value = model.worker_id;
+                obj_cmd.Parameters.Add("@WORKER_ID", SqlDbType.Int); obj_cmd.Parameters["@WORKER_ID"].Value = strResult;
 
                 obj_cmd.ExecuteNonQuery();
 

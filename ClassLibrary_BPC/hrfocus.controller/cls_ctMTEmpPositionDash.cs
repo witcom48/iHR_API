@@ -60,6 +60,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                     model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
                     model.empposition_position = dr["EMPPOSITION_POSITION"].ToString();
+                    model.position_name_en = dr["POSITION_NAME_EN"].ToString();
                     model.position_name_th = dr["POSITION_NAME_TH"].ToString();
                     model.position_name_en = dr["POSITION_NAME_EN"].ToString();
                     

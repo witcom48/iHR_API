@@ -141,6 +141,33 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return blnResult;
         }
 
+        public int getID(string com, string empid)
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT EMPAWPT_NO ");
+                obj_str.Append(" FROM HRM_TR_EMPAWPT");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + empid + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Empawpt.getID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
         public int getNextID(string com, string worker)
         {
             int intResult = 1;
@@ -330,6 +357,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public bool update(cls_TREmpawpt model)
         {
+            string strResult = model.empawpt_no.ToString();
             bool blnResult = false;
             try
             {
@@ -359,7 +387,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_conn.doConnect();
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
-
+                if (model.empawpt_no == 0)
+                {
+                    strResult = this.getID(model.company_code, model.worker_code).ToString();
+                }
                 obj_cmd.Parameters.Add("@EMPAWPT_START", SqlDbType.DateTime); obj_cmd.Parameters["@EMPAWPT_START"].Value = model.empawpt_start;
                 obj_cmd.Parameters.Add("@EMPAWPT_FINISH", SqlDbType.DateTime); obj_cmd.Parameters["@EMPAWPT_FINISH"].Value = model.empawpt_finish;
                 obj_cmd.Parameters.Add("@EMPAWPT_TYPE", SqlDbType.VarChar); obj_cmd.Parameters["@EMPAWPT_TYPE"].Value = model.empawpt_type;
@@ -373,7 +404,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_cmd.Parameters.Add("@COMPANY_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@COMPANY_CODE"].Value = model.company_code;
                 obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
-                obj_cmd.Parameters.Add("@EMPAWPT_NO", SqlDbType.Int); obj_cmd.Parameters["@EMPAWPT_NO"].Value = model.empawpt_no;
+                obj_cmd.Parameters.Add("@EMPAWPT_NO", SqlDbType.Int); obj_cmd.Parameters["@EMPAWPT_NO"].Value = strResult;
 
                 obj_cmd.ExecuteNonQuery();
 
