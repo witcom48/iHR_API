@@ -47,8 +47,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ISNULL(HRM_TR_EMPLEAVEACC.MODIFIED_BY, HRM_TR_EMPLEAVEACC.CREATED_BY) AS MODIFIED_BY");
                 obj_str.Append(", ISNULL(HRM_TR_EMPLEAVEACC.MODIFIED_DATE, HRM_TR_EMPLEAVEACC.CREATED_DATE) AS MODIFIED_DATE");
 
-                
-                if (language.Equals("TH"))
+
+                if (language.Equals("TH") || language.Equals("th"))
                 {
                     obj_str.Append(", LEAVE_NAME_TH AS LEAVE_DETAIL");
                     obj_str.Append(", INITIAL_NAME_TH + WORKER_FNAME_TH + ' ' + WORKER_LNAME_TH AS WORKER_DETAIL");

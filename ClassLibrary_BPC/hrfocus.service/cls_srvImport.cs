@@ -10,11 +10,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Excel = Microsoft.Office.Interop.Excel;
+//using c.Excel;
 namespace ClassLibrary_BPC.hrfocus.service
 {
     public class cls_srvImport
     {
+        public string Test = "";
         private static DataTable doConvertCSVtoDataTable(string path)
         {
             DataTable dt = new DataTable();
@@ -41,11 +43,9 @@ namespace ClassLibrary_BPC.hrfocus.service
             return dt;
         }
 
-
         public DataTable doReadExcel(string fileName)
         {
             DataTable dt = new DataTable();
-
             string filePath = Path.Combine(ClassLibrary_BPC.Config.PathFileImport + "\\Imports\\", fileName);
             string xlConnStr = @"Provider=Microsoft.ACE.OLEDB.12.0; Data Source=" + filePath + ";Extended Properties='Excel 8.0;HDR=Yes;';";
             var xlConn = new OleDbConnection(xlConnStr);
@@ -61,7 +61,7 @@ namespace ClassLibrary_BPC.hrfocus.service
             }
             catch (Exception ex)
             {
-
+                Test = "Fail"+ex.ToString();
             }
             finally
             {
@@ -1339,7 +1339,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                 strResult = "Task not found::" + taskid;
             }
 
-            return strResult;
+            return Test;
         }
 
 

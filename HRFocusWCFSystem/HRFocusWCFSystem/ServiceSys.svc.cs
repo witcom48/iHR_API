@@ -10792,6 +10792,20 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region MTLeave
+        public string getMTLeaveTotal(string com,string emp, string year)
+        {
+            JObject output = new JObject();
+
+            cls_ctMTLeave objLeave = new cls_ctMTLeave();
+            string lleavetotal = objLeave.totalleave(com, emp, year);
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = lleavetotal;
+         
+
+            return output.ToString(Formatting.None);
+        }
         public string getMTLeaveList(string com)
         {
             JObject output = new JObject();
@@ -11333,6 +11347,20 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Rateot
+        public string getMTOTTotal(string com, string emp, string year)
+        {
+            JObject output = new JObject();
+
+            cls_ctMTRateot objRate = new cls_ctMTRateot();
+            string ottotal = objRate.totalot(com, emp, year);
+
+            output["result"] = "1";
+            output["result_text"] = "1";
+            output["data"] = ottotal;
+
+
+            return output.ToString(Formatting.None);
+        }
         public string getMTRateotList(string com)
         {
             JObject output = new JObject();
@@ -15430,7 +15458,7 @@ namespace HRFocusWCFSystem
                     json.Add("worker_code", model.worker_code);
                     json.Add("empposition_position", model.empposition_position);
                     json.Add("position_name_th", model.position_name_th);
-
+                    json.Add("position_name_en", model.position_name_en);
 
                     json.Add("index", index);
 
