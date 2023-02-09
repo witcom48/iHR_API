@@ -301,11 +301,11 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return list_model;
         }
-        public List<cls_TRDashboard> getDataOTPoByFillter(DateTime fromdate, DateTime todate)
+        public List<cls_TRDashboard> getDataOTPoByFillter(string fromdate, string todate)
         {
             string strCondition = "";
 
-            strCondition += " AND (HRM_TR_TIMECARD.TIMECARD_WORKDATE BETWEEN '" + fromdate.ToString(this.FormatDateDB) + "' AND '" + todate.ToString(this.FormatDateDB) + "' )";
+            strCondition += " AND (HRM_TR_TIMECARD.TIMECARD_WORKDATE BETWEEN '" + fromdate+ "' AND '" + todate + "' )";
 
             return this.getDataOTPo(strCondition);
 

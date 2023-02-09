@@ -31,7 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExcelLibrary">
+    <Reference Include="ExcelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Users\sukawit.s\Downloads\ExcelLibrary.dll</HintPath>
     </Reference>
     <Reference Include="office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
@@ -52,8 +53,11 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="hrfocus.controller\cls_ctSYSAllow.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTBank.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTBonus.cs" />
+    <Compile Include="hrfocus.controller\cls_ctSYSPackage.cs" />
+    <Compile Include="hrfocus.controller\cls_ctSYSTopic.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRAttTimecardDash.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRAttTtimeleaveDash.cs" />
     <Compile Include="hrfocus.controller\cls_ctTREmpEempdepDash.cs" />
@@ -173,6 +177,10 @@
     <Compile Include="hrfocus.controller\cls_ctTRPlanschedule.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRTimecard.cs" />
     <Compile Include="hrfocus.model\cls_MTBdashboard.cs" />
+    <Compile Include="hrfocus.model\cls_SYSAllow.cs" />
+    <Compile Include="hrfocus.model\cls_SYSPackage.cs" />
+    <Compile Include="hrfocus.model\cls_SYSTopic.cs" />
+    <Compile Include="hrfocus.model\cls_SYSUsepackage.cs" />
     <Compile Include="hrfocus.model\cls_TRAttTimecardDash.cs" />
     <Compile Include="hrfocus.model\cls_TRAttTtimeleaveDash.cs" />
     <Compile Include="hrfocus.model\cls_TREmpEempdepDash.cs" />

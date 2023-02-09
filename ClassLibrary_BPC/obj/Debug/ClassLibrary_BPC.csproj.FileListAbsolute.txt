@@ -1,8 +1,8 @@
-D:\api\iHR_API\ClassLibrary_BPC\bin\Debug\ClassLibrary_BPC.dll
-D:\api\iHR_API\ClassLibrary_BPC\bin\Debug\ClassLibrary_BPC.pdb
-D:\api\iHR_API\ClassLibrary_BPC\bin\Debug\ExcelLibrary.dll
 D:\api\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.frmExportData.resources
 D:\api\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.csproj.GenerateResource.Cache
+D:\api\iHR_API\ClassLibrary_BPC\bin\Debug\ClassLibrary_BPC.dll
+D:\api\iHR_API\ClassLibrary_BPC\bin\Debug\ClassLibrary_BPC.pdb
+D:\api\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.csprojResolveAssemblyReference.cache
 D:\api\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.dll
 D:\api\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.pdb
-D:\api\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.csprojResolveAssemblyReference.cache
+D:\api\iHR_API\ClassLibrary_BPC\bin\Debug\ExcelLibrary.dll

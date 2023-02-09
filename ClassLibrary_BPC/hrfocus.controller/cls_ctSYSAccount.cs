@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using ClassLibrary_BPC.hrfocus.model;
 using System.Data.SqlClient;
 using System.Data;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace ClassLibrary_BPC.hrfocus.controller
 {
@@ -79,7 +81,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.account_id = Convert.ToInt32(dr["ACCOUNT_ID"]);
 
                     model.account_usr = Convert.ToString(dr["ACCOUNT_USR"]);
-                    model.account_pwd = Convert.ToString(dr["ACCOUNT_PWD"]);
+                    model.account_pwd = this.Decrypt(Convert.ToString(dr["ACCOUNT_PWD"]));
                     model.account_detail = Convert.ToString(dr["ACCOUNT_DETAIL"]);
 
                     model.account_email = Convert.ToString(dr["ACCOUNT_EMAIL"]);
@@ -123,7 +125,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
         public List<cls_SYSAccount> getData(string username, string password)
         {
             string strCondition = " AND ACCOUNT_USR='" + username.Replace("'", "").Replace(",", "").Replace("=", "") + "'";
-            strCondition += " AND ACCOUNT_PWD='" + password.Replace("'", "").Replace(",", "").Replace("=", "") + "'";
+            strCondition += " AND ACCOUNT_PWD='" + this.Encrypt_Password(password) + "'";
             return this.getData(strCondition);
         }
 
@@ -210,9 +212,33 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return blnResult;
         }
 
-        public bool insert(cls_SYSAccount model)
+        public int usercount()
         {
-            bool blnResult = false;
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("select COUNT(ACCOUNT_ID) as usercount from HRM_SYS_ACCOUNT");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(HRM_SYS_ACCOUNT.count)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
+        public string insert(cls_SYSAccount model)
+        {
+            string blnResult = "";
             try
             {
                 //-- Check data old
@@ -220,7 +246,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 {
                     return this.update(model);
                 }
-
+                cls_ctSYSPackage Package = new cls_ctSYSPackage();
+                var usercount = this.usercount();
+                List<cls_SYSPackage> listPackage = Package.getData();
+                if (Convert.ToInt32(this.Decrypt(listPackage[0].packege_user).Split('U')[1]) <= usercount)
+                {
+                    return "limit";
+                }
                 cls_ctConnection obj_conn = new cls_ctConnection();
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
@@ -282,7 +314,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@ACCOUNT_ID", SqlDbType.Int); obj_cmd.Parameters["@ACCOUNT_ID"].Value = this.getNextID();
 
                 obj_cmd.Parameters.Add("@ACCOUNT_USR", SqlDbType.VarChar); obj_cmd.Parameters["@ACCOUNT_USR"].Value = model.account_usr;
-                obj_cmd.Parameters.Add("@ACCOUNT_PWD", SqlDbType.VarChar); obj_cmd.Parameters["@ACCOUNT_PWD"].Value = model.account_pwd;
+                obj_cmd.Parameters.Add("@ACCOUNT_PWD", SqlDbType.VarChar); obj_cmd.Parameters["@ACCOUNT_PWD"].Value = this.Encrypt_Password(model.account_pwd);
                 obj_cmd.Parameters.Add("@ACCOUNT_DETAIL", SqlDbType.VarChar); obj_cmd.Parameters["@ACCOUNT_DETAIL"].Value = model.account_detail;
 
                 obj_cmd.Parameters.Add("@ACCOUNT_EMAIL", SqlDbType.VarChar); obj_cmd.Parameters["@ACCOUNT_EMAIL"].Value = model.account_email;
@@ -306,7 +338,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_conn.doClose();
 
-                blnResult = true;
+                blnResult = "yes";
             }
             catch (Exception ex)
             {
@@ -316,9 +348,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return blnResult;
         }
 
-        public bool update(cls_SYSAccount model)
+        public string update(cls_SYSAccount model)
         {
-            bool blnResult = false;
+            string blnResult = "";
             try
             {
                 cls_ctConnection obj_conn = new cls_ctConnection();
@@ -337,10 +369,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append(", ACCOUNT_LOCK=@ACCOUNT_LOCK ");
 
-                obj_str.Append(", ACCOUNT_NEWDATA=@ACCOUNT_NEWDATA ");
-                obj_str.Append(", ACCOUNT_EDITDATA=@ACCOUNT_EDITDATA ");
-                obj_str.Append(", ACCOUNT_DELETEDATA=@ACCOUNT_DELETEDATA ");
-                obj_str.Append(", ACCOUNT_VIEWSALARY=@ACCOUNT_VIEWSALARY ");
+                //obj_str.Append(", ACCOUNT_NEWDATA=@ACCOUNT_NEWDATA ");
+                //obj_str.Append(", ACCOUNT_EDITDATA=@ACCOUNT_EDITDATA ");
+                //obj_str.Append(", ACCOUNT_DELETEDATA=@ACCOUNT_DELETEDATA ");
+                //obj_str.Append(", ACCOUNT_VIEWSALARY=@ACCOUNT_VIEWSALARY ");
 
                 obj_str.Append(", ACCOUNT_MONTHLY=@ACCOUNT_MONTHLY ");
                 obj_str.Append(", ACCOUNT_DAILY=@ACCOUNT_DAILY ");
@@ -359,7 +391,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
 
-                obj_cmd.Parameters.Add("@ACCOUNT_PWD", SqlDbType.VarChar); obj_cmd.Parameters["@ACCOUNT_PWD"].Value = model.account_pwd;
+                obj_cmd.Parameters.Add("@ACCOUNT_PWD", SqlDbType.VarChar); obj_cmd.Parameters["@ACCOUNT_PWD"].Value = this.Encrypt_Password(model.account_pwd);
                 obj_cmd.Parameters.Add("@ACCOUNT_DETAIL", SqlDbType.VarChar); obj_cmd.Parameters["@ACCOUNT_DETAIL"].Value = model.account_detail;
 
                 obj_cmd.Parameters.Add("@ACCOUNT_EMAIL", SqlDbType.VarChar); obj_cmd.Parameters["@ACCOUNT_EMAIL"].Value = model.account_email;
@@ -385,7 +417,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_conn.doClose();
 
-                blnResult = true;
+                blnResult = "yes";
             }
             catch (Exception ex)
             {
@@ -393,6 +425,47 @@ namespace ClassLibrary_BPC.hrfocus.controller
             }
 
             return blnResult;
+        }
+        private const string ENCRYPTION_KEY = "d42262e6-17c0-45da-bc34-1bd04f8b6928";
+        private readonly byte[] SALT = Encoding.ASCII.GetBytes(ENCRYPTION_KEY.Length.ToString());
+        public string Decrypt(string inputText)
+        {
+            RijndaelManaged rijndaelCipher = new RijndaelManaged();
+            byte[] encryptedData = Convert.FromBase64String(inputText);
+            PasswordDeriveBytes secretKey = new PasswordDeriveBytes(ENCRYPTION_KEY, SALT);
+
+            using (ICryptoTransform decryptor = rijndaelCipher.CreateDecryptor(secretKey.GetBytes(32), secretKey.GetBytes(16)))
+            {
+                using (MemoryStream memoryStream = new MemoryStream(encryptedData))
+                {
+                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                    {
+                        byte[] plainText = new byte[encryptedData.Length];
+                        int decryptedCount = cryptoStream.Read(plainText, 0, plainText.Length);
+                        return Encoding.Unicode.GetString(plainText, 0, decryptedCount);
+                    }
+                }
+            }
+
+        }
+        public string Encrypt_Password(string inputText)
+        {
+            RijndaelManaged rijndaelCipher = new RijndaelManaged();
+            byte[] plainText = Encoding.Unicode.GetBytes(inputText);
+            PasswordDeriveBytes SecretKey = new PasswordDeriveBytes(ENCRYPTION_KEY, SALT);
+
+            using (ICryptoTransform encryptor = rijndaelCipher.CreateEncryptor(SecretKey.GetBytes(32), SecretKey.GetBytes(16)))
+            {
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                    {
+                        cryptoStream.Write(plainText, 0, plainText.Length);
+                        cryptoStream.FlushFinalBlock();
+                        return Convert.ToBase64String(memoryStream.ToArray());
+                    }
+                }
+            }
         }
     }
 }

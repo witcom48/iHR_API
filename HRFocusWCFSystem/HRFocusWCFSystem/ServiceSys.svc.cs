@@ -573,9 +573,16 @@ namespace HRFocusWCFSystem
                 model.modified_by = input.modified_by;
                 model.flag = model.flag;
 
-                bool blnResult = objCom.insert(model);
+                string blnResult = objCom.insert(model);
 
-                if (blnResult)
+                if (blnResult.Equals("limit"))
+                {
+                    output["result"] = "2";
+                    output["result_text"] = "Limit License";
+                    return output.ToString(Formatting.None);
+                }
+
+                if (!blnResult.Equals(""))
                 {
                     //-- Comcards
                     string card_data = input.card_data;
@@ -2112,7 +2119,7 @@ namespace HRFocusWCFSystem
                     {
                         cls_srvImport srvImport = new cls_srvImport();
                         string link = srvImport.doImportExcel(input.company_code, intTaskID.ToString());
-
+                        output["result_link"] = link;
                     }
 
                  
@@ -3451,9 +3458,15 @@ namespace HRFocusWCFSystem
                 model.modified_by = input.modified_by;
                 model.flag = model.flag;
 
-                bool blnResult = objCombranch.insert(model);
+                string blnResult = objCombranch.insert(model);
+                if (blnResult.Equals("limit"))
+                {
+                    output["result"] = "2";
+                    output["result_text"] = "Limit License";
+                    return output.ToString(Formatting.None);
+                }
 
-                if (blnResult)
+                if (!blnResult.Equals(""))
                 {
                     output["result"] = "1";
                     output["result_text"] = "0";
@@ -4156,9 +4169,16 @@ namespace HRFocusWCFSystem
                 model.modified_by = input.modified_by;
                 model.flag = model.flag;
 
-                bool blnResult = objAccount.insert(model);
+                string blnResult = objAccount.insert(model);
 
-                if (blnResult)
+                if (blnResult.Equals("limit"))
+                {
+                    output["result"] = "2";
+                    output["result_text"] = "Limit License";
+                    return output.ToString(Formatting.None);
+                }
+
+                if (blnResult.Equals("yes"))
                 {
                     output["result"] = "1";
                     output["result_text"] = "0";
@@ -5402,6 +5422,14 @@ namespace HRFocusWCFSystem
                 model.flag = model.flag;
 
                 string strResult = objWorker.insert(model);
+
+                if (strResult.Equals("limit"))
+                {
+                    output["result"] = "2";
+                    output["result_text"] = "Limit License";
+                    return output.ToString(Formatting.None);
+
+                }
 
                 if (!strResult.Equals(""))
                 {
@@ -15739,7 +15767,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctTRDashboard objDashh = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom, dateto);
+            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom.ToString("yyyy-MM-dd"), dateto.ToString("yyyy-MM-dd"));
 
             JArray array = new JArray();
 
@@ -15780,6 +15808,353 @@ namespace HRFocusWCFSystem
         }
         #endregion
 
+        #endregion
+        // -- Topic
+        #region Topic
+        public string getTopicList(string emp)
+        {
+            JObject output = new JObject();
+
+            cls_ctSYSTopic objTopic = new cls_ctSYSTopic();
+            List<cls_SYSTopic> listTopic = objTopic.getDataTopicByFillter(emp);
+            JArray array = new JArray();
+
+            if (listTopic.Count > 0)
+            {
+
+
+                int index = 1;
+                foreach (cls_SYSTopic model in listTopic)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("topic_id", model.topic_id);
+                    json.Add("detail", model.detail);
+                    json.Add("status", model.status.Equals("True")?"1":"0");
+                    json.Add("create_by", model.create_by);
+                    json.Add("create_date", model.create_date.ToString("dd-MM-yyyy"));
+                    json.Add("index", index);
+                    index++;
+
+                    array.Add(json);
+
+                }
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageSYSTopic(InputTopic input)
+        {
+            JObject output = new JObject();
+            Authen objAuthen = new Authen();
+
+            try
+            {
+                cls_ctSYSTopic objTopic = new cls_ctSYSTopic();
+                cls_SYSTopic model = new cls_SYSTopic();
+                model.topic_id = input.topic_id;
+                model.detail = input.detail;
+                model.status = input.status;
+                model.create_by = input.create_by;
+
+                bool strResult = objTopic.insert(model);
+
+                if (strResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objTopic.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteSYSTopic(string id)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctSYSTopic objTopic = new cls_ctSYSTopic();
+
+                bool blnResult = objTopic.delete(id);
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objTopic.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
+        //-- Packate
+        #region Packate
+        public string getPackageList()
+        {
+            JObject output = new JObject();
+
+            cls_ctSYSPackage objPackage = new cls_ctSYSPackage();
+            List<cls_SYSPackage> listPackage = objPackage.getData();
+            List<cls_SYSUsepackage> listPackageUse = objPackage.getUse();
+            Authen objAuthen = new Authen();
+            JArray array = new JArray();
+
+            if (listPackage.Count > 0)
+            {
+
+
+                JObject json = new JObject();
+
+                foreach (cls_SYSPackage model in listPackage)
+                {
+
+                    json.Add("package_ref", model.package_ref);
+                    json.Add("packege_name", objAuthen.Decrypt(model.packege_name));
+                    json.Add("packege_com", objAuthen.Decrypt(model.packege_com).Split('C')[1]);
+                    json.Add("packege_branch", objAuthen.Decrypt(model.packege_branch).Split('B')[1]);
+                    json.Add("packege_emp", objAuthen.Decrypt(model.packege_emp).Split('E')[1]);
+                    json.Add("packege_user", objAuthen.Decrypt(model.packege_user).Split('U')[1]);
+                }
+                foreach (cls_SYSUsepackage model in listPackageUse)
+                {
+
+                    json.Add("com", model.com);
+                    json.Add("branch", model.branch);
+                    json.Add("emp", model.emp);
+                    json.Add("user", model.user);
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageSYSPackage(InputPackate input)
+        {
+            JObject output = new JObject();
+            Authen objAuthen = new Authen();
+
+            try
+            {
+                cls_ctSYSPackage objPackage = new cls_ctSYSPackage();
+                cls_SYSPackage model = new cls_SYSPackage();
+                model.package_ref = input.package_ref;
+                model.packege_name = objAuthen.Encrypt_Password(input.package_name);
+                model.packege_com = objAuthen.Encrypt_Password("C"+input.package_com);
+                model.packege_branch = objAuthen.Encrypt_Password("B" + input.package_branch);
+                model.packege_emp = objAuthen.Encrypt_Password("E" + input.package_emp);
+                model.packege_user = objAuthen.Encrypt_Password("U" + input.package_user);
+
+                bool strResult = objPackage.insert(model);
+
+                if (strResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objPackage.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteSYSPackate(string package_ref)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctSYSPackage objPackage = new cls_ctSYSPackage();
+
+                bool blnResult = objPackage.delete(package_ref);
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objPackage.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
+        //-- Allow
+        #region Allow
+        public string getAllowList()
+        {
+            JObject output = new JObject();
+
+            cls_ctSYSAllow objAllow = new cls_ctSYSAllow();
+            List<cls_SYSAllow> listAllowe = objAllow.getData();
+            JArray array = new JArray();
+
+            if (listAllowe.Count > 0)
+            {
+
+
+                int index = 1;
+
+                foreach (cls_SYSAllow model in listAllowe)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("allow_ip", model.allow_ip);
+                    json.Add("allow_port", model.allow_port);
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageSYSAllow(InputAllow input)
+        {
+            JObject output = new JObject();;
+
+            try
+            {
+                cls_ctSYSAllow objAllow = new cls_ctSYSAllow();
+                cls_SYSAllow model = new cls_SYSAllow();
+                model.allow_ip = input.allow_ip;
+                model.allow_port = input.allow_port;
+
+                bool strResult = objAllow.insert(model);
+
+                if (strResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objAllow.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteSYSAllow(string ip, string port)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctSYSAllow objAllow = new cls_ctSYSAllow();
+
+                bool blnResult = objAllow.delete(ip,port);
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objAllow.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
         #endregion
 
         //-- Files manage
@@ -15993,7 +16368,6 @@ namespace HRFocusWCFSystem
 
 
         #endregion
-
 
         //private void 
 
@@ -16334,7 +16708,6 @@ namespace HRFocusWCFSystem
         }
         #endregion
 
-
         //-- Login self services
         public string doLogin(string usr, string pwd, string token)
         {
@@ -16439,8 +16812,6 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
 
         }
-
-
 
         //-- Self services
         public string getShfitDetail(string com, string emp, string workdate, string language)
@@ -16581,7 +16952,6 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
         }
         public string strEmp { get; set; }
-
 
         public string doTest(req input)
         {

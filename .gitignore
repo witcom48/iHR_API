@@ -30,7 +30,8 @@ msbuild.binlog
 msbuild.log
 msbuild.err
 msbuild.wrn
-
+/bin
+/obj
 # Cross building rootfs
 cross/rootfs/
 cross/android-rootfs/

@@ -75,9 +75,7 @@ namespace ClassLibrary_BPC.hrfocus.service
         public string doImportExcel(string com, string taskid)
         {
             string strResult = "";
-
-            bool blnResult = false;
-
+            string ggg = "";
             cls_ctMTTask objMTTask = new cls_ctMTTask();
             List<cls_MTTask> listMTTask = objMTTask.getDataByFillter(com, taskid, "IMP_XLS", "");
             List<string> listError = new List<string>();
@@ -85,7 +83,8 @@ namespace ClassLibrary_BPC.hrfocus.service
             if (listMTTask.Count > 0)
             {
                 cls_MTTask task = listMTTask[0];
-
+                try
+                {
                 task.task_start = DateTime.Now;
 
                 cls_ctMTTask objTaskDetail = new cls_ctMTTask();
@@ -96,8 +95,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 string fileName = task_detail.taskdetail_process;
 
-                try
-                {
+
                     string import_code = fileName.Substring(0, 5);
 
                     int success = 0;
@@ -106,8 +104,9 @@ namespace ClassLibrary_BPC.hrfocus.service
                     switch (import_code)
                     {
                         case "EM001":
-
-                            DataTable dt = doReadExcel(fileName);
+                            try
+                            {
+                                DataTable dt = doReadExcel(fileName);
                             if (dt.Rows.Count > 0)
                             {
                                 foreach (DataRow dr in dt.Rows)
@@ -157,8 +156,13 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     model.flag = model.flag;
 
                                     string strID = objWorker.insert(model);
+                                    if (strID.Equals("limit")){
+                                        objStr.Append("Limit License");
+                                        ggg += strID;
+                                        break;
+                                    }
 
-                                    if (!strID.Equals(""))
+                                    if (strID.Equals("yes"))
                                     {
                                         success++;
                                     }
@@ -169,7 +173,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 }
 
-                                strResult = "";
+                                strResult = "TTTT" + ggg;
 
                                 if (success > 0)
                                     strResult += "Success : " + success.ToString();
@@ -177,6 +181,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 if (objStr.Length > 0)
                                     strResult += " Fail : " + objStr.ToString();
 
+                            }
+                            }
+                            catch (Exception ex)
+                            {
+                                strResult = "ERROR::(Read Xcel)" + ex.ToString();
                             }
 
                             break;
@@ -215,7 +224,6 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         //model.worker_lname_th = dr["lastname_th"].ToString();
                                         //model.worker_fname_en = dr["firstname_en"].ToString();
                                         //model.worker_lname_en = dr["lastname_en"].ToString();
-
                                         model.empcard_code = dr["empcard_code"].ToString();
                                         model.card_type = dr["card_type"].ToString();
                                         model.empcard_issue = Convert.ToDateTime(dr["empcard_issue"]);
@@ -456,7 +464,16 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                         model.empposition_date = Convert.ToDateTime(dr["empposition_date"]);
                                         model.empposition_position = dr["empposition_position"].ToString();
-                                        model.empposition_reason = dr["empposition_reason"].ToString();
+
+                                        if (!dr["empposition_reason"].ToString().Equals(""))
+                                        {
+                                            model.empposition_reason = dr["empposition_reason"].ToString();
+                                        }
+                                        else
+                                        {
+
+                                        }
+                                        
                                        
 
 
@@ -633,19 +650,94 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 }
 
-                                strResult = TEST;
+                                //strResult = TEST;
                                 break;
 
                        }
                     
 
                     //
-                    //EM008
-                    
+                       
+                        //EM008
+                   
+
 
                         switch (import_code)
                         {
                             case "EM008":
+
+                                DataTable dt = doReadExcel(fileName);
+                                if (dt.Rows.Count > 0)
+                                {
+                                    foreach (DataRow dr in dt.Rows)
+                                    {
+                                        //com	emp_code	emp_card	initial_code	firstname_th	lastname_th	firstname_en	lastname_en	emptype_code	emp_gender	emp_birthday	emp_startdate	
+                                        //
+
+                                        cls_ctTREmpbank objEmpbanky = new cls_ctTREmpbank();
+                                        cls_TREmpbank model = new cls_TREmpbank();
+
+
+                                        if (dr["com"].ToString().Equals(""))
+                                            continue;
+                                        model.company_code = dr["com"].ToString();
+
+                                        model.worker_code = dr["emp_code"].ToString();
+                                        //model.worker_card = dr["emp_card"].ToString();
+                                        //model.worker_initial = dr["initial_code"].ToString();
+                                        //model.worker_fname_th = dr["firstname_th"].ToString();
+                                        //model.worker_lname_th = dr["lastname_th"].ToString();
+                                        //model.worker_fname_en = dr["firstname_en"].ToString();
+                                        //model.worker_lname_en = dr["lastname_en"].ToString();
+
+                                        model.empbank_bankcode = dr["bankcode"].ToString();
+                                        model.empbank_bankaccount = dr["bankaccount"].ToString();
+
+                                        model.empbank_bankpercent = Convert.ToDouble(dr["bankpercent"]);
+                                        model.empbank_cashpercent = Convert.ToDouble(dr["cashpercent"]);
+
+                                        model.empbank_bankname = dr["bankname"].ToString();
+                                        
+                                        model.modified_by = task.modified_by;
+                                        //model.empbenefit_break = model.empbenefit_break;
+
+                                        bool strID = objEmpbanky.insert(model);
+
+                                        if (!strID.Equals(""))
+                                        {
+                                            success++;
+                                        }
+                                        else
+                                        {
+                                            objStr.Append(model.company_code + "-" + model.worker_code);
+                                        }
+
+                                    }
+
+                                    strResult = "";
+
+                                    if (success > 0)
+                                        strResult += "Success : " + success.ToString();
+
+                                    if (objStr.Length > 0)
+                                        strResult += " Fail : " + objStr.ToString();
+
+                                }
+
+                                break;
+
+
+                        }
+
+
+                        //
+
+                    //EM009
+                    
+
+                        switch (import_code)
+                        {
+                            case "EM009":
 
                                 DataTable dt = doReadExcel(fileName);
                                 if (dt.Rows.Count > 0)
@@ -718,12 +810,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                     
 
                     //
-                    //EM009
+                    //EM010
                     
 
                         switch (import_code)
                         {
-                            case "EM009":
+                            case "EM010":
 
                                 DataTable dt = doReadExcel(fileName);
                                 if (dt.Rows.Count > 0)
@@ -793,12 +885,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                         }
                     
 
-                    //EM010
+                    //EM011
                     
 
                         switch (import_code)
                         {
-                            case "EM010":
+                            case "EM011":
 
                                 DataTable dt = doReadExcel(fileName);
                                 if (dt.Rows.Count > 0)
@@ -829,8 +921,23 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.emptraining_finish = Convert.ToDateTime(dr["emptraining_finish"]);
                                       
                                         model.emptraining_status = dr["emptraining_status"].ToString();
-                                        model.emptraining_hours = Convert.ToDouble(dr["emptraining_hours"]);
-                                        model.emptraining_cost = Convert.ToDouble(dr["emptraining_cost"]);
+
+                                        if (!dr["emptraining_hours"].ToString().Equals(""))
+                                        {
+                                            model.emptraining_hours = Convert.ToDouble(dr["emptraining_hours"]);
+                                        }
+                                        else
+                                        {
+
+                                        }
+                                        if (!dr["emptraining_cost"].ToString().Equals(""))
+                                        {
+                                            model.emptraining_cost = Convert.ToDouble(dr["emptraining_cost"]);
+                                        }
+                                        else
+                                        {
+
+                                        }
                                       
                                         model.emptraining_note = dr["emptraining_note"].ToString();
                                         model.institute_code = dr["institute_code"].ToString();
@@ -870,13 +977,13 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 break;
                         }
-                    //10
-                        //EM011
+                    //11
+                        //EM012
 
 
                         switch (import_code)
                         {
-                            case "EM011":
+                            case "EM012":
 
                                 DataTable dt = doReadExcel(fileName);
                                 if (dt.Rows.Count > 0)
@@ -902,11 +1009,26 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         //model.worker_lname_en = dr["lastname_en"].ToString();
 
                                         model.empsalary_amount = Convert.ToDouble(dr["amount"]);
-                                        model.empsalary_incamount = Convert.ToDouble(dr["incamount"]);
-                                        model.empsalary_incpercent = Convert.ToDouble(dr["incpercent"]);
                                         model.empsalary_date = Convert.ToDateTime(dr["date"]);
                                         model.empsalary_reason = dr["reason"].ToString();
 
+                                        if (!dr["incamount"].ToString().Equals(""))
+                                        {
+                                            model.empsalary_incamount = Convert.ToDouble(dr["incamount"]);
+                                        }
+                                        else
+                                        {
+
+                                        }
+
+                                        if (!dr["incpercent"].ToString().Equals(""))
+                                        {
+                                        model.empsalary_incpercent = Convert.ToDouble(dr["incpercent"]);
+                                          }
+                                        else
+                                        {
+
+                                        }
 
                                         model.modified_by = task.modified_by;
                                         model.flag = model.flag;
@@ -940,14 +1062,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                         }
 
 
-                        //EM011
-
                         //EM012
+
+                        //EM013
 
 
                         switch (import_code)
                         {
-                            case "EM012":
+                            case "EM013":
 
                                 DataTable dt = doReadExcel(fileName);
                                 if (dt.Rows.Count > 0)
@@ -978,7 +1100,16 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.empprovident_card = dr["empprovident_card"].ToString();
                                         model.empprovident_entry = Convert.ToDateTime(dr["entry"]);
                                         model.empprovident_start = Convert.ToDateTime(dr["start"]);
-                                        model.empprovident_end = Convert.ToDateTime(dr["end"]);
+
+                                        if (!dr["end"].ToString().Equals(""))
+                                        {
+                                            model.empprovident_end = Convert.ToDateTime(dr["end"]);
+                                        }
+                                        else
+                                        {
+
+                                        }
+                                        
 
 
                                         model.modified_by = task.modified_by;
@@ -1013,14 +1144,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                         }
 
 
-                    //EM012
+                    //EM013
 
-                        //EM013
+                        //EM014
 
 
                         switch (import_code)
                         {
-                            case "EM013":
+                            case "EM014":
 
                                 DataTable dt = doReadExcel(fileName);
                                 if (dt.Rows.Count > 0)
@@ -1086,14 +1217,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                         }
 
 
-                    //EM013
+                    //EM014
 
-                        //EM014
+                        //EM015
 
 
                         switch (import_code)
                         {
-                            case "EM014":
+                            case "EM015":
 
                                 DataTable dt = doReadExcel(fileName);
                                 if (dt.Rows.Count > 0)
@@ -1161,14 +1292,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                         }
 
 
-                    //EM014
+                    //EM015
 
-                        //EM015
+                        //EM016
 
 
                         switch (import_code)
                         {
-                            case "EM015":
+                            case "EM016":
 
                                 DataTable dt = doReadExcel(fileName);
                                 if (dt.Rows.Count > 0)
@@ -1236,14 +1367,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                         }
 
 
-                    //EM015
+                    //EM016
 
-                        //EM016
+                        //EM017
 
 
                         switch (import_code)
                         {
-                            case "EM016":
+                            case "EM017":
 
                                 DataTable dt = doReadExcel(fileName);
                                 if (dt.Rows.Count > 0)
@@ -1314,7 +1445,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                         }
 
 
-                    //EM016
+                    //EM017
                     }
 
                 
