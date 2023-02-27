@@ -62,7 +62,6 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.empposition_position = dr["EMPPOSITION_POSITION"].ToString();
                     model.position_name_en = dr["POSITION_NAME_EN"].ToString();
                     model.position_name_th = dr["POSITION_NAME_TH"].ToString();
-                    model.position_name_en = dr["POSITION_NAME_EN"].ToString();
                     
 
                     list_model.Add(model);
@@ -77,11 +76,11 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_TREmpPositionDash> getDataByFillter(DateTime fromdate, DateTime todate)
+        public List<cls_TREmpPositionDash> getDataByFillter(string fromdate, string todate)
         {
             string strCondition = "";
 
-            strCondition += " AND (EMPPOSITION_DATE BETWEEN '" + fromdate.ToString(this.FormatDateDB) + "' AND '" + todate.ToString(this.FormatDateDB) + "' )";
+            strCondition += " AND (EMPPOSITION_DATE BETWEEN '" + fromdate + "' AND '" + todate+ "' )";
 
             return this.getData(strCondition);
         }

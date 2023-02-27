@@ -208,6 +208,33 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return intResult;
         }
 
+        public int getID(string com, string empid)
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT EMPBANK_ID ");
+                obj_str.Append(" FROM HRM_TR_EMPBANK");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + empid + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Empbank.getID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
         public bool insert(cls_TREmpbank model)
         {
             bool blnResult = false;
@@ -285,6 +312,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public bool update(cls_TREmpbank model)
         {
+            string strResult = model.empbank_id.ToString();
             bool blnResult = false;
             try
             {
@@ -306,11 +334,15 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", FLAG=@FLAG ");
 
                 obj_str.Append(" WHERE EMPBANK_ID=@EMPBANK_ID ");
-                               
+                obj_str.Append(" AND WORKER_CODE=@WORKER_CODE ");
+
                 obj_conn.doConnect();
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
-
+                if (model.empbank_id == 0)
+                {
+                    strResult = this.getID(model.company_code, model.worker_code).ToString();
+                }
                 obj_cmd.Parameters.Add("@EMPBANK_BANKCODE", SqlDbType.VarChar); obj_cmd.Parameters["@EMPBANK_BANKCODE"].Value = model.empbank_bankcode;
                 obj_cmd.Parameters.Add("@EMPBANK_BANKACCOUNT", SqlDbType.VarChar); obj_cmd.Parameters["@EMPBANK_BANKACCOUNT"].Value = model.empbank_bankaccount;
                 obj_cmd.Parameters.Add("@EMPBANK_BANKPERCENT", SqlDbType.Decimal); obj_cmd.Parameters["@EMPBANK_BANKPERCENT"].Value = model.empbank_bankpercent;
@@ -322,7 +354,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
                 obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit); obj_cmd.Parameters["@FLAG"].Value = false;
 
-                obj_cmd.Parameters.Add("@EMPBANK_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPBANK_ID"].Value = model.empbank_id;
+                obj_cmd.Parameters.Add("@EMPBANK_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPBANK_ID"].Value = strResult;
+                obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
 
                 obj_cmd.ExecuteNonQuery();
 

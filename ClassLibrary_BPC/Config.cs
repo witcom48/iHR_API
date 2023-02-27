@@ -13,6 +13,7 @@ namespace ClassLibrary_BPC
         static public string Userid = "sa";
 
         static public string Server = ".\\SQLEXPRESS";
+        //static public string Server = "83.118.28.242";
         //static public string Server = "161.82.218.95";
         static public string Password = "Sql2019*";
 

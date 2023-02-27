@@ -587,26 +587,26 @@ namespace HRFocusWCFSystem
                     //-- Comcards
                     string card_data = input.card_data;
 
-                    try
-                    {
-                        JObject jsonObject = new JObject();
-                        var jsonArray = JsonConvert.DeserializeObject<List<cls_TRComcard>>(card_data);
-                        List<cls_TRComcard> list_model = new List<cls_TRComcard>();
-                        cls_ctTRComcard objCard = new cls_ctTRComcard();
+                    //try
+                    //{
+                    //    JObject jsonObject = new JObject();
+                    //    var jsonArray = JsonConvert.DeserializeObject<List<cls_TRComcard>>(card_data);
+                    //    List<cls_TRComcard> list_model = new List<cls_TRComcard>();
+                    //    cls_ctTRComcard objCard = new cls_ctTRComcard();
 
-                        bool blnClear = objCard.clear(input.company_code);
-                        if (blnClear)
-                        {
-                            foreach (cls_TRComcard item in jsonArray)
-                            {
-                                item.company_code = input.company_code;
-                                item.modified_by = input.modified_by;
-                                objCard.insert(item);
-                            }
-                        }
+                    //    bool blnClear = objCard.clear(input.company_code);
+                    //    if (blnClear)
+                    //    {
+                    //        foreach (cls_TRComcard item in jsonArray)
+                    //        {
+                    //            item.company_code = input.company_code;
+                    //            item.modified_by = input.modified_by;
+                    //            objCard.insert(item);
+                    //        }
+                    //    }
 
-                    }
-                    catch { }
+                    //}
+                    //catch { }
 
 
 
@@ -3861,13 +3861,12 @@ namespace HRFocusWCFSystem
                     var jsonArray = JsonConvert.DeserializeObject<List<cls_TRCombank>>(bank_data);
                     cls_ctTRCombank objBank = new cls_ctTRCombank();
 
-                    //objBank.clear
+                    objBank.clear(input.company_code);
 
                     foreach (cls_TRCombank item in jsonArray)
                     {                        
 
-                        item.combank_bankaccount = company_code;
-
+                        item.company_code = company_code;
 
                         item.modified_by = input.modified_by;
                         blnResult = objBank.insert(item);
@@ -5602,8 +5601,8 @@ namespace HRFocusWCFSystem
                    
                     json.Add("comcard_issue", model.comcard_issue);
                     json.Add("comcard_expire", model.comcard_expire);
-
                     json.Add("company_code", model.company_code);
+                    json.Add("card_type", model.card_type);
                     json.Add("combranch_code", model.combranch_code);
                     json.Add("change", false);
 
@@ -5726,7 +5725,7 @@ namespace HRFocusWCFSystem
                     JObject jsonObject = new JObject();
                     var jsonArray = JsonConvert.DeserializeObject<List<cls_TRComcard>>(addr_data);
                     cls_ctTRComcard objAddr = new cls_ctTRComcard();
-
+                    objAddr.clear(input.company_code);
                     foreach (cls_TRComcard item in jsonArray)
                     {
                         item.company_code = company_code;
@@ -15443,7 +15442,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctMTEmpPositionDash objPoDash = new cls_ctMTEmpPositionDash();
-            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(datefrom, dateto);
+            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(fromdate, todate);
 
             JArray array = new JArray();
 
@@ -15795,7 +15794,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctTRDashboard objDashh = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom, dateto);
+            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom.ToString("yyyy-MM-dd"), dateto.ToString("yyyy-MM-dd"));
 
             JArray array = new JArray();
 
