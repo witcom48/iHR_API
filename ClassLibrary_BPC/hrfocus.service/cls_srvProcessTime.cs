@@ -63,6 +63,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                 cls_ctTRTimeot objTimeot = new cls_ctTRTimeot();
                 cls_ctTRTimeonsite objTimeonsite = new cls_ctTRTimeonsite();
 
+                cls_ctTRPlanschedule objTimeschedule = new cls_ctTRPlanschedule();
+
                 string[] process = task_detail.taskdetail_process.Split('|');
 
                 
@@ -160,7 +162,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
                             //-- Get daytype OLD
-                            string daytype = "N";                            
+                            string daytype = timecard.timecard_daytype_plan;                            
                             foreach (cls_TRHoliday holiday in listHoliday)
                             {
                                 if (holiday.holiday_date == date)

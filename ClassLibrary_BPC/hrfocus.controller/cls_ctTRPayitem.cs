@@ -133,6 +133,23 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(language, strCondition);
         }
 
+        public List<cls_TRPayitem> getDataByCreateDate(string language, string com, string emp, DateTime date, DateTime datecreate)
+        {
+            string strCondition = "";
+
+            strCondition += " AND HRM_TR_PAYITEM.COMPANY_CODE='" + com + "'";
+            strCondition += " AND HRM_TR_PAYITEM.PAYITEM_DATE='" + date.ToString("MM/dd/yyyy") + "'";
+
+            if (!emp.Equals(""))
+                strCondition += " AND HRM_TR_PAYITEM.WORKER_CODE='" + emp + "'";
+
+            strCondition += " AND (HRM_TR_PAYITEM.CREATED_DATE >= '" + datecreate.ToString("MM/dd/yyyy") + "' OR HRM_TR_PAYITEM.MODIFIED_DATE >= '" + datecreate.ToString("MM/dd/yyyy") + "')";
+
+
+
+            return this.getData(language, strCondition);
+        }
+
         public bool checkDataOld(string com, string emp, string item, DateTime date)
         {
             bool blnResult = false;

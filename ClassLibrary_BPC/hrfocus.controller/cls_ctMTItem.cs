@@ -46,6 +46,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ITEM_CALPF");
                 obj_str.Append(", ITEM_CALSSO");
                 obj_str.Append(", ITEM_CALOT");
+
+                obj_str.Append(", ISNULL(ITEM_CALALLW, 'N') AS ITEM_CALALLW");
+
                 obj_str.Append(", ITEM_CONTAX");
                 obj_str.Append(", ITEM_SECTION");
 
@@ -80,6 +83,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.item_caltax = dr["ITEM_CALTAX"].ToString();
                     model.item_calpf = dr["ITEM_CALPF"].ToString();
                     model.item_calsso = dr["ITEM_CALSSO"].ToString();
+
+                    model.item_calallw = dr["ITEM_CALALLW"].ToString();
+
                     model.item_calot = dr["ITEM_CALOT"].ToString();
                     model.item_contax = dr["ITEM_CONTAX"].ToString();
 
@@ -227,6 +233,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ITEM_RATE ");
                 obj_str.Append(", ITEM_ACCOUNT ");
 
+                obj_str.Append(", ITEM_CALALLW ");
+
                 obj_str.Append(", CREATED_BY ");
                 obj_str.Append(", CREATED_DATE ");
                 obj_str.Append(", FLAG ");
@@ -248,6 +256,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", @ITEM_SECTION ");
                 obj_str.Append(", @ITEM_RATE ");
                 obj_str.Append(", @ITEM_ACCOUNT ");
+
+                obj_str.Append(", @ITEM_CALALLW ");
 
                 obj_str.Append(", @CREATED_BY ");
                 obj_str.Append(", @CREATED_DATE ");
@@ -274,6 +284,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@ITEM_SECTION", SqlDbType.VarChar); obj_cmd.Parameters["@ITEM_SECTION"].Value = model.item_section;
                 obj_cmd.Parameters.Add("@ITEM_RATE", SqlDbType.Decimal); obj_cmd.Parameters["@ITEM_RATE"].Value = model.item_rate;
                 obj_cmd.Parameters.Add("@ITEM_ACCOUNT", SqlDbType.VarChar); obj_cmd.Parameters["@ITEM_ACCOUNT"].Value = model.item_account;
+
+                obj_cmd.Parameters.Add("@ITEM_CALALLW", SqlDbType.VarChar); obj_cmd.Parameters["@ITEM_CALALLW"].Value = model.item_calallw;
 
                 obj_cmd.Parameters.Add("@CREATED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@CREATED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@CREATED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@CREATED_DATE"].Value = DateTime.Now;
@@ -317,6 +329,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ITEM_RATE=@ITEM_RATE ");
                 obj_str.Append(", ITEM_ACCOUNT=@ITEM_ACCOUNT ");
 
+                obj_str.Append(", ITEM_CALALLW=@ITEM_CALALLW ");
+
                 obj_str.Append(", MODIFIED_BY=@MODIFIED_BY ");
                 obj_str.Append(", MODIFIED_DATE=@MODIFIED_DATE ");
                 obj_str.Append(", FLAG=@FLAG ");
@@ -340,6 +354,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@ITEM_SECTION", SqlDbType.VarChar); obj_cmd.Parameters["@ITEM_SECTION"].Value = model.item_section;
                 obj_cmd.Parameters.Add("@ITEM_RATE", SqlDbType.Decimal); obj_cmd.Parameters["@ITEM_RATE"].Value = model.item_rate;
                 obj_cmd.Parameters.Add("@ITEM_ACCOUNT", SqlDbType.VarChar); obj_cmd.Parameters["@ITEM_ACCOUNT"].Value = model.item_account;
+
+                obj_cmd.Parameters.Add("@ITEM_CALALLW", SqlDbType.VarChar); obj_cmd.Parameters["@ITEM_CALALLW"].Value = model.item_calallw;
                 
                 obj_cmd.Parameters.Add("@MODIFIED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@MODIFIED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;

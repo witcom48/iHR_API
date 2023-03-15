@@ -95,6 +95,51 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(strCondition);
         }
 
+        public List<cls_TREmppolatt> getDataPolItem(string com, string worker, string type)
+        {
+            List<cls_TREmppolatt> list_model = new List<cls_TREmppolatt>();
+            cls_TREmppolatt model;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT DISTINCT EMPPOLATT_POLICY_CODE ");
+                obj_str.Append(" FROM HRM_TR_EMPPOLATT");
+                obj_str.Append(" WHERE 1=1");
+
+                if (!worker.Equals(""))
+                    obj_str.Append(" AND WORKER_CODE='" + worker + "'");
+
+                if (!type.Equals(""))
+                    obj_str.Append(" AND EMPPOLATT_POLICY_TYPE='" + type + "'");
+
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    model = new cls_TREmppolatt();
+
+                    model.company_code = "";
+                    model.worker_code = "";
+
+                    model.emppolatt_policy_code = dr["EMPPOLATT_POLICY_CODE"].ToString();
+                    model.emppolatt_policy_type = "";
+
+                    list_model.Add(model);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Emppolatt.getDataPolItem)" + ex.ToString();
+            }
+
+            return list_model;
+
+
+        }
+
                
         public bool delete(string com, string emp, string type)
         {

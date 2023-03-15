@@ -36,6 +36,10 @@ namespace HRFocusWCFSystem
         public string item_calsso { get; set; }
         [DataMember]
         public string item_calot { get; set; }
+
+        [DataMember]
+        public string item_calallw { get; set; }
+
         [DataMember]
         public string item_contax { get; set; }
         [DataMember]

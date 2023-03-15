@@ -68,6 +68,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ISNULL(TIMECARD_LATE_MIN_APP, 0) AS TIMECARD_LATE_MIN_APP");
 
                 obj_str.Append(", ISNULL(TIMECARD_LOCK, 0) AS TIMECARD_LOCK");
+
+                obj_str.Append(", ISNULL(TIMECARD_DAYTYPE_PLAN, TIMECARD_DAYTYPE) AS TIMECARD_DAYTYPE_PLAN");
+
+                obj_str.Append(", TIMECARD_DAYTYPE");
                                 
                 obj_str.Append(", ISNULL(MODIFIED_BY, CREATED_BY) AS MODIFIED_BY");
                 obj_str.Append(", ISNULL(MODIFIED_DATE, CREATED_DATE) AS MODIFIED_DATE");
@@ -121,6 +125,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.timecard_late_min_app = Convert.ToInt32(dr["TIMECARD_LATE_MIN_APP"]);
 
                     model.timecard_lock = Convert.ToBoolean(dr["TIMECARD_LOCK"]);
+
+                    model.timecard_daytype_plan = dr["TIMECARD_DAYTYPE_PLAN"].ToString();
 
                     model.modified_by = dr["MODIFIED_BY"].ToString();
                     model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
@@ -272,6 +278,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     obj_str.Append(", TIMECARD_DAYTYPE ");
                     obj_str.Append(", TIMECARD_COLOR ");
                     obj_str.Append(", TIMECARD_LOCK ");
+
+                    obj_str.Append(", TIMECARD_DAYTYPE_PLAN ");
+
                     obj_str.Append(", CREATED_BY ");
                     obj_str.Append(", CREATED_DATE ");
                     obj_str.Append(", FLAG ");
@@ -285,6 +294,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     obj_str.Append(", @TIMECARD_DAYTYPE ");
                     obj_str.Append(", @TIMECARD_COLOR ");
                     obj_str.Append(", @TIMECARD_LOCK ");
+
+                    obj_str.Append(", @TIMECARD_DAYTYPE_PLAN ");
+
                     obj_str.Append(", @CREATED_BY ");
                     obj_str.Append(", @CREATED_DATE ");
                     obj_str.Append(", @FLAG ");
@@ -301,6 +313,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     obj_cmd.Parameters.Add("@TIMECARD_COLOR", SqlDbType.VarChar);
                     obj_cmd.Parameters.Add("@TIMECARD_LOCK", SqlDbType.Bit);
 
+                    obj_cmd.Parameters.Add("@TIMECARD_DAYTYPE_PLAN", SqlDbType.VarChar);
+
                     obj_cmd.Parameters.Add("@CREATED_BY", SqlDbType.VarChar); 
                     obj_cmd.Parameters.Add("@CREATED_DATE", SqlDbType.DateTime); 
                     obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit); 
@@ -316,6 +330,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                         obj_cmd.Parameters["@TIMECARD_DAYTYPE"].Value = model.timecard_daytype;
                         obj_cmd.Parameters["@TIMECARD_COLOR"].Value = model.timecard_color;
                         obj_cmd.Parameters["@TIMECARD_LOCK"].Value = false;
+
+                        obj_cmd.Parameters["@TIMECARD_DAYTYPE_PLAN"].Value = model.timecard_daytype;
 
                         obj_cmd.Parameters["@CREATED_BY"].Value = model.modified_by;
                         obj_cmd.Parameters["@CREATED_DATE"].Value = DateTime.Now;

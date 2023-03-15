@@ -78,6 +78,8 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         public int timecard_leavededuct_min { get; set; }
 
+        public string timecard_daytype_plan { get; set; }
+
 
     }
 }

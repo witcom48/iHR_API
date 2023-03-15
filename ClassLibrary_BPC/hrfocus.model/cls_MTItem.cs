@@ -23,6 +23,9 @@ namespace ClassLibrary_BPC.hrfocus.model
         public string item_calpf { get; set; }
         public string item_calot { get; set; }
         public string item_calsso { get; set; }
+
+        public string item_calallw { get; set; }
+
         public string item_contax { get; set; }
         public string item_section { get; set; }
 

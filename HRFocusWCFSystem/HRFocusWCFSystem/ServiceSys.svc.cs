@@ -1567,6 +1567,8 @@ namespace HRFocusWCFSystem
                     json.Add("item_section", model.item_section);
                     json.Add("item_rate", model.item_rate);
                     json.Add("item_account", model.item_account);
+
+                    json.Add("item_calallw", model.item_calallw);
                     
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);
@@ -1617,6 +1619,8 @@ namespace HRFocusWCFSystem
                 model.item_section = input.item_section;
                 model.item_rate = input.item_rate;
                 model.item_account = input.item_account;
+
+                model.item_calallw = input.item_calallw;
                 
                 model.modified_by = input.modified_by;
                 model.flag = model.flag;
@@ -15217,7 +15221,7 @@ namespace HRFocusWCFSystem
         }
         #endregion
 
-        public string getSummaryWageList(string language, string com, string fromdate, string todate, string createdate)
+        public string getSummaryWageList_OLD(string language, string com, string fromdate, string todate, string createdate)
         {
             JObject output = new JObject();
 
@@ -15242,11 +15246,12 @@ namespace HRFocusWCFSystem
 
                 int row = 0;
 
+                JObject json = new JObject();
+
                 foreach (cls_TRWageday model in listWageday)
                 {
-                    row++;
-
-                    if (worker_code.Equals(model.worker_code) && row < listWageday.Count)
+                    
+                    if (worker_code.Equals(model.worker_code))
                     {
 
                         douSalary += model.wageday_wage;
@@ -15256,11 +15261,10 @@ namespace HRFocusWCFSystem
                         douOvertime += (model.ot1_amount + model.ot15_amount + model.ot2_amount + model.ot3_amount);
                         douAllowance += model.allowance_amount;
 
-
                     }
                     else
                     {
-                        JObject json = new JObject();
+                        json = new JObject();
 
                         json.Add("company_code", com);
                         json.Add("worker_code", worker_code);
@@ -15279,18 +15283,200 @@ namespace HRFocusWCFSystem
                         array.Add(json);
 
                         //-- Next emp
+                        douSalary = model.wageday_wage;
+                        douLate = model.late_amount;
+                        douLeave = model.leave_amount;
+                        douAbsent = model.absent_amount;
+                        douOvertime = (model.ot1_amount + model.ot15_amount + model.ot2_amount + model.ot3_amount);
+                        douAllowance = model.allowance_amount;
+
+                        worker_code = model.worker_code;
+                        worker_detail = model.worker_detail;
+                    }
+
+                    row++;
+                    
+                }
+
+                //-- Last Item
+                json = new JObject();
+
+                json.Add("company_code", com);
+                json.Add("worker_code", worker_code);
+                json.Add("worker_detail", worker_detail);
+
+                json.Add("salary", douSalary);
+                json.Add("late", douLate);
+                json.Add("leave", douLeave);
+                json.Add("absent", douAbsent);
+                json.Add("overtime", douOvertime);
+                json.Add("allowance", douAllowance);
+
+                json.Add("index", index);
+                array.Add(json);
+
+
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string getSummaryWageList(string language, string com, string fromdate, string todate, string createdate)
+        {
+            JObject output = new JObject();
+
+            cls_ctTRPayitem objPayitem = new cls_ctTRPayitem();
+            List<cls_TRPayitem> listWageday = objPayitem.getDataByCreateDate(language, com, "", Convert.ToDateTime(fromdate), Convert.ToDateTime(createdate));
+
+            cls_ctTREmppolatt objPolatt = new cls_ctTREmppolatt();
+            List<cls_TREmppolatt> listPolatt = objPolatt.getDataPolItem(com, "", "AW");
+            string[] allw_code = { "", "", "", "", "", "", "", "", "", "" };
+
+            int i = 0;
+            foreach (cls_TREmppolatt model in listPolatt)
+            {
+                allw_code[i] = model.emppolatt_policy_code;
+
+                if (++i == 10)
+                    break;
+                
+
+            }
+
+            JArray array = new JArray();
+
+            if (listWageday.Count > 0)
+            {
+                int index = 1;
+
+
+                string worker_code = listWageday[0].worker_code;
+                string worker_detail = listWageday[0].worker_detail;
+
+                double douSalary = 0;
+                double douLate = 0;
+                double douLeave = 0;
+                double douAbsent = 0;
+                double douOvertime = 0;
+                double douAllowance = 0;
+                double douDiligence = 0;
+
+                int row = 0;
+
+                JObject json = new JObject();
+
+                foreach (cls_TRPayitem model in listWageday)
+                {
+                    string item_code = model.item_code.Substring(0, 2);
+
+                    if (worker_code.Equals(model.worker_code))
+                    {
+                 
+                        switch (item_code)
+                        {
+                            case "SA": douSalary += model.payitem_amount; break;
+                            case "OT": douOvertime += model.payitem_amount; break;
+                            case "DG": douDiligence += model.payitem_amount; break;
+                            case "LT": douLate += model.payitem_amount; break;
+                            case "LV": douLeave += model.payitem_amount; break;
+                            case "AB": douAbsent += model.payitem_amount; break;                                                           
+                        }
+
+                        if(allw_code[0]==model.item_code || allw_code[1]==model.item_code || allw_code[2]==model.item_code || allw_code[3]==model.item_code || allw_code[4]==model.item_code
+                            || allw_code[5]==model.item_code|| allw_code[6]==model.item_code|| allw_code[7]==model.item_code|| allw_code[8]==model.item_code|| allw_code[9]==model.item_code
+                            )
+                        {
+                            douAllowance += model.payitem_amount;
+                        }
+                      
+                    }
+                    else
+                    {
+                        json = new JObject();
+
+                        json.Add("company_code", com);
+                        json.Add("worker_code", worker_code);
+                        json.Add("worker_detail", worker_detail);
+
+                        json.Add("salary", douSalary);
+                        json.Add("late", douLate);
+                        json.Add("leave", douLeave);
+                        json.Add("absent", douAbsent);
+                        json.Add("overtime", douOvertime);
+                        json.Add("allowance", douAllowance);
+                        json.Add("diligence", douDiligence);
+
+                        json.Add("index", index);
+                        index++;
+
+                        array.Add(json);
+
+                        //-- Next emp
                         douSalary = 0;
                         douLate = 0;
                         douLeave = 0;
                         douAbsent = 0;
                         douOvertime = 0;
                         douAllowance = 0;
-
+                        douDiligence = 0;
+                        
                         worker_code = model.worker_code;
                         worker_detail = model.worker_detail;
+
+                        switch (item_code)
+                        {
+                            case "SA": douSalary += model.payitem_amount; break;
+                            case "OT": douOvertime += model.payitem_amount; break;
+                            case "DG": douDiligence += model.payitem_amount; break;
+                            case "LT": douLate += model.payitem_amount; break;
+                            case "LV": douLeave += model.payitem_amount; break;
+                            case "AB": douAbsent += model.payitem_amount; break;
+                            
+                        }
+
+                        if (allw_code[0] == model.item_code || allw_code[1] == model.item_code || allw_code[2] == model.item_code || allw_code[3] == model.item_code || allw_code[4] == model.item_code
+                            || allw_code[5] == model.item_code || allw_code[6] == model.item_code || allw_code[7] == model.item_code || allw_code[8] == model.item_code || allw_code[9] == model.item_code
+                            )
+                        {
+                            douAllowance += model.payitem_amount;
+                        }
+
+
                     }
-                    
+
+                    row++;
+
                 }
+
+                //-- Last Item
+                json = new JObject();
+
+                json.Add("company_code", com);
+                json.Add("worker_code", worker_code);
+                json.Add("worker_detail", worker_detail);
+
+                json.Add("salary", douSalary);
+                json.Add("late", douLate);
+                json.Add("leave", douLeave);
+                json.Add("absent", douAbsent);
+                json.Add("overtime", douOvertime);
+                json.Add("allowance", douAllowance);
+                json.Add("diligence", douDiligence);
+
+                json.Add("index", index);
+                array.Add(json);
+
+
 
                 output["result"] = "1";
                 output["result_text"] = "1";
