@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="hrfocus.controller\cls_ctMTPolround.cs" />
     <Compile Include="hrfocus.controller\cls_ctSYSAllow.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTBank.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTBonus.cs" />
@@ -183,6 +184,7 @@
     <Compile Include="hrfocus.controller\cls_ctTRPlanschedule.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRTimecard.cs" />
     <Compile Include="hrfocus.model\cls_MTBdashboard.cs" />
+    <Compile Include="hrfocus.model\cls_MTPolround.cs" />
     <Compile Include="hrfocus.model\cls_SYSAllow.cs" />
     <Compile Include="hrfocus.model\cls_SYSPackage.cs" />
     <Compile Include="hrfocus.model\cls_SYSTopic.cs" />

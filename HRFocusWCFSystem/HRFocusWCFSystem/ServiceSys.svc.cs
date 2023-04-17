@@ -494,6 +494,152 @@ namespace HRFocusWCFSystem
         }
         #endregion
 
+        #region MTPolround
+        public string getMTPolroundList(string com)
+        {
+            JObject output = new JObject();
+
+            cls_ctMTPolround objPolround = new cls_ctMTPolround();
+            List<cls_MTPolround> listPolround = objPolround.getDataByFillter(com);
+
+            JArray array = new JArray();
+
+            if (listPolround.Count > 0)
+            {
+
+                int index = 1;
+
+                foreach (cls_MTPolround model in listPolround)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("company_code", model.company_code);
+                    json.Add("polround_pf", model.polround_pf);
+                    json.Add("polround_sso", model.polround_sso);
+                    json.Add("polround_tax", model.polround_tax);
+                    json.Add("polround_wage_day", model.polround_wage_day);
+                    json.Add("polround_wage_summary", model.polround_wage_summary);
+                    json.Add("polround_ot_day", model.polround_ot_day);
+                    json.Add("polround_ot_summary", model.polround_ot_summary);
+                    json.Add("polround_absent", model.polround_absent);
+                    json.Add("polround_late", model.polround_late);
+                    json.Add("polround_leave", model.polround_leave);
+                    json.Add("polround_netpay", model.polround_netpay);
+                    json.Add("polround_timelate", model.polround_timelate);
+                    json.Add("polround_timeleave", model.polround_timeleave);
+                    json.Add("polround_timeot", model.polround_timeot);
+                    json.Add("polround_timeworking", model.polround_timeworking);
+                    json.Add("modified_by", model.modified_by);
+                    json.Add("modified_date", model.modified_date);
+                    json.Add("flag", model.flag);
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManagePolround(InputMTPolround input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctMTPolround objPolround = new cls_ctMTPolround();
+                cls_MTPolround model = new cls_MTPolround();
+
+                model.company_code = input.company_code;
+                model.polround_pf = input.polround_pf;
+                model.polround_sso = input.polround_sso;
+                model.polround_tax = input.polround_tax;
+                model.polround_wage_day = input.polround_wage_day;
+                model.polround_wage_summary = input.polround_wage_summary;
+                model.polround_ot_day = input.polround_ot_day;
+                model.polround_ot_summary = input.polround_ot_summary;
+                model.polround_absent = input.polround_absent;
+                model.polround_late = input.polround_late;
+                model.polround_leave = input.polround_leave;
+                model.polround_netpay = input.polround_netpay;
+                model.polround_timelate = input.polround_timelate;
+                model.polround_timeleave = input.polround_timeleave;
+                model.polround_timeot = input.polround_timeot;
+                model.polround_timeworking = input.polround_timeworking;
+                model.modified_by = input.modified_by;
+                model.flag = model.flag;
+
+                bool strID = objPolround.insert(model);
+
+                if (strID)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objPolround.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeletePolround(string com)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctMTPolround objPolround = new cls_ctMTPolround();
+
+                bool blnResult = objPolround.delete(com);
+
+                if (blnResult)
+                {
+
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objPolround.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
         #region MTCompany
         public string getMTCompanyList()
         {
@@ -587,26 +733,26 @@ namespace HRFocusWCFSystem
                     //-- Comcards
                     string card_data = input.card_data;
 
-                    try
-                    {
-                        JObject jsonObject = new JObject();
-                        var jsonArray = JsonConvert.DeserializeObject<List<cls_TRComcard>>(card_data);
-                        List<cls_TRComcard> list_model = new List<cls_TRComcard>();
-                        cls_ctTRComcard objCard = new cls_ctTRComcard();
+                    //try
+                    //{
+                    //    JObject jsonObject = new JObject();
+                    //    var jsonArray = JsonConvert.DeserializeObject<List<cls_TRComcard>>(card_data);
+                    //    List<cls_TRComcard> list_model = new List<cls_TRComcard>();
+                    //    cls_ctTRComcard objCard = new cls_ctTRComcard();
 
-                        bool blnClear = objCard.clear(input.company_code);
-                        if (blnClear)
-                        {
-                            foreach (cls_TRComcard item in jsonArray)
-                            {
-                                item.company_code = input.company_code;
-                                item.modified_by = input.modified_by;
-                                objCard.insert(item);
-                            }
-                        }
+                    //    bool blnClear = objCard.clear(input.company_code);
+                    //    if (blnClear)
+                    //    {
+                    //        foreach (cls_TRComcard item in jsonArray)
+                    //        {
+                    //            item.company_code = input.company_code;
+                    //            item.modified_by = input.modified_by;
+                    //            objCard.insert(item);
+                    //        }
+                    //    }
 
-                    }
-                    catch { }
+                    //}
+                    //catch { }
 
 
 
@@ -2049,7 +2195,8 @@ namespace HRFocusWCFSystem
                     else if (input.task_type.Trim().Equals("IMP_TIME"))
                     {
                         cls_srvProcessTime srvTime = new cls_srvProcessTime();
-                        srvTime.doImportTime(input.company_code, intTaskID.ToString());
+                     string link=   srvTime.doImportTime(input.company_code, intTaskID.ToString());
+                        output["result_link"] = link;
                     }
                     //TIME
 
@@ -3865,13 +4012,12 @@ namespace HRFocusWCFSystem
                     var jsonArray = JsonConvert.DeserializeObject<List<cls_TRCombank>>(bank_data);
                     cls_ctTRCombank objBank = new cls_ctTRCombank();
 
-                    //objBank.clear
+                    objBank.clear(input.company_code);
 
                     foreach (cls_TRCombank item in jsonArray)
                     {                        
 
-                        item.combank_bankaccount = company_code;
-
+                        item.company_code = company_code;
 
                         item.modified_by = input.modified_by;
                         blnResult = objBank.insert(item);
@@ -5606,8 +5752,8 @@ namespace HRFocusWCFSystem
                    
                     json.Add("comcard_issue", model.comcard_issue);
                     json.Add("comcard_expire", model.comcard_expire);
-
                     json.Add("company_code", model.company_code);
+                    json.Add("card_type", model.card_type);
                     json.Add("combranch_code", model.combranch_code);
                     json.Add("change", false);
 
@@ -5730,7 +5876,7 @@ namespace HRFocusWCFSystem
                     JObject jsonObject = new JObject();
                     var jsonArray = JsonConvert.DeserializeObject<List<cls_TRComcard>>(addr_data);
                     cls_ctTRComcard objAddr = new cls_ctTRComcard();
-
+                    objAddr.clear(input.company_code);
                     foreach (cls_TRComcard item in jsonArray)
                     {
                         item.company_code = company_code;
@@ -7560,7 +7706,7 @@ namespace HRFocusWCFSystem
                     json.Add("empprovident_entry", model.empprovident_entry);
                     json.Add("empprovident_start", model.empprovident_start);
                     json.Add("empprovident_end", model.empprovident_end);
-
+                    json.Add("provident_data", this.getTRProvidentWorkageList(model.company_code,model.provident_code));
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);
                     json.Add("flag", model.flag);
@@ -8746,7 +8892,7 @@ namespace HRFocusWCFSystem
                     json.Add("provident_name_en", model.provident_name_en);
                   
                     json.Add("company_code", model.company_code);
-
+                    json.Add("provident_data", this.getTRProvidentWorkageList(model.company_code, model.provident_code));
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);
                     json.Add("flag", model.flag);
@@ -15629,7 +15775,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctMTEmpPositionDash objPoDash = new cls_ctMTEmpPositionDash();
-            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(datefrom, dateto);
+            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(fromdate, todate);
 
             JArray array = new JArray();
 
@@ -15981,7 +16127,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctTRDashboard objDashh = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom, dateto);
+            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom.ToString("yyyy-MM-dd"), dateto.ToString("yyyy-MM-dd"));
 
             JArray array = new JArray();
 
