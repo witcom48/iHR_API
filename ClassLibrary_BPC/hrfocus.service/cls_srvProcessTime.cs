@@ -898,6 +898,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     timecard.timecard_after_min_app = req_ot.timeot_aftermin;
                                 }
 
+                                   //-- After
+                                if (timecard.timecard_break_min_app > req_ot.timeot_break)
+                                {
+                                    timecard.timecard_break_min_app = req_ot.timeot_break;
+                                }
+
                             }
 
                             //--******************

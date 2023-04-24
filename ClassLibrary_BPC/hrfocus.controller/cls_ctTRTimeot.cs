@@ -54,6 +54,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ISNULL(TIMEOT_BEFOREMIN, 0) AS TIMEOT_BEFOREMIN");
                 obj_str.Append(", ISNULL(TIMEOT_NORMALMIN, 0) AS TIMEOT_NORMALMIN");
                 obj_str.Append(", ISNULL(TIMEOT_AFTERMIN, 0) AS TIMEOT_AFTERMIN");
+                obj_str.Append(", ISNULL(TIMEOT_BREAK, 0) AS TIMEOT_BREAK");
                 
                 obj_str.Append(", ISNULL(TIMEOT_NOTE, '') AS TIMEOT_NOTE");
                
@@ -94,6 +95,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.timeot_beforemin = Convert.ToInt32(dr["TIMEOT_BEFOREMIN"]);
                     model.timeot_normalmin = Convert.ToInt32(dr["TIMEOT_NORMALMIN"]);
                     model.timeot_aftermin = Convert.ToInt32(dr["TIMEOT_AFTERMIN"]);
+                    model.timeot_break = Convert.ToInt32(dr["TIMEOT_BREAK"]);
                     
                     model.timeot_note = dr["TIMEOT_NOTE"].ToString();
                     model.location_code = dr["LOCATION_CODE"].ToString();
@@ -230,6 +232,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", TIMEOT_BEFOREMIN ");
                 obj_str.Append(", TIMEOT_NORMALMIN ");
                 obj_str.Append(", TIMEOT_AFTERMIN ");
+                obj_str.Append(", TIMEOT_BREAK ");
 
                 obj_str.Append(", TIMEOT_NOTE ");
                 obj_str.Append(", REASON_CODE ");
@@ -252,6 +255,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", @TIMEOT_BEFOREMIN ");
                 obj_str.Append(", @TIMEOT_NORMALMIN ");
                 obj_str.Append(", @TIMEOT_AFTERMIN ");
+                obj_str.Append(", @TIMEOT_BREAK ");
 
                 obj_str.Append(", @TIMEOT_NOTE ");
                 obj_str.Append(", @REASON_CODE ");
@@ -276,6 +280,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@TIMEOT_BEFOREMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_BEFOREMIN"].Value = model.timeot_beforemin;
                 obj_cmd.Parameters.Add("@TIMEOT_NORMALMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_NORMALMIN"].Value = model.timeot_normalmin;
                 obj_cmd.Parameters.Add("@TIMEOT_AFTERMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_AFTERMIN"].Value = model.timeot_aftermin;
+                obj_cmd.Parameters.Add("@TIMEOT_BREAK", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_BREAK"].Value = model.timeot_break;
 
                 obj_cmd.Parameters.Add("@TIMEOT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@TIMEOT_NOTE"].Value = model.timeot_note;
                 obj_cmd.Parameters.Add("@LOCATION_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@LOCATION_CODE"].Value = model.location_code;
@@ -313,6 +318,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", TIMEOT_BEFOREMIN=@TIMEOT_BEFOREMIN ");
                 obj_str.Append(", TIMEOT_NORMALMIN=@TIMEOT_NORMALMIN ");
                 obj_str.Append(", TIMEOT_AFTERMIN=@TIMEOT_AFTERMIN ");
+                obj_str.Append(", TIMEOT_BREAK=@TIMEOT_BREAK ");
 
                 obj_str.Append(", TIMEOT_NOTE=@TIMEOT_NOTE ");
                 obj_str.Append(", REASON_CODE=@REASON_CODE ");
@@ -332,6 +338,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@TIMEOT_BEFOREMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_BEFOREMIN"].Value = model.timeot_beforemin;
                 obj_cmd.Parameters.Add("@TIMEOT_NORMALMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_NORMALMIN"].Value = model.timeot_normalmin;
                 obj_cmd.Parameters.Add("@TIMEOT_AFTERMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_AFTERMIN"].Value = model.timeot_aftermin;
+                obj_cmd.Parameters.Add("@TIMEOT_BREAK", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_BREAK"].Value = model.timeot_break;
 
                 obj_cmd.Parameters.Add("@TIMEOT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@TIMEOT_NOTE"].Value = model.timeot_note;
                 obj_cmd.Parameters.Add("@LOCATION_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@LOCATION_CODE"].Value = model.location_code;

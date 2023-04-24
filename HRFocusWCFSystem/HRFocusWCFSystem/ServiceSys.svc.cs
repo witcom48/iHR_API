@@ -14137,6 +14137,7 @@ namespace HRFocusWCFSystem
                     json.Add("timeot_beforemin", model.timeot_beforemin);
                     json.Add("timeot_normalmin", model.timeot_normalmin);
                     json.Add("timeot_aftermin", model.timeot_aftermin);
+                    json.Add("timeot_breakmin", model.timeot_break);
 
                     int hrs = (model.timeot_beforemin) / 60;
                     int min = (model.timeot_beforemin) - (hrs * 60);
@@ -14149,6 +14150,10 @@ namespace HRFocusWCFSystem
                     hrs = (model.timeot_aftermin) / 60;
                     min = (model.timeot_aftermin) - (hrs * 60);
                     json.Add("timeot_aftermin_hrs", hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0'));
+
+                    hrs = (model.timeot_break) / 60;
+                    min = (model.timeot_break) - (hrs * 60);
+                    json.Add("timeot_breakmin_hrs", hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0'));
                                         
 
                     json.Add("timeot_note", model.timeot_note);
@@ -14198,6 +14203,7 @@ namespace HRFocusWCFSystem
                 model.timeot_beforemin = input.timeot_beforemin;
                 model.timeot_normalmin = input.timeot_normalmin;
                 model.timeot_aftermin = input.timeot_aftermin;
+                model.timeot_break = input.timeot_breakmin;
 
                 model.timeot_note = input.timeot_note;
                 model.location_code = input.location_code;

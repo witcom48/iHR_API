@@ -21,6 +21,7 @@ namespace ClassLibrary_BPC.hrfocus.model
         public int timeot_beforemin { get; set; }
         public int timeot_normalmin { get; set; }
         public int timeot_aftermin { get; set; }
+        public int timeot_break { get; set; }
 
         public string timeot_note { get; set; }
         public string location_code { get; set; }

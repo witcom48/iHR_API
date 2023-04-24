@@ -885,6 +885,8 @@ namespace HRFocusWCFSystem
         [DataMember]
         public int timeot_aftermin { get; set; }
         [DataMember]
+        public int timeot_breakmin { get; set; }
+        [DataMember]
         public string timeot_note { get; set; }
         [DataMember]
         public string location_code { get; set; }

@@ -284,7 +284,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             {
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
-                obj_str.Append("SELECT ISNULL(SUM(TIMEOT_BEFOREMIN+TIMEOT_NORMALMIN+TIMEOT_AFTERMIN),0) FROM HRM_TR_TIMEOT WHERE WORKER_CODE = '" + emp + "' AND COMPANY_CODE = '" + com + "' AND YEAR(TIMEOT_WORKDATE) ='" + year + "'");
+                obj_str.Append("SELECT ISNULL(SUM(TIMEOT_BEFOREMIN+TIMEOT_NORMALMIN+TIMEOT_BREAK+TIMEOT_AFTERMIN),0) FROM HRM_TR_TIMEOT WHERE WORKER_CODE = '" + emp + "' AND COMPANY_CODE = '" + com + "' AND YEAR(TIMEOT_WORKDATE) ='" + year + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
