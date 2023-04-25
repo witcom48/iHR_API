@@ -206,7 +206,32 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return blnResult;
         }
+        public bool delete(string com, string emp, DateTime date)
+        {
+            bool blnResult = true;
+            try
+            {
+                cls_ctConnection obj_conn = new cls_ctConnection();
 
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append(" DELETE FROM HRM_TR_PAYITEM");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "' ");
+                obj_str.Append(" AND WORKER_CODE='" + emp + "' ");
+                obj_str.Append(" AND PAYITEM_DATE='" + date.ToString("MM/dd/yyyy") + "' ");
+
+                blnResult = obj_conn.doExecuteSQL(obj_str.ToString());
+
+
+            }
+            catch (Exception ex)
+            {
+                blnResult = false;
+                Message = "ERROR::(Payitem.delete)" + ex.ToString();
+            }
+
+            return blnResult;
+        }
         public bool delete(string com, string emp)
         {
             bool blnResult = true;

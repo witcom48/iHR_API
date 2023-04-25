@@ -9237,7 +9237,7 @@ namespace HRFocusWCFSystem
             {
                 cls_ctTRPayitem objPayitem = new cls_ctTRPayitem();
 
-                bool blnResult = objPayitem.delete(input.company_code, input.worker_code, input.item_code, Convert.ToDateTime(input.payitem_date));
+                bool blnResult = objPayitem.delete(input.company_code, input.worker_code, Convert.ToDateTime(input.payitem_date));
 
                 if (blnResult)
                 {
