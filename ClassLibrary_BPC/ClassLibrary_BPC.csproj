@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="hrfocus.controller\cls_ctMTEmpStatus.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPolround.cs" />
     <Compile Include="hrfocus.controller\cls_ctSYSAllow.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTBank.cs" />
@@ -184,6 +185,7 @@
     <Compile Include="hrfocus.controller\cls_ctTRPlanschedule.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRTimecard.cs" />
     <Compile Include="hrfocus.model\cls_MTBdashboard.cs" />
+    <Compile Include="hrfocus.model\cls_MTEmpStatus.cs" />
     <Compile Include="hrfocus.model\cls_MTPolround.cs" />
     <Compile Include="hrfocus.model\cls_SYSAllow.cs" />
     <Compile Include="hrfocus.model\cls_SYSPackage.cs" />
@@ -314,6 +316,7 @@
     <Compile Include="hrfocus.model\cls_TRTimecard.cs" />
     <Compile Include="hrfocus.service\cls_srvAuthen.cs" />
     <Compile Include="hrfocus.service\cls_srvImport.cs" />
+    <Compile Include="hrfocus.service\cls_srvProcessEmployee.cs" />
     <Compile Include="hrfocus.service\cls_srvProcessPayroll.cs" />
     <Compile Include="hrfocus.service\cls_srvProcessTime.cs" />
     <Compile Include="hrfocus.service\MultipartParser.cs" />

@@ -107,6 +107,19 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteMTFamily(InputMTFamily input);
 
+        //-- MTEmpStatus
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getMTEmpStatusList();
+
+        [OperationContract(Name = "doManageMTEmpStatus")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageMTEmpStatus(InputMTEmpStatus input);
+
+        [OperationContract(Name = "doDeleteMTEmpStatus")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteMTEmpStatus(InputMTEmpStatus input);
+
         //-- Round
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
@@ -781,6 +794,11 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "doSetBatchLocation")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doSetBatchLocation(InputTREmplocation input);
+
+
+        [OperationContract(Name = "change_workercode")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doChangeWorkerCode(InputChangeWorkerCode input);
         
         #endregion
 

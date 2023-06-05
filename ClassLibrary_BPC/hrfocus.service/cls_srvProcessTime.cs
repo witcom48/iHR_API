@@ -398,12 +398,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 }
                             }
 
+                            int round = 1;
+
                             if (listTimeinput.Count == 0)
                                 goto CALCULATE;
 
                             //-- Step 4 
                             #region Match time
-                            int round = 1;
+                            
                             if (blnCH[3] && blnCH[7])
                                 round++;
 
@@ -412,6 +414,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                             //-- *********************** IN *************************
 
                             //-- OT IN
+                            bool ot_in = false;
                             if (blnCH[1])
                             {
 
@@ -436,12 +439,16 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     timecard.timecard_ch2_scan = true;
                                     timecard.timecard_ch3_scan = true;
 
-                                    blnCH[3] = false;
+                                    //-- F edit 18/05/2023
+                                    //blnCH[3] = false;
+                                    ot_in = true;
                                 }
                             }
 
                             //-- Time normal IN
-                            if (blnCH[3])
+                            //-- F edit 18/05/2023
+                            //if (blnCH[3])
+                            if (!ot_in)
                             {
                                 ts = TimeSpan.Parse(shift.shift_ch3);
                                 DateTime dateShift = date.AddHours(ts.Hours).AddMinutes(ts.Minutes);
@@ -725,25 +732,29 @@ namespace ClassLibrary_BPC.hrfocus.service
                             }
 
                             //-- Normal 2
-                            if (timecard.timecard_ch7_scan && timecard.timecard_ch8_scan)
+                            if (round > 1)
                             {
-                                
-                                ts = timecard.timecard_ch8.Subtract(timecard.timecard_ch7);
-                                timecard.timecard_work2_min = (ts.Hours * 60) + ts.Minutes;
-
-                            }
-                            else
-                            {
-                                if (strDaytype.Equals("O") || strDaytype.Equals("H") || strDaytype.Equals("C") || strDaytype.Equals("L"))
+                                if (timecard.timecard_ch7_scan && timecard.timecard_ch8_scan)
                                 {
+
+                                    ts = timecard.timecard_ch8.Subtract(timecard.timecard_ch7);
+                                    timecard.timecard_work2_min = (ts.Hours * 60) + ts.Minutes;
 
                                 }
                                 else
                                 {
-                                    strDaytype = "A";
+                                    if (strDaytype.Equals("O") || strDaytype.Equals("H") || strDaytype.Equals("C") || strDaytype.Equals("L"))
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        strDaytype = "A";
+                                    }
                                 }
                             }
 
+                            
 
                             //-- OT OUT
                             if (timecard.timecard_ch9_scan && timecard.timecard_ch10_scan)
@@ -788,8 +799,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     int minbreak = (ts.Hours * 60) + ts.Minutes;
 
                                     timecard.timecard_work1_min -= minbreak;
-                                    if(timecard.timecard_late_min > 0)
-                                        timecard.timecard_late_min -= minbreak;
+                                    //if(timecard.timecard_late_min > 0)
+                                    //    timecard.timecard_late_min -= minbreak;
                                 }
 
                             }
@@ -847,10 +858,15 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             }
 
-                            if (blnLeaveFullday)
-                            {
+                            //if (blnLeaveFullday)
+                            //{
+                            //    strDaytype = "L";
+                            //}
+
+                            //-- F add 18/05/2023
+                            if (intLeaveMin > 0)
                                 strDaytype = "L";
-                            }
+
 
                             if (strDaytype.Equals("A"))
                             {
@@ -871,6 +887,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 timecard.timecard_before_min_app = 0;
                                 timecard.timecard_after_min_app = 0;
+                                timecard.timecard_break_min_app = 0;
 
                             }
                             else
@@ -898,7 +915,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     timecard.timecard_after_min_app = req_ot.timeot_aftermin;
                                 }
 
-                                   //-- After
+                                //-- Break
                                 if (timecard.timecard_break_min_app > req_ot.timeot_break)
                                 {
                                     timecard.timecard_break_min_app = req_ot.timeot_break;

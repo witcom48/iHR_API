@@ -1,0 +1,117 @@
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER FUNCTION [dbo].[HRM_FNT_ROUND_TIME]
+(
+	@CompID varchar(10),
+	@Input decimal (12, 3),
+	@Type varchar(10)
+)
+RETURNS @Round TABLE 
+(
+	Result int
+)      
+AS
+BEGIN
+	
+	--DECLARE @CompID varchar(10) = 'APT'
+	--DECLARE @Input decimal (12, 3) = 305
+	--DECLARE @Type varchar(10) = 'TIMEOT'
+	--DECLARE @Output int = 0
+		
+	DECLARE @ROUND_CODE varchar(10) = ''
+
+	SELECT @ROUND_CODE = CASE @Type	
+	WHEN 'TIMELATE' THEN ISNULL(POLROUND_TIMELATE, '')
+	WHEN 'TIMEOT' THEN ISNULL(POLROUND_TIMEOT, '')
+	WHEN 'TIMEWORKING' THEN ISNULL(POLROUND_TIMEWORKING, '')	
+	END
+	FROM [HRM].[dbo].[HRM_MT_POLROUND]
+	WHERE COMPANY_CODE=@CompID
+
+	--PRINT 'Input:' + CAST(@Input AS VARCHAR(30))
+
+	--PRINT 'Round type:' + @ROUND_CODE
+	
+	DECLARE @output_time int = @Input
+
+	IF @ROUND_CODE <> '' BEGIN
+		DECLARE @hrs int = @Input / 60
+
+		DECLARE @min int = @Input - (@hrs * 60)
+
+		--PRINT @min
+	
+		DECLARE @round_value int = 0
+		
+		SELECT TOP 1 @round_value=ISNULL(ROUND_RESULT, 0) 
+		FROM HRM_MT_ROUND 
+		INNER JOIN HRM_TR_ROUND ON HRM_MT_ROUND.ROUND_ID=HRM_TR_ROUND.ROUND_ID
+		WHERE HRM_MT_ROUND.ROUND_CODE = @ROUND_CODE
+		AND (@min BETWEEN ROUND_FROM AND ROUND_TO)
+
+		SET @output_time = (@hrs * 60) + @round_value
+
+		--PRINT 'Output:' + CAST(@output_time AS VARCHAR(30))
+	END
+
+	INSERT INTO @Round VALUES(@output_time)
+	RETURN
+
+END
+
+GO
+
+
+ALTER TRIGGER trUpdateTimecard
+ON HRM_TR_TIMECARD  
+FOR UPDATE  
+AS  
+BEGIN  
+
+	DECLARE @CompID varchar(30);
+    DECLARE @EmpID varchar(30);
+	DECLARE @Workdate datetime;
+
+	DECLARE @Work_min int;
+	DECLARE @Before_min int;
+	DECLARE @Break_min int;
+	DECLARE @After_min int;
+	DECLARE @Late_min int;
+
+		
+	SELECT TOP 1  @CompID = i.COMPANY_CODE, @EmpID=d.WORKER_CODE, @Workdate=i.TIMECARD_WORKDATE
+
+	, @Work_min = ISNULL(i.TIMECARD_WORK1_MIN, 0)
+	, @Before_min = ISNULL(i.TIMECARD_BEFORE_MIN, 0)
+	, @Break_min = ISNULL(i.TIMECARD_BREAK_MIN, 0)
+	, @After_min = ISNULL(i.TIMECARD_AFTER_MIN, 0)
+	, @Late_min = ISNULL(i.TIMECARD_LATE_MIN, 0)
+	
+
+	FROM  deleted d
+	INNER JOIN inserted i ON  d.COMPANY_CODE = i.COMPANY_CODE AND d.WORKER_CODE = i.WORKER_CODE AND d.TIMECARD_WORKDATE = i.TIMECARD_WORKDATE
+	
+
+	SELECT @Work_min=Result FROM dbo.HRM_FNT_ROUND_TIME(@CompID, @Work_min, 'TIMEWORKING')
+	SELECT @Before_min=Result FROM dbo.HRM_FNT_ROUND_TIME(@CompID, @Before_min, 'TIMEOT')
+	SELECT @Break_min=Result FROM dbo.HRM_FNT_ROUND_TIME(@CompID, @Break_min, 'TIMEOT')
+	SELECT @After_min=Result FROM dbo.HRM_FNT_ROUND_TIME(@CompID, @After_min, 'TIMEOT')
+	SELECT @Late_min=Result FROM dbo.HRM_FNT_ROUND_TIME(@CompID, @Late_min, 'TIMELATE')
+
+
+	UPDATE HRM_TR_TIMECARD SET TIMECARD_WORK1_MIN_APP = @Work_min
+	, TIMECARD_BEFORE_MIN_APP = @Before_min
+	, TIMECARD_BREAK_MIN_APP = @Break_min
+	, TIMECARD_AFTER_MIN_APP = @After_min
+	, TIMECARD_LATE_MIN_APP = @Late_min
+
+	WHERE COMPANY_CODE=@CompID AND WORKER_CODE=@EmpID AND TIMECARD_WORKDATE=@Workdate
+
+
+END  
+GO

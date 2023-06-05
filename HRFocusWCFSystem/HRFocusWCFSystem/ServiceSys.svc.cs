@@ -5235,6 +5235,126 @@ namespace HRFocusWCFSystem
         
         #endregion
 
+        #region MTEmpStatus
+        public string getMTEmpStatusList()
+        {
+            JObject output = new JObject();
+
+            cls_ctMTEmpStatus contoller = new cls_ctMTEmpStatus();
+            List<cls_MTEmpStatus> list = contoller.getDataByFillter("", "");
+
+            JArray array = new JArray();
+
+            if (list.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_MTEmpStatus model in list)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("empstatus_id", model.empstatus_id);
+                    json.Add("empstatus_code", model.empstatus_code);
+                    json.Add("empstatus_name_th", model.empstatus_name_th);
+                    json.Add("empstatus_name_en", model.empstatus_name_en);
+                    json.Add("modified_by", model.modified_by);
+                    json.Add("modified_date", model.modified_date);
+                    json.Add("flag", model.flag);
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageMTEmpStatus(InputMTEmpStatus input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctMTEmpStatus contoller = new cls_ctMTEmpStatus();
+                cls_MTEmpStatus model = new cls_MTEmpStatus();
+
+                model.empstatus_id = input.empstatus_id;
+                model.empstatus_code = input.empstatus_code;
+                model.empstatus_name_th = input.empstatus_name_th;
+                model.empstatus_name_en = input.empstatus_name_en;
+                model.modified_by = input.modified_by;
+                model.flag = model.flag;
+
+                bool blnResult = contoller.insert(model);
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = contoller.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteMTEmpStatus(InputMTEmpStatus input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctMTEmpStatus contoller = new cls_ctMTEmpStatus();
+
+                bool blnResult = contoller.delete(input.empstatus_id.ToString());
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = contoller.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
         #endregion
                
         #region Employee
@@ -5503,6 +5623,8 @@ namespace HRFocusWCFSystem
 
                     json.Add("self_admin", model.self_admin);
 
+                    json.Add("worker_empstatus", model.worker_empstatus);
+
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);
                     json.Add("flag", model.flag);
@@ -5567,6 +5689,8 @@ namespace HRFocusWCFSystem
                 model.worker_pwd = "+PH1MsvnDonmqUuzB4TZ8g==";
 
                 model.self_admin = input.self_admin;
+
+                model.worker_empstatus = input.worker_empstatus;
                 
                 model.modified_by = input.modified_by;
                 model.flag = model.flag;
@@ -9237,7 +9361,7 @@ namespace HRFocusWCFSystem
             {
                 cls_ctTRPayitem objPayitem = new cls_ctTRPayitem();
 
-                bool blnResult = objPayitem.delete(input.company_code, input.worker_code, Convert.ToDateTime(input.payitem_date));
+                bool blnResult = objPayitem.delete(input.company_code, input.worker_code, input.item_code, Convert.ToDateTime(input.payitem_date));
 
                 if (blnResult)
                 {
@@ -17374,6 +17498,55 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
+
+
+        //-- F add 05/06/2023
+        public string doChangeWorkerCode(InputChangeWorkerCode input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                //-- Step 1 Check data old
+                cls_ctMTWorker objWorker = new cls_ctMTWorker();
+                bool blnOld = objWorker.checkDataOld(input.company_code, input.new_code);
+                if (blnOld)
+                {
+                    output["result"] = "0";
+                    output["result_text"] = input.new_code + " is duplicate code";
+                }
+                else
+                {
+
+                    cls_srvProcessEmployee srv_emp = new cls_srvProcessEmployee();
+
+                    string result = srv_emp.doChangeWorkerCode(input.company_code, input.worker_code, input.new_code);
+
+                    if (!result.Equals(""))
+                    {
+                        output["result"] = "1";
+                        output["result_text"] = "0";
+                    }
+                    else
+                    {
+                        output["result"] = "0";
+                        output["result_text"] = "There was a problem a transaction.";
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        //-
 
 
     }

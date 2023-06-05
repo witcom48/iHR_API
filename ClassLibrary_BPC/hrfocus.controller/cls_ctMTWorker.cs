@@ -70,6 +70,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append(", ISNULL(SELF_ADMIN, 0) AS SELF_ADMIN");
 
+                obj_str.Append(", ISNULL(EMPSTATUS_CODE, '') AS EMPSTATUS_CODE");
+
                 obj_str.Append(" FROM HRM_MT_WORKER");
                 obj_str.Append(" INNER JOIN HRM_MT_INITIAL ON HRM_MT_WORKER.WORKER_INITIAL=HRM_MT_INITIAL.INITIAL_CODE");
 
@@ -120,6 +122,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.initial_name_en = dr["INITIAL_NAME_EN"].ToString();
 
                     model.self_admin = Convert.ToBoolean(dr["SELF_ADMIN"]);
+
+                    model.worker_empstatus = dr["EMPSTATUS_CODE"].ToString();
                                                                                                                       
                     list_model.Add(model);
                 }
@@ -466,6 +470,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append(", WORKER_PWD ");
                 obj_str.Append(", SELF_ADMIN ");
+
+                obj_str.Append(", EMPSTATUS_CODE ");
                 
                 obj_str.Append(", CREATED_BY ");
                 obj_str.Append(", CREATED_DATE ");
@@ -508,6 +514,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", @WORKER_TAXMETHOD ");
                 obj_str.Append(", @WORKER_PWD ");
                 obj_str.Append(", @SELF_ADMIN ");
+
+                obj_str.Append(", @EMPSTATUS_CODE ");
 
                 obj_str.Append(", @CREATED_BY ");
                 obj_str.Append(", @CREATED_DATE ");
@@ -558,6 +566,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_cmd.Parameters.Add("@SELF_ADMIN", SqlDbType.Bit); obj_cmd.Parameters["@SELF_ADMIN"].Value = model.self_admin;
 
+                obj_cmd.Parameters.Add("@EMPSTATUS_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@EMPSTATUS_CODE"].Value = model.worker_empstatus;
 
                 obj_cmd.Parameters.Add("@CREATED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@CREATED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@CREATED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@CREATED_DATE"].Value = DateTime.Now;
@@ -622,6 +631,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append(", SELF_ADMIN=@SELF_ADMIN ");
 
+                obj_str.Append(", EMPSTATUS_CODE=@EMPSTATUS_CODE ");
+
                 obj_str.Append(", MODIFIED_BY=@MODIFIED_BY ");
                 obj_str.Append(", MODIFIED_DATE=@MODIFIED_DATE ");
                 obj_str.Append(", FLAG=@FLAG ");
@@ -671,6 +682,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@WORKER_TAXMETHOD", SqlDbType.Char); obj_cmd.Parameters["@WORKER_TAXMETHOD"].Value = model.worker_taxmethod;
 
                 obj_cmd.Parameters.Add("@SELF_ADMIN", SqlDbType.Bit); obj_cmd.Parameters["@SELF_ADMIN"].Value = model.self_admin;
+
+                obj_cmd.Parameters.Add("@EMPSTATUS_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@EMPSTATUS_CODE"].Value = model.worker_empstatus;
                 
 
                 obj_cmd.Parameters.Add("@MODIFIED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@MODIFIED_BY"].Value = model.modified_by;
