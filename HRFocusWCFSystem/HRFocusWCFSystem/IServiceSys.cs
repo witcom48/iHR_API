@@ -124,6 +124,19 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteRound(InputMTRound input);
 
+        //-- Polround
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getMTPolroundList(string com);
+
+        [OperationContract(Name = "doManagePolround")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManagePolround(InputMTPolround input);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string doDeletePolround(string com);
+
         //-- Reason
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
@@ -775,6 +788,12 @@ namespace HRFocusWCFSystem
         //-- Payroll
         //-- ********************
         #region Payroll
+        //paybank
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getpaybank(string com);
+
         //-- Item
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
@@ -852,6 +871,10 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "doDeleteTRPaytran")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteTRPaytran(InputTRPaytran input);
+
+        [OperationContract(Name = "getTRPR1List")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRPR1List(InputTRPaytran input);
 
         //-- Payreduce
         [OperationContract]
@@ -972,6 +995,19 @@ namespace HRFocusWCFSystem
         string doDeleteMTHoliday(InputMTHoliday input);
 
         //-- Leave
+
+        [OperationContract(Name = "doManageTRTimeleaveattachfile")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRTimeleaveattachfile(InputTRTimeattchfile input);
+
+        [OperationContract(Name = "doDeleteTRTimeleaveattachfile")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteTRTimeleaveattachfile(InputTRTimeattchfile input);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTRTimeleaveattachfileList(string company_code, string timeleave_doc);
+
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getMTLeaveList(string com);
@@ -1161,6 +1197,13 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteTREmpleaveacc(InputTREmpleaveacc input);
 
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getMTLeaveTotal(string com, string emp, string year);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getMTOTTotal(string com, string emp, string year);
 
 
         //-- Timedoc
@@ -1292,6 +1335,11 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "doDeleteMTPlanshiftflexible")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteMTPlanshiftflexible(InputMTPlanshiftflexible input);
+
+        //-- GetCurrent
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTRCurrent(string worker_id, string startdate,string todate);
         
         #endregion
 
@@ -1299,6 +1347,8 @@ namespace HRFocusWCFSystem
         //-- Dashboard
         //-- ********************
         #region Dashboard
+        
+
         #region Att
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
@@ -1325,16 +1375,20 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getDashEmpWorkAgeList(string com);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getEmpPositionDash(string fromdate, string todate);
         #endregion
 
         #region Pay
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getDashItemINList(string com, string fromdate, string todate);
+        string getDashItemINList(string com);
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getDashItemDEList(string com, string fromdate, string todate);
+        string getDashItemDEList(string com);
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
@@ -1342,10 +1396,56 @@ namespace HRFocusWCFSystem
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getDashItemOTPoList(string com, string fromdate, string todate);
+        string getDashItemOTPoList(string fromdate, string todate);
 
         #endregion
         #endregion
+
+
+        //-- Topic
+        #region Topic
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTopicList(string emp);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageSYSTopic(InputTopic input);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteSYSTopic(string id);
+        #endregion
+        //-- Package
+        #region Package
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getPackageList();
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageSYSPackage(InputPackate input);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteSYSPackate(string package_ref);
+        #endregion
+
+        //-- Allow
+        #region Allow
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getAllowList();
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageSYSAllow(InputAllow input);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteSYSAllow(string ip,string port);
+        #endregion
+
 
         //-- SummaryWage
         [OperationContract]
@@ -1369,6 +1469,10 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string doAuthen(string usr, string pwd, string token);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string doGetQR2Factor(string com, string usr, string token);
         
         [OperationContract]
         [WebGet(UriTemplate = "File/{fileName}/{fileExtension}")]
@@ -1377,6 +1481,11 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/doUploadTimeInput?fileName={fileName}", ResponseFormat = WebMessageFormat.Json)]
         string doUploadTimeInput(string fileName, Stream stream);
+
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Task<string> UploadStream(Stream stream);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/doReadSimpleTimeInput?fileName={fileName}", ResponseFormat = WebMessageFormat.Json)]
@@ -1410,6 +1519,16 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "doChangePass")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doChangePass(InputMTWorker input);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doTest(req input);
+
+
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", UriTemplate = "/doUploadExcel?fileName={fileName}", ResponseFormat = WebMessageFormat.Json)]
+        Task<string> doUploadExcel(string fileName, Stream stream);
         
     }
 

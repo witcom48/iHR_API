@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Web;
-
+using ClassLibrary_BPC.hrfocus.model;
 
 namespace HRFocusWCFSystem
 {
@@ -190,6 +190,17 @@ namespace HRFocusWCFSystem
         public string modified_by { get; set; }
         [DataMember]
         public string modified_date { get; set; }
+
+        [DataMember]
+        public string language { get; set; }
+        [DataMember]
+        public string com { get; set; }
+        [DataMember]
+        public List<cls_MTWorker> emp_data { get; set; }
+        [DataMember]
+        public string fromdate { get; set; }
+        [DataMember]
+        public string todate { get; set; }
     }
 
     [DataContract]

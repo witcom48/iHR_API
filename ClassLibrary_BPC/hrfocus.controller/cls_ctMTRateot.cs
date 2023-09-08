@@ -277,5 +277,29 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return blnResult;
         }
+        public string totalot(string com, string emp, string year)
+        {
+            string blnResult = "0";
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT ISNULL(SUM(TIMEOT_BEFOREMIN+TIMEOT_NORMALMIN+TIMEOT_AFTERMIN),0) FROM HRM_TR_TIMEOT WHERE WORKER_CODE = '" + emp + "' AND COMPANY_CODE = '" + com + "' AND YEAR(TIMEOT_WORKDATE) ='" + year + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    blnResult = dt.Rows[0][0].ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                blnResult = ex.ToString();
+                Message = "ERROR::(Level.checkDataOld)" + ex.ToString();
+            }
+
+            return blnResult;
+        }
     }
 }

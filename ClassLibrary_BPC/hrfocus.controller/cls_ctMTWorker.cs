@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using ClassLibrary_BPC.hrfocus.model;
 using System.Data.SqlClient;
 using System.Data;
-
+using System.Security.Cryptography;
+using System.IO;
 namespace ClassLibrary_BPC.hrfocus.controller
 {
     public class cls_ctMTWorker
@@ -252,10 +253,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
             {
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
-                obj_str.Append("SELECT WORKER_ID");
+                obj_str.Append("SELECT WORKER_CODE");
                 obj_str.Append(" FROM HRM_MT_WORKER");
                 obj_str.Append(" WHERE 1=1 ");                
-                obj_str.Append(" AND WORKER_ID='" + id + "'");
+                obj_str.Append(" AND WORKER_CODE='" + id + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -313,7 +314,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
                 obj_str.Append("SELECT MAX(WORKER_ID) ");
-                obj_str.Append(" FROM HRM_MT_WORKER");             
+                obj_str.Append(" FROM HRM_MT_WORKER");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -325,6 +326,33 @@ namespace ClassLibrary_BPC.hrfocus.controller
             catch (Exception ex)
             {
                 Message = "ERROR::(Worker.getNextID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
+        public int getID( string com, string empid)
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT WORKER_ID ");
+                obj_str.Append(" FROM HRM_MT_WORKER");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + empid + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Worker.getID)" + ex.ToString();
             }
 
             return intResult;
@@ -354,21 +382,49 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return blnResult;
         }
+        public int empcount()
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
+                obj_str.Append("select COUNT(WORKER_ID) as empcount from HRM_MT_WORKER");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(HRM_MT_WORKER.count)" + ex.ToString();
+            }
+
+            return intResult;
+        }
         public string insert(cls_MTWorker model)
         {
             string strResult = "";
             try
             {
                 //-- Check data old
-                if (this.checkDataOld(model.worker_id.ToString()))
+                if (this.checkDataOld(model.worker_code.ToString()))
                 {
                     bool blnResult = this.update(model);
 
                     if (blnResult)
-                        return model.worker_code;
+                        return "yes";
                 }
-
+                cls_ctSYSPackage Package = new cls_ctSYSPackage();
+                var empcounts =  this.empcount();
+                List<cls_SYSPackage> listPackage =   Package.getData();
+                if (Convert.ToInt32(this.Decrypt(listPackage[0].packege_emp).Split('E')[1]) <= empcounts)
+                {
+                    return "limit";
+                }
                 cls_ctConnection obj_conn = new cls_ctConnection();
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
@@ -462,11 +518,11 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
 
-                strResult = this.getNextID().ToString();
+                strResult = "yes";
 
                 obj_cmd.Parameters.Add("@COMPANY_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@COMPANY_CODE"].Value = model.company_code;
 
-                obj_cmd.Parameters.Add("@WORKER_ID", SqlDbType.Int); obj_cmd.Parameters["@WORKER_ID"].Value = strResult;
+                obj_cmd.Parameters.Add("@WORKER_ID", SqlDbType.Int); obj_cmd.Parameters["@WORKER_ID"].Value = this.getNextID();
                 obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
                 obj_cmd.Parameters.Add("@WORKER_CARD", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CARD"].Value = model.worker_card;
 
@@ -515,7 +571,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             catch (Exception ex)
             {
                 strResult = "";
-                Message = "ERROR::(Worker.insert)" + ex.ToString();
+                strResult = "ERROR::(Worker.insert)" + ex.ToString();
             }
 
             return strResult;
@@ -523,6 +579,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public bool update(cls_MTWorker model)
         {
+            string strResult = model.worker_id.ToString();
             bool blnResult = false;
             try
             {
@@ -574,7 +631,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 
                 obj_conn.doConnect();
 
-                SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());                              
+                SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
+
+                if (model.worker_id == 0) {
+                    strResult = this.getID(model.company_code,model.worker_code).ToString();
+                }
+
+                
                 
                 obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
                 obj_cmd.Parameters.Add("@WORKER_CARD", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CARD"].Value = model.worker_card;
@@ -614,7 +677,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
                 obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit); obj_cmd.Parameters["@FLAG"].Value = false;
 
-                obj_cmd.Parameters.Add("@WORKER_ID", SqlDbType.Int); obj_cmd.Parameters["@WORKER_ID"].Value = model.worker_id;
+                obj_cmd.Parameters.Add("@WORKER_ID", SqlDbType.Int); obj_cmd.Parameters["@WORKER_ID"].Value = strResult;
 
                 obj_cmd.ExecuteNonQuery();
 
@@ -668,6 +731,28 @@ namespace ClassLibrary_BPC.hrfocus.controller
             }
 
             return blnResult;
+        }
+        private const string ENCRYPTION_KEY = "d42262e6-17c0-45da-bc34-1bd04f8b6928";
+        private readonly byte[] SALT = Encoding.ASCII.GetBytes(ENCRYPTION_KEY.Length.ToString());
+        public string Decrypt(string inputText)
+        {
+            RijndaelManaged rijndaelCipher = new RijndaelManaged();
+            byte[] encryptedData = Convert.FromBase64String(inputText);
+            PasswordDeriveBytes secretKey = new PasswordDeriveBytes(ENCRYPTION_KEY, SALT);
+
+            using (ICryptoTransform decryptor = rijndaelCipher.CreateDecryptor(secretKey.GetBytes(32), secretKey.GetBytes(16)))
+            {
+                using (MemoryStream memoryStream = new MemoryStream(encryptedData))
+                {
+                    using (CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+                    {
+                        byte[] plainText = new byte[encryptedData.Length];
+                        int decryptedCount = cryptoStream.Read(plainText, 0, plainText.Length);
+                        return Encoding.Unicode.GetString(plainText, 0, decryptedCount);
+                    }
+                }
+            }
+
         }
     }
 }

@@ -122,6 +122,87 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return blnResult;
         }
+        public int getID(string com, string empid)
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT EMPEDUCATION_NO ");
+                obj_str.Append(" FROM HRM_TR_EMPEDUCATION");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + empid + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Empeducation.getID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
+
+        public int getNextID(string com, string worker)
+        {
+            int intResult = 1;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT MAX(EMPEDUCATION_NO) ");
+                obj_str.Append(" FROM HRM_TR_EMPEDUCATION");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + worker + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]) + 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Empeducation.getNextID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
+        public int getNextID(cls_ctConnection obj_conn, string com, string worker)
+        {
+            int intResult = 1;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT MAX(EMPEDUCATION_NO) ");
+                obj_str.Append(" FROM HRM_TR_EMPEDUCATION");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + worker + "'");
+
+                DataTable dt = obj_conn.doGetTableTransaction(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]) + 1;
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Empeducation.getNextID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
                 
         public bool delete(string com, string emp, string no)
         {
@@ -252,7 +333,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_cmd.Parameters.Add("@COMPANY_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@COMPANY_CODE"].Value = model.company_code;
                 obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
-                obj_cmd.Parameters.Add("@EMPEDUCATION_NO", SqlDbType.Int); obj_cmd.Parameters["@EMPEDUCATION_NO"].Value = model.empeducation_no;
+                obj_cmd.Parameters.Add("@EMPEDUCATION_NO", SqlDbType.Int); obj_cmd.Parameters["@EMPEDUCATION_NO"].Value = this.getNextID(model.company_code, model.worker_code);
                 obj_cmd.Parameters.Add("@INSTITUTE_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@INSTITUTE_CODE"].Value = model.institute_code;
                 obj_cmd.Parameters.Add("@FACULTY_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@FACULTY_CODE"].Value = model.faculty_code;
                 obj_cmd.Parameters.Add("@MAJOR_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@MAJOR_CODE"].Value = model.major_code;
@@ -335,6 +416,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 if (blnResult)
                 {
                     SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
+
                     obj_cmd.Transaction = obj_conn.getTransaction();
 
                     obj_cmd.Parameters.Add("@COMPANY_CODE", SqlDbType.VarChar);
@@ -399,6 +481,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public bool update(cls_TREmpeducation model)
         {
+            string strResult = model.empeducation_no.ToString();
             bool blnResult = false;
             try
             {
@@ -427,7 +510,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_conn.doConnect();
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
-                                
+                if (model.empeducation_no == 0)
+                {
+                    strResult = this.getID(model.company_code, model.worker_code).ToString();
+                }              
                 obj_cmd.Parameters.Add("@INSTITUTE_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@INSTITUTE_CODE"].Value = model.institute_code;
                 obj_cmd.Parameters.Add("@FACULTY_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@FACULTY_CODE"].Value = model.faculty_code;
                 obj_cmd.Parameters.Add("@MAJOR_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@MAJOR_CODE"].Value = model.major_code;
@@ -439,7 +525,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
                 obj_cmd.Parameters.Add("@COMPANY_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@COMPANY_CODE"].Value = model.company_code;
                 obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
-                obj_cmd.Parameters.Add("@EMPEDUCATION_NO", SqlDbType.Int); obj_cmd.Parameters["@EMPEDUCATION_NO"].Value = model.empeducation_no;
+                obj_cmd.Parameters.Add("@EMPEDUCATION_NO", SqlDbType.Int); obj_cmd.Parameters["@EMPEDUCATION_NO"].Value = strResult;
                 
                 obj_cmd.ExecuteNonQuery();
 

@@ -175,6 +175,34 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return intResult;
         }
 
+        public int getID(string com, string empid ,DateTime date)
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT EMPDEP_ID ");
+                obj_str.Append(" FROM HRM_TR_EMPDEP");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND WORKER_CODE='" + empid + "'");
+                obj_str.Append(" AND EMPDEP_DATE='" + date.ToString("MM/dd/yyyy") + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Empdep.getID)" + ex.ToString();
+            }
+
+            return intResult;
+        }
+
         public bool delete(string id)
         {
             bool blnResult = true;
@@ -233,6 +261,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 //-- Check data old
                 if (this.checkDataOld(model.company_code, model.worker_code, model.empdep_date))
                 {
+
                     return this.update(model);
                 }
 
@@ -324,6 +353,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         public bool update(cls_TREmpdep model)
         {
+            string strResult = model.empdep_id.ToString();
             bool blnResult = false;
             try
             {
@@ -352,11 +382,17 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", FLAG=@FLAG ");
 
                 obj_str.Append(" WHERE EMPDEP_ID=@EMPDEP_ID ");
-                               
+                obj_str.Append(" AND WORKER_CODE=@WORKER_CODE ");
+
+                
                 obj_conn.doConnect();
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
 
+                if (model.empdep_id == 0)
+                {
+                    strResult = this.getID(model.company_code, model.worker_code, model.empdep_date).ToString();
+                }
                 obj_cmd.Parameters.Add("@EMPDEP_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@EMPDEP_DATE"].Value = model.empdep_date;
 
                 obj_cmd.Parameters.Add("@EMPDEP_LEVEL01", SqlDbType.VarChar); obj_cmd.Parameters["@EMPDEP_LEVEL01"].Value = model.empdep_level01;
@@ -375,8 +411,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@MODIFIED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@MODIFIED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
                 obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit); obj_cmd.Parameters["@FLAG"].Value = false;
+                obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
 
-                obj_cmd.Parameters.Add("@EMPDEP_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPDEP_ID"].Value = model.empdep_id;
+                obj_cmd.Parameters.Add("@EMPDEP_ID", SqlDbType.Int); obj_cmd.Parameters["@EMPDEP_ID"].Value = strResult;
 
                 obj_cmd.ExecuteNonQuery();
 

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using ClassLibrary_BPC.hrfocus.model;
 using System.Data.SqlClient;
 using System.Data;
-
 namespace ClassLibrary_BPC.hrfocus.controller
 {
     public class cls_ctMTTask
@@ -65,7 +64,6 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" ORDER BY COMPANY_CODE, HRM_MT_TASK.TASK_ID DESC");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
-
                 foreach (DataRow dr in dt.Rows)
                 {
                     model = new cls_MTTask();

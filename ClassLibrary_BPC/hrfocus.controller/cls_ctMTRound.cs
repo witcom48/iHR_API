@@ -83,8 +83,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
         public List<cls_MTRound> getDataByFillter(string group, string id, string code)
         {
             string strCondition = "";
-
-            strCondition += " AND ROUND_GROUP='" + group + "'";
+            if (!group.Equals(""))
+                strCondition += " AND ROUND_GROUP='" + group + "'";
 
             if (!id.Equals(""))
                 strCondition += " AND ROUND_ID='" + id + "'";

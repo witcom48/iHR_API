@@ -17,9 +17,10 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,12 +31,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Interop.Microsoft.Office.Core">
-      <HintPath>..\HR-KIOSK\bin\Debug\Interop.Microsoft.Office.Core.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+    <Reference Include="closedxml">
+      <HintPath>C:\Users\phattaraphon.p\Downloads\closedxml.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.Microsoft.Office.Interop.Excel">
-      <HintPath>..\HR-KIOSK\bin\Debug\Interop.Microsoft.Office.Interop.Excel.dll</HintPath>
+    <Reference Include="ExcelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TEST\ExcelLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="office, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
@@ -56,15 +59,30 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="hrfocus.controller\cls_ctMTPolround.cs" />
+    <Compile Include="hrfocus.controller\cls_ctSYSAllow.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTBank.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTBonus.cs" />
+    <Compile Include="hrfocus.controller\cls_ctSYSPackage.cs" />
+    <Compile Include="hrfocus.controller\cls_ctSYSTopic.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRAttTimecardDash.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRAttTtimeleaveDash.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTREmpEempdepDash.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTREmpEmpdeplevel01.cs" />
+    <Compile Include="hrfocus.controller\cls_ctMTEmpGenderDash.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTREmpOtpositionDash.cs" />
+    <Compile Include="hrfocus.controller\cls_ctMTEmpPositionDash.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTDashboard.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPlanshiftflexible.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPlantimeallw.cs" />
     <Compile Include="hrfocus.controller\cls_ctSYSReportjob.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRCurrent.cs" />
     <Compile Include="hrfocus.controller\cls_ctTADashboard.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRDashboard.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRPaybank.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPaypf.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRPayPtimecardDash.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRPayPtimeleaveDash.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRShiftflexible.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRTimeallw.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRHoliday.cs" />
@@ -79,6 +97,7 @@
     <Compile Include="hrfocus.controller\cls_ctSYSMainmenu.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTProvince.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTTimeimpformat.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRTimeleaveattachfile.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRWageday.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRCombranch.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPeriod.cs" />
@@ -164,18 +183,36 @@
     <Compile Include="hrfocus.controller\cls_ctMTPlanshift.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPlanschedule.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRTimecard.cs" />
+    <Compile Include="hrfocus.model\cls_MTBdashboard.cs" />
+    <Compile Include="hrfocus.model\cls_MTPolround.cs" />
+    <Compile Include="hrfocus.model\cls_SYSAllow.cs" />
+    <Compile Include="hrfocus.model\cls_SYSPackage.cs" />
+    <Compile Include="hrfocus.model\cls_SYSTopic.cs" />
+    <Compile Include="hrfocus.model\cls_SYSUsepackage.cs" />
+    <Compile Include="hrfocus.model\cls_TRAttTimecardDash.cs" />
+    <Compile Include="hrfocus.model\cls_TRAttTtimeleaveDash.cs" />
+    <Compile Include="hrfocus.model\cls_TREmpEempdepDash.cs" />
+    <Compile Include="hrfocus.model\cls_TREmpEmpdeplevel01Dash.cs" />
+    <Compile Include="hrfocus.model\cls_MTEmpGenderDash.cs" />
+    <Compile Include="hrfocus.model\cls_TREmpOtpositionDash.cs" />
+    <Compile Include="hrfocus.model\cls_TREmpPositionDash.cs" />
     <Compile Include="hrfocus.model\cls_MTDashboard.cs" />
     <Compile Include="hrfocus.model\cls_MTPlanshiftflexible.cs" />
     <Compile Include="hrfocus.model\cls_MTPlantimeallw.cs" />
     <Compile Include="hrfocus.model\cls_SYSReportjob.cs" />
+    <Compile Include="hrfocus.model\cls_TRCurrent.cs" />
     <Compile Include="hrfocus.model\cls_TADashboard.cs" />
     <Compile Include="hrfocus.model\cls_TRDashboard.cs" />
+    <Compile Include="hrfocus.model\cls_TRPaybank.cs" />
     <Compile Include="hrfocus.model\cls_TRPaypf.cs" />
+    <Compile Include="hrfocus.model\cls_TRPayPtimecardDash.cs" />
+    <Compile Include="hrfocus.model\cls_TRPayPtimeleaveDash.cs" />
     <Compile Include="hrfocus.model\cls_TRShiftflexible.cs" />
     <Compile Include="hrfocus.model\cls_SYSReportjobwhose.cs" />
     <Compile Include="hrfocus.model\cls_TRTimeallw.cs" />
     <Compile Include="hrfocus.model\cls_TRHoliday.cs" />
     <Compile Include="hrfocus.model\cls_MTPlanholiday.cs" />
+    <Compile Include="hrfocus.model\cls_TRTimeleaveattachfile.cs" />
     <Compile Include="hrfocus.model\cls_TRWageday.cs" />
     <Compile Include="hrfocus.model\cls_TREmpleaveacc.cs" />
     <Compile Include="hrfocus.model\cls_TREmpkt20.cs" />
@@ -276,8 +313,13 @@
     <Compile Include="hrfocus.model\cls_TRPlanschedule.cs" />
     <Compile Include="hrfocus.model\cls_TRTimecard.cs" />
     <Compile Include="hrfocus.service\cls_srvAuthen.cs" />
+    <Compile Include="hrfocus.service\cls_srvImport.cs" />
     <Compile Include="hrfocus.service\cls_srvProcessPayroll.cs" />
     <Compile Include="hrfocus.service\cls_srvProcessTime.cs" />
+    <Compile Include="hrfocus.service\MultipartParser.cs" />
+    <Compile Include="hrfocus.service\MultipartParser_2.cs" />
+    <Compile Include="hrfocus.service\MultipartParser_3.cs" />
+    <Compile Include="hrfocus.service\MultipartParser_4.cs" />
     <Compile Include="hrfocus.utility\cls_ctConnection.cs" />
     <Compile Include="hrfocus.utility\cls_Hash.cs" />
     <Compile Include="hrfocus.utility\cls_StyleDataGridView.cs" />
@@ -285,7 +327,9 @@
     <Compile Include="Initial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmExportData.resx" />
   </ItemGroup>

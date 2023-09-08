@@ -41,6 +41,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ExcelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\phattaraphon.p\Downloads\ExcelLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Authenticator">
       <HintPath>..\..\Lib\GoogleAuthenticator.1.2.0\lib\net45\Google.Authenticator.dll</HintPath>
     </Reference>
@@ -49,6 +53,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\Bin\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -75,6 +80,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authen.cs" />
     <Compile Include="cls_DataContract_payroll.cs" />
     <Compile Include="cls_DataContract_system.cs" />
     <Compile Include="cls_DataContract_attendance.cs" />
@@ -83,6 +89,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="MultipartParser.cs" />
+    <Compile Include="paybank.cs" />
     <Compile Include="ServiceSys.svc.cs">
       <DependentUpon>ServiceSys.svc</DependentUpon>
     </Compile>
@@ -110,6 +117,9 @@
       <Name>ClassLibrary_BPC</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -125,7 +135,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>0</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:32207/</IISUrl>
+          <IISUrl>http://localhost:32208/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
