@@ -2195,6 +2195,14 @@ namespace HRFocusWCFSystem
                         output["result_link"] = link;
                     }
                     //TIME
+                    //TA1
+                    else if (input.task_type.Trim().Equals("EXP_TIME"))
+                    {
+                        cls_srvProcessTime srvTime = new cls_srvProcessTime();
+                        string link = srvTime.doExportTA(input.company_code, intTaskID.ToString());
+                        output["result_link"] = link;
+                    }
+                    //TA1
 
 
                     //BONUS

@@ -1338,6 +1338,305 @@ namespace ClassLibrary_BPC.hrfocus.service
 
             return blnResult;
         }
+
+        public string doExportTA(string com, string taskid)
+        {
+            string strResult = "";
+            cls_ctMTTask objMTTask = new cls_ctMTTask();
+            List<cls_MTTask> listMTTask = objMTTask.getDataByFillter(com, taskid, "EXP_TIME", "");
+            List<string> listError = new List<string>();
+            if (listMTTask.Count > 0)
+            {
+                cls_MTTask task = listMTTask[0];
+
+                task.task_start = DateTime.Now;
+
+                cls_ctMTTask objTaskDetail = new cls_ctMTTask();
+                cls_TRTaskdetail task_detail = objTaskDetail.getTaskDetail(task.task_id.ToString());
+
+                cls_ctMTTask objTaskWhose = new cls_ctMTTask();
+                List<cls_TRTaskwhose> listWhose = objTaskWhose.getTaskWhose(task.task_id.ToString());
+
+                DateTime datePay = task_detail.taskdetail_paydate;
+                DateTime dateFrom = task_detail.taskdetail_fromdate;
+                DateTime dateTo = task_detail.taskdetail_todate;
+
+                StringBuilder objStr = new StringBuilder();
+                foreach (cls_TRTaskwhose whose in listWhose)
+                {
+                    objStr.Append("'" + whose.worker_code + "',");
+                }
+
+                string strEmp = objStr.ToString().Substring(0, objStr.ToString().Length - 1);
+
+                //-- Get worker
+                cls_ctMTWorker objWorker = new cls_ctMTWorker();
+                List<cls_MTWorker> list_worker = objWorker.getDataMultipleEmp(com, strEmp);
+
+                //-- Get worker dep
+                cls_ctTREmpdep objDep = new cls_ctTREmpdep();
+                List<cls_TREmpdep> list_TRdep = objDep.getDataTaxMultipleEmp(com, strEmp, dateTo);
+                //cls_TREmpdep empdep = list_TRdep[0];
+
+                //-- Get worker position
+                cls_ctTREmpposition objPos = new cls_ctTREmpposition();
+                List<cls_TREmpposition> list_TRpos = objPos.getDataMultipleEmp(com, strEmp, dateTo);
+                //cls_TREmpposition emppos = list_TRpos[0];
+                
+
+                //--get timecard
+                cls_ctTRTimecard objTimecard = new cls_ctTRTimecard();
+                List<cls_TRTimecard> list_timecard = objTimecard.getDataTimeMultipleEmp(com, strEmp, dateFrom, dateTo);
+
+                //--get timeleave
+                cls_ctTRTimeleave objleave = new cls_ctTRTimeleave();
+                List<cls_TRTimeleave> list_leave = objleave.getDataMultipleEmp("TH", com, strEmp, dateFrom, dateTo);
+
+                string tmpData = "";
+                if (list_timecard.Count > 0)
+                {
+                    double douTotal = 0;
+
+                    int index = 1;
+                    string bkData;
+
+                    foreach (cls_TRTimecard timecard in list_timecard)
+                    {
+                        string empname = "";
+
+                        cls_MTWorker obj_worker = new cls_MTWorker();
+                        cls_TREmpdep obj_workerdep = new cls_TREmpdep();
+                        cls_TREmpposition obj_workerpos = new cls_TREmpposition();
+
+                        cls_TRTimeleave obj_timeleave = new cls_TRTimeleave();
+
+                        foreach (cls_MTWorker worker in list_worker)
+                        {
+                            if (timecard.worker_code.Equals(worker.worker_code))
+                            {
+                                empname = worker.initial_name_en + " " + worker.worker_fname_en + " " + worker.worker_lname_en;
+                                obj_worker = worker;
+                                break;
+                            }
+                        }
+
+                        foreach (cls_TREmpdep dep in list_TRdep)
+                        {
+                            if (timecard.worker_code.Equals(dep.worker_code))
+                            {
+                                obj_workerdep = dep;
+                                break;
+                            }
+                        }
+
+                        foreach (cls_TREmpposition pos in list_TRpos)
+                        {
+                            if (timecard.worker_code.Equals(pos.worker_code))
+                            {
+                                obj_workerpos = pos;
+                                break;
+                            }
+                        }
+
+                        foreach (cls_TRTimeleave leave in list_leave)
+                        {
+                            if (timecard.worker_code.Equals(leave.worker_code) && timecard.timecard_workdate.Equals(leave.timeleave_fromdate))
+                            {
+                                obj_timeleave = leave;
+                                break;
+                            }
+                        }
+
+                        
+
+                        if (empname.Equals(""))
+                            continue;
+
+                        if (!(timecard.timecard_workdate == null)) 
+                        {
+                            //ลำดับ
+                            bkData = index++ + "|";
+
+                            //รหัสพนักงาน
+                            bkData += obj_worker.worker_code + "|";
+
+                            //ชื่อ-นามสกุล
+                            bkData += obj_worker.initial_name_th + " " + obj_worker.worker_fname_th + " " + obj_worker.worker_lname_th + "|";
+
+                            //ประเภท
+                            bkData += obj_worker.worker_emptype + "|";
+
+                            //ตำแหน่ง
+                            bkData += obj_workerpos.empposition_position + "|";
+
+                            //สังกัด
+                            bkData += obj_workerdep.empdep_level01 + "|";
+
+                            //วันที่
+                            bkData += timecard.timecard_workdate.ToString("dd/MM/yyyy") + "|";
+
+                            //กะการทำงาน
+                            bkData += timecard.shift_code + "|";
+
+                            //ประเภทวัน
+                            bkData += timecard.timecard_daytype + "|";
+
+                            string timein;
+                            string timeout;
+                            //-- Time in
+                            if (!timecard.timecard_ch1.ToString("HH:mm").Equals("00:00"))
+                            {
+                                timein = timecard.timecard_ch1.ToString("HH:mm");
+                            }
+                            else if (!timecard.timecard_ch3.ToString("HH:mm").Equals("00:00"))
+                            {
+                                timein = timecard.timecard_ch3.ToString("HH:mm");
+                            }
+                            else
+                            {
+                                timein = "-";
+                            }
+
+                            //-- Time out
+                            if (!timecard.timecard_ch10.ToString("HH:mm").Equals("00:00"))
+                            {
+                                timeout = timecard.timecard_ch10.ToString("HH:mm");
+                            }
+                            else if (!timecard.timecard_ch8.ToString("HH:mm").Equals("00:00"))
+                            {
+                                timeout = timecard.timecard_ch8.ToString("HH:mm");
+                            }
+                            else if (!timecard.timecard_ch4.ToString("HH:mm").Equals("00:00"))
+                            {
+                                timeout = timecard.timecard_ch4.ToString("HH:mm");
+                            }
+                            else
+                            {
+                                timeout = "-";
+                            }
+
+                            //scan
+                            bkData += timein + ":" + timeout + "|";
+
+                            //in
+                            bkData += timein + "|";
+
+                            //out
+                            bkData += timeout + "|";
+
+                            //working
+                            int hrs = (timecard.timecard_work1_min + timecard.timecard_work2_min) / 60;
+                            int min = (timecard.timecard_work1_min + timecard.timecard_work2_min) - (hrs * 60);
+                            bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
+
+                            //working approve
+                            int hrsapp = (timecard.timecard_work1_min_app + timecard.timecard_work2_min_app) / 60;
+                            int minapp = (timecard.timecard_work1_min_app + timecard.timecard_work2_min_app) - (hrsapp * 60);
+                            bkData += hrsapp.ToString().PadLeft(2, '0') + ":" + minapp.ToString().PadLeft(2, '0') + "|";
+
+                            //ot
+                            hrs = (timecard.timecard_before_min + timecard.timecard_after_min) / 60;
+                            min = (timecard.timecard_before_min + timecard.timecard_after_min) - (hrs * 60);
+                            bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
+
+                            //ot approve
+                            hrsapp = (timecard.timecard_before_min_app + timecard.timecard_after_min_app) / 60;
+                            minapp = (timecard.timecard_before_min_app + timecard.timecard_after_min_app) - (hrsapp * 60);
+                            bkData += hrsapp.ToString().PadLeft(2, '0') + ":" + minapp.ToString().PadLeft(2, '0') + "|";
+
+                            //late
+                            hrs = (timecard.timecard_late_min_app) / 60;
+                            min = (timecard.timecard_late_min_app) - (hrs * 60);
+                            bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
+
+                            //leave
+                            int leavehrs = (obj_timeleave.timeleave_min) / 60;
+                            int leavemin = (obj_timeleave.timeleave_min) - (leavehrs * 60);
+                            bkData += leavehrs.ToString().PadLeft(2, '0') + ":" + leavemin.ToString().PadLeft(2, '0') + "|";
+
+                            //absent
+                            if (timecard.timecard_daytype.Equals("A")){
+                                bkData += "1" + "|";
+                            }else{
+                                bkData += "0" + "|";
+                            }
+                            
+
+                            //leaveID
+                            bkData += obj_timeleave.leave_code + "|";
+                            
+                            
+
+                            tmpData += bkData + '\r' + '\n';
+                        }
+                        
+                    }
+
+                    int record = list_timecard.Count;
+
+                    try
+                    {
+                        //-- Step 1 create file
+                        string filename = "EXP_TIME" + DateTime.Now.ToString("yyMMddHHmm") + "." + "xls";
+                        string filepath = Path.Combine
+                       (ClassLibrary_BPC.Config.PathFileExport, filename);
+
+
+
+                        // Check if file already exists. If yes, delete it.     
+                        if (File.Exists(filepath))
+                        {
+                            File.Delete(filepath);
+                        }
+                        DataSet ds = new DataSet();
+                        string str = tmpData.Replace("\r\n", "]");
+                        string[] data = str.Split(']');
+                        DataTable dataTable = ds.Tables.Add();
+                        dataTable.Columns.AddRange(new DataColumn[20] { new DataColumn("No."), new DataColumn("Emp. ID"), new DataColumn("Emp. Name"), new DataColumn("Emp. type"), new DataColumn("Position"), new DataColumn("Department"), new DataColumn("Workdate"), new DataColumn("Shift"), new DataColumn("Daytype"), new DataColumn("Finger print"), new DataColumn("Time in"), new DataColumn("Time out"), new DataColumn("Working"), new DataColumn("Working Approve"), new DataColumn("OT Request"), new DataColumn("OT Approve"), new DataColumn("Late  Approve"), new DataColumn("Leave Approve"), new DataColumn("AB Status"), new DataColumn("Leave ID") });
+                        foreach (var i in data)
+                        {
+                            if (i.Equals(""))
+                                continue;
+                            string[] array = i.Split('|');
+                            dataTable.Rows.Add(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10], array[11], array[12], array[13], array[14], array[15], array[16], array[17], array[18], array[19]);
+                        }
+                        ExcelLibrary.DataSetHelper.CreateWorkbook(filepath, ds);
+
+                        // Create a new file     
+                        //using (FileStream fs = File.Create(filepath))
+                        //{
+                        //    // Add some text to file    
+                        //    Byte[] Table = new UTF8Encoding(true).GetBytes(tmpData);
+                        //    fs.Write(Table, 0, Table.Length);
+
+
+                        //}
+
+                        strResult = filename;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        strResult = ex.ToString();
+                    }
+                    
+                }
+
+                
+
+                task.task_end = DateTime.Now;
+                task.task_status = "F";
+                task.task_note = strResult;
+                objMTTask.updateStatus(task);
+            }
+            else
+            {
+
+            }
+
+
+            return strResult;
+        }
         
     }
 

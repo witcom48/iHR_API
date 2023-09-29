@@ -133,6 +133,24 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(language, strCondition);
         }
 
+        public List<cls_TRPayitem> getDataitemMultipleEmp(string language, string com, string worker, DateTime date, string item_type, string item)
+        {
+            string strCondition = "";
+
+            strCondition += " AND HRM_TR_PAYITEM.COMPANY_CODE='" + com + "'";
+            strCondition += " AND HRM_TR_PAYITEM.PAYITEM_DATE='" + date.ToString("MM/dd/yyyy") + "'";
+
+            strCondition += " AND HRM_TR_PAYITEM.WORKER_CODE IN (" + worker + ") ";
+
+            if (!item.Equals(""))
+                strCondition += " AND HRM_TR_PAYITEM.ITEM_CODE='" + item + "'";
+
+            if (!item_type.Equals(""))
+            {
+                strCondition += " AND HRM_TR_PAYITEM.ITEM_CODE IN (SELECT ITEM_CODE FROM HRM_MT_ITEM WHERE COMPANY_CODE='" + com + "' AND ITEM_CODE='" + item_type + "')";
+            }
+            return this.getData(language, strCondition);
+        }
         public bool checkDataOld(string com, string emp, string item, DateTime date)
         {
             bool blnResult = false;
