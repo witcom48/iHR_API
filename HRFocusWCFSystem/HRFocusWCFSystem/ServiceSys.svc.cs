@@ -2199,6 +2199,14 @@ namespace HRFocusWCFSystem
                         output["result_link"] = link;
                     }
                     //TIME
+                    //TA1
+                    else if (input.task_type.Trim().Equals("EXP_TIME"))
+                    {
+                        cls_srvProcessTime srvTime = new cls_srvProcessTime();
+                        string link = srvTime.doExportTA(input.company_code, intTaskID.ToString());
+                        output["result_link"] = link;
+                    }
+                    //TA1
 
 
                     //BONUS
@@ -9548,6 +9556,98 @@ namespace HRFocusWCFSystem
 
                 array.Add(json);
 
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }        
+
+        //--PR1 kim Add
+        public string getTRPR1List(InputTRPaytran input)
+        {
+            JObject output = new JObject();
+
+            cls_ctTRPaytran objPaytran = new cls_ctTRPaytran();
+            StringBuilder objStr = new StringBuilder();
+            foreach (cls_MTWorker emp in input.emp_data)
+            {
+                objStr.Append("'" + emp.worker_code + "',");
+            }
+            string strEmp = objStr.ToString().Substring(0, objStr.ToString().Length - 1);
+            List<cls_TRPaytran> listPaytran = objPaytran.getExport(input.language, input.com, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate), strEmp);
+            JArray array = new JArray();
+
+            if (listPaytran.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRPaytran model in listPaytran)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("company_code", model.company_code);
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("worker_detail", model.worker_detail);
+                    json.Add("position", model.position);
+                    json.Add("level01", model.level01);
+                    json.Add("level02", model.level02);
+
+                    json.Add("a01", model.A01);
+                    json.Add("a02", model.A02);
+                    json.Add("al03", model.AL03);
+                    json.Add("bo01", model.BO01);
+                    json.Add("dg01", model.DG01);
+                    json.Add("ga01", model.GA01);
+                    json.Add("ot01", model.OT01);
+                    json.Add("sa01", model.SA01);
+                    json.Add("sa02", model.SA02);
+
+                    json.Add("lv01", model.LV01);
+                    json.Add("slf1", model.SLF1);
+
+
+                    json.Add("paytran_ssoemp", model.paytran_ssoemp);
+                    json.Add("paytran_pfemp", model.paytran_pfemp);
+
+                    json.Add("paytran_ssocom", model.paytran_ssocom);
+                    json.Add("paytran_pfcom", model.paytran_pfcom);
+
+                    double tax = model.paytran_tax_401 + model.paytran_tax_4012 + model.paytran_tax_4013 + model.paytran_tax_402I + model.paytran_tax_402O;
+                    json.Add("tax", tax);
+
+                    json.Add("paytran_income_notax", model.paytran_income_notax);
+                    json.Add("paytran_deduct_notax", model.paytran_deduct_notax);
+
+                    json.Add("paytran_income_total", model.paytran_income_total);
+                    json.Add("paytran_deduct_total", model.paytran_deduct_total);
+
+                    json.Add("paytran_netpay_b", model.paytran_netpay_b);
+                    json.Add("paytran_netpay_c", model.paytran_netpay_c);
+
+                    json.Add("paytran_netpay", model.paytran_netpay_b + model.paytran_netpay_c);
+
+                    json.Add("employment_date", model.employment_date);
+                    json.Add("bankaccount", model.bankaccount);
+                    json.Add("type", model.type);
+
+                    json.Add("modified_by", model.modified_by);
+                    json.Add("modified_date", model.modified_date);
+                    json.Add("flag", model.flag);
+
+                    json.Add("index", index);
+                    index++;
+
+                    array.Add(json);
+                }
 
                 output["result"] = "1";
                 output["result_text"] = "1";

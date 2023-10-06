@@ -551,5 +551,145 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return blnResult;
         }
+
+        public List<cls_TRPaytran> getExport(string language, string com, DateTime datefrom, DateTime dateto, string emp)
+        {
+            List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+            cls_TRPaytran model;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT ");
+                obj_str.Append("HRM_TR_PAYTRAN.COMPANY_CODE");
+                obj_str.Append(", HRM_TR_PAYTRAN.WORKER_CODE");
+
+                if (language.Equals("TH"))
+                {
+                    obj_str.Append(", HRM_MT_WORKER.WORKER_FNAME_TH+ ' '+ HRM_MT_WORKER.WORKER_LNAME_TH AS WORKER_DETAIL");
+                    obj_str.Append(", (SELECT POSITION_NAME_TH FROM HRM_MT_POSITION WHERE POSITION_CODE = (SELECT TOP 1 EMPPOSITION_POSITION FROM HRM_TR_EMPPOSITION WHERE WORKER_CODE = HRM_MT_WORKER.WORKER_CODE)) AS POSITION");
+                }
+                else
+                {
+                    obj_str.Append(", HRM_MT_WORKER.WORKER_FNAME_EN+ ' '+ HRM_MT_WORKER.WORKER_LNAME_EN AS WORKER_DETAIL");
+                    obj_str.Append(", (SELECT POSITION_NAME_EN FROM HRM_MT_POSITION WHERE POSITION_CODE = (SELECT TOP 1 EMPPOSITION_POSITION FROM HRM_TR_EMPPOSITION WHERE WORKER_CODE = HRM_MT_WORKER.WORKER_CODE)) AS POSITION");
+                }
+
+
+                obj_str.Append(", (SELECT TOP 1 EMPDEP_LEVEL01 FROM HRM_TR_EMPDEP WHERE HRM_TR_EMPDEP.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE ORDER BY EMPDEP_DATE DESC) AS LEVEL01");
+                obj_str.Append(", (SELECT TOP 1 EMPDEP_LEVEL02 FROM HRM_TR_EMPDEP WHERE HRM_TR_EMPDEP.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE ORDER BY EMPDEP_DATE DESC) AS LEVEL02");
+
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE = 'A01' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS A01");
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE = 'A02' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS A02");
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE = 'AL03' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS AL03");
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE LIKE 'BO%' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS BO01");
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE LIKE 'DG%' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS DG01");
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE LIKE 'GA%' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS GA01");
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE LIKE 'OT%' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS OT01");
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE = 'SA01' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS SA01");
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE = 'SA02' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS SA02");
+
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE LIKE 'LV%' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS LV01");
+                obj_str.Append(", ISNULL((SELECT SUM(PAYITEM_AMOUNT) FROM HRM_TR_PAYITEM WHERE HRM_TR_PAYITEM.ITEM_CODE LIKE 'SLF%' AND HRM_TR_PAYITEM.WORKER_CODE = HRM_TR_PAYTRAN.WORKER_CODE AND HRM_TR_PAYITEM.PAYITEM_DATE = HRM_TR_PAYTRAN.PAYTRAN_PAYDATE),0) AS SLF1");
+
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_TAX_401, 0) AS PAYTRAN_TAX_401");
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_TAX_4012, 0) AS PAYTRAN_TAX_4012");
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_TAX_4013, 0) AS PAYTRAN_TAX_4013");
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_TAX_402I, 0) AS PAYTRAN_TAX_402I");
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_TAX_402O, 0) AS PAYTRAN_TAX_402O");
+
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_SSOEMP, 0) AS PAYTRAN_SSOEMP");
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_PFEMP, 0) AS PAYTRAN_PFEMP");
+
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_SSOCOM, 0) AS PAYTRAN_SSOCOM");
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_PFCOM, 0) AS PAYTRAN_PFCOM");
+
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_INCOME_TOTAL, 0) AS PAYTRAN_INCOME_TOTAL");
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.PAYTRAN_DEDUCT_TOTAL, 0) AS PAYTRAN_DEDUCT_TOTAL");
+
+                obj_str.Append(", ISNULL(PAYTRAN_NETPAY_B, 0) AS PAYTRAN_NETPAY_B");
+                obj_str.Append(", ISNULL(PAYTRAN_NEYPAY_C, 0) AS PAYTRAN_NEYPAY_C");
+
+                obj_str.Append(", HRM_MT_WORKER.WORKER_HIREDATE AS EMPLOYMENT_DATE");
+                obj_str.Append(", ISNULL((SELECT TOP 1 EMPBANK_BANKACCOUNT FROM HRM_TR_EMPBANK WHERE HRM_TR_EMPBANK.WORKER_CODE = HRM_MT_WORKER.WORKER_CODE),'') AS BANKACCOUNT");
+                obj_str.Append(", HRM_MT_WORKER.WORKER_EMPTYPE");
+
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY) AS MODIFIED_BY");
+                obj_str.Append(", ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE) AS MODIFIED_DATE");
+
+                obj_str.Append(" FROM HRM_TR_PAYTRAN");
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_MT_WORKER.COMPANY_CODE=HRM_TR_PAYTRAN.COMPANY_CODE AND HRM_MT_WORKER.WORKER_CODE=HRM_TR_PAYTRAN.WORKER_CODE");
+                obj_str.Append(" WHERE 1=1");
+
+                obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND HRM_TR_PAYTRAN.WORKER_CODE IN (" + emp + ")");
+
+                obj_str.Append(" ORDER BY HRM_TR_PAYTRAN.COMPANY_CODE, PAYTRAN_PAYDATE, HRM_TR_PAYTRAN.WORKER_CODE");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    model = new cls_TRPaytran();
+                    model.company_code = Convert.ToString(dr["COMPANY_CODE"]);
+                    model.worker_code = Convert.ToString(dr["WORKER_CODE"]);
+                    model.worker_detail = Convert.ToString(dr["WORKER_DETAIL"]);
+                    model.position = Convert.ToString(dr["POSITION"]);
+                    model.level01 = Convert.ToString(dr["LEVEL01"]);
+                    model.level02 = Convert.ToString(dr["LEVEL02"]);
+
+                    model.A01 = Convert.ToDouble(dr["A01"]);
+                    model.A02 = Convert.ToDouble(dr["A02"]);
+                    model.AL03 = Convert.ToDouble(dr["AL03"]);
+                    model.BO01 = Convert.ToDouble(dr["BO01"]);
+                    model.DG01 = Convert.ToDouble(dr["DG01"]);
+                    model.GA01 = Convert.ToDouble(dr["GA01"]);
+                    model.OT01 = Convert.ToDouble(dr["OT01"]);
+                    model.SA01 = Convert.ToDouble(dr["SA01"]);
+                    model.SA02 = Convert.ToDouble(dr["SA02"]);
+                    model.LV01 = Convert.ToDouble(dr["LV01"]);
+                    model.SLF1 = Convert.ToDouble(dr["SLF1"]);
+
+
+                    model.paytran_ssoemp = Convert.ToDouble(dr["PAYTRAN_SSOEMP"]);
+                    model.paytran_pfemp = Convert.ToDouble(dr["PAYTRAN_PFEMP"]);
+
+                    model.paytran_ssocom = Convert.ToDouble(dr["PAYTRAN_SSOCOM"]);
+                    model.paytran_pfcom = Convert.ToDouble(dr["PAYTRAN_PFCOM"]);
+
+                    model.paytran_tax_401 = Convert.ToDouble(dr["PAYTRAN_TAX_401"]);
+                    model.paytran_tax_4012 = Convert.ToDouble(dr["PAYTRAN_TAX_4012"]);
+                    model.paytran_tax_4013 = Convert.ToDouble(dr["PAYTRAN_TAX_4013"]);
+                    model.paytran_tax_402I = Convert.ToDouble(dr["PAYTRAN_TAX_402I"]);
+                    model.paytran_tax_402O = Convert.ToDouble(dr["PAYTRAN_TAX_402O"]);
+
+                    model.paytran_income_total = Convert.ToDouble(dr["PAYTRAN_INCOME_TOTAL"]);
+                    model.paytran_deduct_total = Convert.ToDouble(dr["PAYTRAN_DEDUCT_TOTAL"]);
+
+                    model.paytran_netpay_b = Convert.ToDouble(dr["PAYTRAN_NETPAY_B"]);
+                    model.paytran_netpay_c = Convert.ToDouble(dr["PAYTRAN_NEYPAY_C"]);
+
+                    model.employment_date = Convert.ToDateTime(dr["EMPLOYMENT_DATE"]);
+                    model.bankaccount = Convert.ToString(dr["BANKACCOUNT"]);
+                    model.type = Convert.ToString(dr["WORKER_EMPTYPE"]);
+
+
+
+                    model.modified_by = dr["MODIFIED_BY"].ToString();
+                    model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+                    list_model.Add(model);
+                    
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+            }
+
+            return list_model;
+        }
     }
 }

@@ -1620,7 +1620,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                 //-- Step 8 Get Payitem
 
                 cls_ctTRPayitem objPayitem = new cls_ctTRPayitem();
-                List<cls_TRPayitem> list_payitem = objPayitem.getDataByFillter("TH", com, strEmp, datePay, "SLF1", "");
+                List<cls_TRPayitem> list_payitem = objPayitem.getDataitemMultipleEmp("TH", com, strEmp, datePay, "SLF1", "");
                 cls_TRPayitem payitem = list_payitem[0];
                 if (list_payitem.Count > 0)
                 {
@@ -1630,7 +1630,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                 //-- Step 9  Get Payitemm
 
                 cls_ctTRPayitem objPayitemm = new cls_ctTRPayitem();
-                List<cls_TRPayitem> list_payitemm = objPayitemm.getDataByFillter("TH", com, strEmp, datePay, "SLF2", "");
+                List<cls_TRPayitem> list_payitemm = objPayitemm.getDataitemMultipleEmp("TH", com, strEmp, datePay, "SLF2", "");
                 cls_TRPayitem payitemm = list_payitemm[0];
                 if (list_payitemm.Count > 0)
                 {

@@ -92,6 +92,14 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(strCondition);
         }
 
+        public List<cls_TREmpposition> getDataMultipleEmp(string com, string worker, DateTime date)
+        {
+            string strCondition = " AND COMPANY_CODE='" + com + "'";
+            strCondition += " AND WORKER_CODE IN (" + worker + ") ";
+            strCondition += " AND EMPPOSITION_DATE <= '" + date.ToString("MM/dd/yyyy") + "' ";
+            return this.getData(strCondition);
+        }
+
         public bool checkDataOld(string com, string worker, DateTime date)
         {
             bool blnResult = false;

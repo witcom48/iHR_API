@@ -872,6 +872,10 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteTRPaytran(InputTRPaytran input);
 
+        [OperationContract(Name = "getTRPR1List")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRPR1List(InputTRPaytran input);
+
         //-- Payreduce
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]

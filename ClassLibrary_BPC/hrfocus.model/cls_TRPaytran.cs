@@ -63,6 +63,27 @@ namespace ClassLibrary_BPC.hrfocus.model
         //-- Show only
         public string worker_detail { get; set; }
         public double paytran_salary { get; set; }
+        public string position { get; set; }
+        public string level01 { get; set; }
+        public string level02 { get; set; }
+        public double A01 { get; set; }
+        public double A02 { get; set; }
+        public double AL03 { get; set; }
+        public double BO01 { get; set; }
+        public double DG01 { get; set; }
+        public double GA01 { get; set; }
+        public double OT01 { get; set; }
+        public double SA01 { get; set; }
+        public double SA02 { get; set; }
+        public double LV01 { get; set; }
+        public double SLF1 { get; set; }
+        public DateTime employment_date { get; set; }
+        public string bankaccount { get; set; }
+        public string type { get; set; }
+
+
+
+
 
     }
 }
