@@ -13,3 +13,10 @@ D:\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.frmExportData.resources
 D:\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.csproj.GenerateResource.Cache
 D:\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.dll
 D:\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.pdb
+D:\Work\BPC\Project\IHR\BackEnd\iHR_API\ClassLibrary_BPC\bin\Debug\ClassLibrary_BPC.dll
+D:\Work\BPC\Project\IHR\BackEnd\iHR_API\ClassLibrary_BPC\bin\Debug\ClassLibrary_BPC.pdb
+D:\Work\BPC\Project\IHR\BackEnd\iHR_API\ClassLibrary_BPC\bin\Debug\ExcelLibrary.dll
+D:\Work\BPC\Project\IHR\BackEnd\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.frmExportData.resources
+D:\Work\BPC\Project\IHR\BackEnd\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.csproj.GenerateResource.Cache
+D:\Work\BPC\Project\IHR\BackEnd\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.dll
+D:\Work\BPC\Project\IHR\BackEnd\iHR_API\ClassLibrary_BPC\obj\Debug\ClassLibrary_BPC.pdb

@@ -310,6 +310,26 @@ namespace HRFocusWCFSystem
         [DataMember]
         public int index { get; set; }
     }
+
+    [DataContract]
+    public class InputMTEmpStatus
+    {
+        [DataMember]
+        public int empstatus_id { get; set; }
+        [DataMember]
+        public string empstatus_code { get; set; }
+        [DataMember]
+        public string empstatus_name_th { get; set; }
+        [DataMember]
+        public string empstatus_name_en { get; set; }
+        [DataMember]
+        public string modified_by { get; set; }
+        [DataMember]
+        public DateTime modified_date { get; set; }
+
+        [DataMember]
+        public int index { get; set; }
+    }
                 
     [DataContract]
     public class InputTRList
@@ -915,6 +935,21 @@ namespace HRFocusWCFSystem
         [DataMember]
         public string created_by { get; set; }
         
+    }
+
+
+    [DataContract]
+    public class InputChangeWorkerCode
+    {
+        [DataMember]
+        public string company_code { get; set; }
+        [DataMember]
+        public string worker_code { get; set; }
+        [DataMember]
+        public string new_code { get; set; }
+       
+        public string modified_by { get; set; }      
+       
     }
 
 }

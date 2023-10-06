@@ -1,0 +1,67 @@
+
+
+CREATE TABLE [dbo].[HRM_MT_EMPSTATUS](
+	[EMPSTATUS_ID] [int] NOT NULL,
+	[EMPSTATUS_CODE] [varchar](5) NOT NULL,
+	[EMPSTATUS_NAME_TH] [varchar](100) NOT NULL,
+	[EMPSTATUS_NAME_EN] [varchar](100) NOT NULL,
+	[CREATED_BY] [varchar](20) NOT NULL,
+	[CREATED_DATE] [datetime] NOT NULL,
+	[MODIFIED_BY] [varchar](20) NULL,
+	[MODIFIED_DATE] [datetime] NULL,
+	[FLAG] [bit] NOT NULL,
+ CONSTRAINT [PK_HRM_MT_EMPSTATUS] PRIMARY KEY CLUSTERED 
+(
+	[EMPSTATUS_CODE] ASC
+))
+GO
+
+
+ALTER TABLE HRM_MT_WORKER
+ADD [EMPSTATUS_CODE] [varchar](5) NULL
+GO
+
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[HRM_PRO_CHANGEWORKERCODE] 
+( 
+	@CompanyCode varchar (30), 
+	@WorkerCode varchar (30), 
+	@NewCode varchar (30) 
+) 
+AS 
+BEGIN 
+	DECLARE @TableName varchar (100) 
+	DECLARE @SQLCommand nvarchar (500) 
+	DECLARE List CURSOR FOR SELECT DISTINCT Tables.name FROM syscolumns Columns 
+	LEFT OUTER JOIN sysobjects Tables ON Columns.id = Tables.id AND Columns.name IN ('WORKER_CODE') 
+	WHERE Tables.Type = 'U' 
+	OPEN List 
+	FETCH NEXT FROM List INTO @TableName 
+	WHILE @@FETCH_STATUS = 0 
+	BEGIN 
+		IF (@TableName IN ('HRM_SYS_ACCOUNT', 'HRM_SYS_REPORTJOBWHOSE', 'HRM_SYS_REPORTJOBWHOSE', 'HRM_TR_TASKWHOSE')) 
+		BEGIN 
+			PRINT 'Noting..'
+		END 		
+		ELSE 
+		BEGIN 
+			SET @SQLCommand = 'UPDATE ' + @TableName + ' SET WORKER_CODE = ''' + @NewCode + ''' ' 
+			SET @SQLCommand = @SQLCommand + 'WHERE COMPANY_CODE = ''' + @CompanyCode + ''' AND WORKER_CODE = ''' + @WorkerCode + '''' 
+		END 
+		
+		EXEC sp_executesql @SQLCommand 
+			
+		FETCH NEXT FROM List INTO @TableName 
+	END 
+	CLOSE List 
+	DEALLOCATE List 
+END 
+GO
+
+

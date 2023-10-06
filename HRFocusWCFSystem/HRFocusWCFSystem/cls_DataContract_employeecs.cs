@@ -143,6 +143,10 @@ namespace HRFocusWCFSystem
         public bool self_admin { get; set; }
 
         [DataMember]
+        public string worker_empstatus { get; set; }
+
+
+        [DataMember]
         public string modified_by { get; set; }
         [DataMember]
         public DateTime modified_date { get; set; }
