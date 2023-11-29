@@ -470,8 +470,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append(", WORKER_PWD ");
                 obj_str.Append(", SELF_ADMIN ");
-
-                obj_str.Append(", EMPSTATUS_CODE ");
+                if (model.worker_empstatus != null) {
+                    obj_str.Append(", EMPSTATUS_CODE ");
+                }
+               
                 
                 obj_str.Append(", CREATED_BY ");
                 obj_str.Append(", CREATED_DATE ");
@@ -514,8 +516,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", @WORKER_TAXMETHOD ");
                 obj_str.Append(", @WORKER_PWD ");
                 obj_str.Append(", @SELF_ADMIN ");
+                if (model.worker_empstatus != null) {
+                    obj_str.Append(", @EMPSTATUS_CODE ");
+                }
 
-                obj_str.Append(", @EMPSTATUS_CODE ");
 
                 obj_str.Append(", @CREATED_BY ");
                 obj_str.Append(", @CREATED_DATE ");
@@ -565,8 +569,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@WORKER_PWD", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_PWD"].Value = model.worker_pwd;
 
                 obj_cmd.Parameters.Add("@SELF_ADMIN", SqlDbType.Bit); obj_cmd.Parameters["@SELF_ADMIN"].Value = model.self_admin;
-
-                obj_cmd.Parameters.Add("@EMPSTATUS_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@EMPSTATUS_CODE"].Value = model.worker_empstatus;
+                if (model.worker_empstatus != null) {
+                    obj_cmd.Parameters.Add("@EMPSTATUS_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@EMPSTATUS_CODE"].Value = model.worker_empstatus;
+                }
+                
 
                 obj_cmd.Parameters.Add("@CREATED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@CREATED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@CREATED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@CREATED_DATE"].Value = DateTime.Now;
