@@ -127,7 +127,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             if (!item_type.Equals(""))
             {
-                strCondition += " AND HRM_TR_PAYITEM.ITEM_CODE IN (SELECT ITEM_CODE FROM HRM_MT_ITEM WHERE COMPANY_CODE='" + com + "' AND ITEM_CODE='" + item_type + "')";
+                strCondition += " AND HRM_TR_PAYITEM.ITEM_CODE IN (SELECT ITEM_CODE FROM HRM_MT_ITEM WHERE COMPANY_CODE='" + com + "' AND ITEM_TYPE='" + item_type + "')";
             }
 
             return this.getData(language, strCondition);
