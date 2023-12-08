@@ -87,30 +87,18 @@ namespace ClassLibrary_BPC.hrfocus.service
                 cls_ctMTWorker objWorker = new cls_ctMTWorker();
                 List<cls_MTWorker> list_worker = objWorker.getDataMultipleEmp(com, strEmp);
 
-                //-- Get worker dep
+                //-- Get dep
                 cls_ctTREmpdep objDep = new cls_ctTREmpdep();
                 List<cls_TREmpdep> list_TRdep = objDep.getDataTaxMultipleEmp(com, strEmp, dateTo);
-                //cls_TREmpdep empdep = list_TRdep[0];
-
+ 
                 //-- Get worker position
                 cls_ctTREmpposition objPos = new cls_ctTREmpposition();
                 List<cls_TREmpposition> list_TRpos = objPos.getDataMultipleEmp(com, strEmp, dateTo);
-                //cls_TREmpposition emppos = list_TRpos[0];
-
+ 
                 //-- Get  Position
                 cls_ctMTPosition objPosition = new cls_ctMTPosition();
                 List<cls_MTPosition> list_TRPosition = objPosition.getDataByFillter("", "", "");
                  
-                
-
-                //--get timecard
-                cls_ctTRTimecard objTimecard = new cls_ctTRTimecard();
-                List<cls_TRTimecard> list_timecard = objTimecard.getDataByFillter(com, strEmp, dateFrom, dateTo);
-
-                //--get timeleave
-                cls_ctTRTimeleave objleave = new cls_ctTRTimeleave();
-                List<cls_TRTimeleave> list_leave = objleave.getDataMultipleEmp("TH", com, strEmp, dateFrom, dateTo);
-
                 //-- Get Emp card
                 cls_ctTREmpcard objEmpcard = new cls_ctTREmpcard();
                 List<cls_TREmpcard> list_empcard = objEmpcard.getDataEmp(com, strEmp );
@@ -127,17 +115,19 @@ namespace ClassLibrary_BPC.hrfocus.service
                 cls_ctMTProvince objProvince = new cls_ctMTProvince();
                 List<cls_MTProvince> list_province = objProvince.getDataByFillter("", "");
 
-                //-- Get Province
+                //-- Get Reason
                 cls_ctMTReason objMTReason = new cls_ctMTReason();
                 List<cls_MTReason> list_TReason = objMTReason.getDatareson("", "");
-               
-                //-- Get Province
+
+                //-- Get MTPosition
                 cls_ctMTPosition objMTPosition = new cls_ctMTPosition();
                 List<cls_MTPosition> list_MTPosition = objMTPosition.getDataByFillter(com, "", "");
-                 //-- Get Province
+
+                //-- Get MTDep 
                 cls_ctMTDep objTDep = new cls_ctMTDep();
                 List<cls_MTDep> list_TDep= objTDep.getDataByFillter(com, "", "", "", "");
-                 //-- Get Province
+
+                //-- Get MTEmpStatus
                 cls_ctMTEmpStatus objMTEmpStatus = new cls_ctMTEmpStatus();
                 List<cls_MTEmpStatus> list_MTEmpStatus = objMTEmpStatus.getDataByFillter("", "");
                
@@ -145,9 +135,6 @@ namespace ClassLibrary_BPC.hrfocus.service
                 string tmpData = "";
                 if (list_worker.Count > 0)
                 {
-                    double douTotal = 0;
-
-                    int index = 1;
                     string bkData;
 
                     foreach (cls_MTWorker MTWorkers in list_worker)
@@ -156,15 +143,11 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                         cls_MTWorker obj_worker = new cls_MTWorker();
                         cls_TREmpdep obj_workerdep = new cls_TREmpdep();
-
                         cls_TREmpdep obj_workerdep1 = new cls_TREmpdep();
                         cls_TREmpdep obj_workerdep2 = new cls_TREmpdep();
                         cls_TREmpdep obj_workerdep3 = new cls_TREmpdep();
-
                         cls_TREmpposition obj_workerpos = new cls_TREmpposition();
-
                         cls_TRTimeleave obj_timeleave = new cls_TRTimeleave();
-
                         cls_TREmpaddress obj_empaddress = new cls_TREmpaddress();
                         cls_TREmpbank obj_empbank = new cls_TREmpbank();
                         cls_TREmpcard obj_empcard = new cls_TREmpcard();
@@ -204,27 +187,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                             }
                         }
 
-                        //foreach (cls_TRTimeleave leave in list_leave)
-                        //{
-                        //    if (timecard.worker_code.Equals(leave.worker_code) && timecard.timecard_workdate.Equals(leave.timeleave_fromdate))
-                        //    {
-                        //        obj_timeleave = leave;
-                        //        break;
-                        //    }
-                        //}
-
-                        
-
                         if (empname.Equals(""))
                             continue;
 
-                        //if (!(MTWorkers.timecard_workdate == null))
                         if (list_worker.Count > 0)
 
                         {
-
-                            ////ลำดับ
-                            //bkData = "";
 
                             //1 รหัสพนักงาน
                             bkData = obj_worker.worker_code + "|";
@@ -237,12 +205,10 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             //4 ชื่อ
                             bkData +=  obj_worker.worker_fname_th + "|";
-
  
                             //5 นามสกุล
                              bkData += obj_worker.worker_lname_th + "|";
 
- 
                             //6 ชื่อเล่น
                             bkData += " " + "|";
  
@@ -388,7 +354,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         }
                                         else
                                         {
-                                            bkData += " " + " |"; 
+                                            bkData += "-" + " |"; 
                                         }
                                     }
 
