@@ -152,7 +152,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             strCondition += " AND (TIMECARD_WORKDATE BETWEEN '" + fromdate.ToString(this.FormatDateDB) + "' AND '" + todate.ToString(this.FormatDateDB) + "' )";
 
             if (!worker.Equals(""))
-                strCondition += " AND WORKER_CODE='" + worker + "'";
+                strCondition += " AND WORKER_CODE=" + worker + "";
             
             return this.getData(strCondition);
         }

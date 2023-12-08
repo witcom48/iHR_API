@@ -105,7 +105,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 //--get timecard
                 cls_ctTRTimecard objTimecard = new cls_ctTRTimecard();
-                List<cls_TRTimecard> list_timecard = objTimecard.getDataTimeMultipleEmp(com, strEmp, dateFrom, dateTo);
+                List<cls_TRTimecard> list_timecard = objTimecard.getDataByFillter(com, strEmp, dateFrom, dateTo);
 
                 //--get timeleave
                 cls_ctTRTimeleave objleave = new cls_ctTRTimeleave();
@@ -143,14 +143,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                
                 
                 string tmpData = "";
-                if (list_timecard.Count > 0)
+                if (list_worker.Count > 0)
                 {
                     double douTotal = 0;
 
                     int index = 1;
                     string bkData;
 
-                    foreach (cls_TRTimecard timecard in list_timecard)
+                    foreach (cls_MTWorker MTWorkers in list_worker)
                     {
                         string empname = "";
 
@@ -178,7 +178,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                         foreach (cls_MTWorker worker in list_worker)
                         {
-                            if (timecard.worker_code.Equals(worker.worker_code))
+                            if (MTWorkers.worker_code.Equals(worker.worker_code))
                             {
                                 empname = worker.initial_name_en + " " + worker.worker_fname_en + " " + worker.worker_lname_en;
                                 obj_worker = worker;
@@ -188,7 +188,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                         foreach (cls_TREmpdep dep in list_TRdep)
                         {
-                            if (timecard.worker_code.Equals(dep.worker_code))
+                            if (MTWorkers.worker_code.Equals(dep.worker_code))
                             {
                                 obj_workerdep = dep;
                                 break;
@@ -197,28 +197,30 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                         foreach (cls_TREmpposition pos in list_TRpos)
                         {
-                            if (timecard.worker_code.Equals(pos.worker_code))
+                            if (MTWorkers.worker_code.Equals(pos.worker_code))
                             {
                                 obj_workerpos = pos;
                                 break;
                             }
                         }
 
-                        foreach (cls_TRTimeleave leave in list_leave)
-                        {
-                            if (timecard.worker_code.Equals(leave.worker_code) && timecard.timecard_workdate.Equals(leave.timeleave_fromdate))
-                            {
-                                obj_timeleave = leave;
-                                break;
-                            }
-                        }
+                        //foreach (cls_TRTimeleave leave in list_leave)
+                        //{
+                        //    if (timecard.worker_code.Equals(leave.worker_code) && timecard.timecard_workdate.Equals(leave.timeleave_fromdate))
+                        //    {
+                        //        obj_timeleave = leave;
+                        //        break;
+                        //    }
+                        //}
 
                         
 
                         if (empname.Equals(""))
                             continue;
 
-                        if (!(timecard.timecard_workdate == null)) 
+                        //if (!(MTWorkers.timecard_workdate == null))
+                        if (list_worker.Count > 0)
+
                         {
 
                             ////ลำดับ
@@ -266,7 +268,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             foreach (cls_MTWorker worker4 in list_worker)
                             {
-                                if (timecard.worker_code.Equals(worker4.worker_code))
+                                if (MTWorkers.worker_code.Equals(worker4.worker_code))
                                 {
                                     foreach (cls_MTEmpStatus MTEmpStatus in list_MTEmpStatus)
                                     {
@@ -356,7 +358,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             foreach (cls_MTWorker worker in list_worker)
                             {
-                                if (timecard.worker_code.Equals(worker.worker_code))
+                                if (MTWorkers.worker_code.Equals(worker.worker_code))
                                 {
                                     bool foundReason = false; // สร้างตัวแปรเพื่อตรวจสอบว่าพบเหตุผลที่เลิกจ้างหรือไม่
 
@@ -401,7 +403,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             foreach (cls_TREmpdep dep1 in list_TRdep)
                             {
-                                if (timecard.worker_code.Equals(dep1.worker_code))
+                                if (MTWorkers.worker_code.Equals(dep1.worker_code))
                                 {
                                     bool foundDep1 = false;
 
@@ -440,7 +442,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             foreach (cls_TREmpdep dep2 in list_TRdep)
                             {
-                                if (timecard.worker_code.Equals(dep2.worker_code))
+                                if (MTWorkers.worker_code.Equals(dep2.worker_code))
                                 {
                                     bool foundDep2 = false;
 
@@ -479,7 +481,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             foreach (cls_TREmpdep dep3 in list_TRdep)
                             {
-                                if (timecard.worker_code.Equals(dep3.worker_code))
+                                if (MTWorkers.worker_code.Equals(dep3.worker_code))
                                 {
                                     bool foundDep3 = false; 
 
@@ -518,7 +520,7 @@ namespace ClassLibrary_BPC.hrfocus.service
  
                             foreach (cls_TREmpposition emppos in list_TRpos)
                             {
-                                if (timecard.worker_code.Equals(emppos.worker_code))
+                                if (MTWorkers.worker_code.Equals(emppos.worker_code))
                                 {
                                     foreach (cls_MTPosition pos1 in list_MTPosition)
                                     {
@@ -544,7 +546,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             foreach (cls_TREmpposition pos in list_TRpos)
                             {
-                                if (timecard.worker_code.Equals(pos.worker_code))
+                                if (MTWorkers.worker_code.Equals(pos.worker_code))
                                 {
                                     foreach (cls_MTReason pos1 in list_TReason)
                                     {
@@ -583,7 +585,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                             //25 เลขที่บัตรประชาชน
                             foreach (cls_TREmpcard card in list_empcard)
                             {
-                                if (timecard.worker_code.Equals(card.worker_code) && card.card_type.Equals("NTID"))
+                                if (MTWorkers.worker_code.Equals(card.worker_code) && card.card_type.Equals("NTID"))
                                 {
                                     obj_empcard = card;
                                     break;
@@ -597,7 +599,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                             //27 เลขที่บัตรประกันสังคม
                             foreach (cls_TREmpcard card in list_empcard)
                             {
-                                if (timecard.worker_code.Equals(card.worker_code) && card.card_type.Equals("SSO"))
+                                if (MTWorkers.worker_code.Equals(card.worker_code) && card.card_type.Equals("SSO"))
                                 {
                                     obj_empcardsso = card;
                                     break;
@@ -611,7 +613,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                             //29 เลขที่หนังสือเดินทาง
                             foreach (cls_TREmpcard card in list_empcard)
                             {
-                                if (timecard.worker_code.Equals(card.worker_code) && card.card_type.Equals("PAS"))
+                                if (MTWorkers.worker_code.Equals(card.worker_code) && card.card_type.Equals("PAS"))
                                 {
                                     obj_empcardpas = card;
                                     break;
@@ -625,7 +627,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             foreach (cls_TREmpaddress address in list_empaddress)
                             {
-                                if (timecard.worker_code.Equals(address.worker_code))
+                                if (MTWorkers.worker_code.Equals(address.worker_code))
                                 {
                                     obj_empaddress = address;
                                     break;
@@ -678,7 +680,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                             foreach (cls_TREmpbank empbank in list_empbank)
                             {
-                                if (timecard.worker_code.Equals(empbank.worker_code))
+                                if (MTWorkers.worker_code.Equals(empbank.worker_code))
                                 {
                                     obj_empbank = empbank;
 
@@ -699,7 +701,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                         
                     }
 
-                    int record = list_timecard.Count;
+                    int record = list_worker.Count;
 
                     try
                     {
