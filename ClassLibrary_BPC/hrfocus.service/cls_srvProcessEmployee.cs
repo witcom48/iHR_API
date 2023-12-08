@@ -230,7 +230,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                             cls_MTEmpStatus bj_MTEmpStatus1 = null; // สร้างตัวแปร bj_MTEmpStatus1 เพื่อให้มีค่าเริ่มต้นเป็น null
                             cls_MTWorker obj_worker4 = null; // สร้างตัวแปร obj_worker4 เพื่อให้มีค่าเริ่มต้นเป็น null
 
-                            bool foundStatus = false; // สร้างตัวแปรเพื่อตรวจสอบว่าพบเหตุผลที่เลิกจ้างหรือไม่
+                            bool foundStatus = false; // สร้างตัวแปรตรวจสอบว่ามีเหตุผลที่เลิกจ้างหรือไม่
 
                             foreach (cls_MTWorker worker4 in list_worker)
                             {
@@ -333,7 +333,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                             {
                                 if (MTWorkers.worker_code.Equals(worker.worker_code))
                                 {
-                                    bool foundReason = false; // สร้างตัวแปรเพื่อตรวจสอบว่าพบเหตุผลที่เลิกจ้างหรือไม่
+                                    bool foundReason = false; 
 
                                     foreach (cls_MTReason pos1 in list_TReason)
                                     {
