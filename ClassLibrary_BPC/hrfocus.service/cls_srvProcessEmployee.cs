@@ -397,7 +397,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     {
                                         if (cls_TREmpdep1 != null)
                                         {
-                                            bkData += obj_workerdep2.empdep_level01 + "|"; 
+                                            bkData += obj_workerdep1.empdep_level01 + "|"; 
                                         }
                                         else
                                         {
@@ -475,7 +475,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     {
                                         if (cls_TREmpdep3 != null)
                                         {
-                                            bkData += obj_workerdep2.empdep_level03 + "|"; 
+                                            bkData += obj_workerdep3.empdep_level03 + "|"; 
                                         }
                                         else
                                         {
