@@ -350,7 +350,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                             bkData += obj_worker.worker_resignstatus + "|";
 
                             //14 วันที่ลาออก
-                            bkData += obj_worker.worker_resigndate.ToString("dd/MM/yyyy") + "|";
+                            if (obj_worker.worker_resignstatus)  
+                            {
+                                bkData += obj_worker.worker_resigndate.ToString("dd/MM/yyyy") + "|"; 
+                            }
+                            else
+                            {
+                                bkData += "" + "|";  
+                            }
 
                             //15 สาเหตุการลาออก
                             cls_MTReason bj_MTReasons1 = null; 
