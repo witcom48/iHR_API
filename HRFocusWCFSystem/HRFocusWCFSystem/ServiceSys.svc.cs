@@ -2211,7 +2211,7 @@ namespace HRFocusWCFSystem
                     //golf 07/12/2023
                     else if (input.task_type.Trim().Equals("EMP_TIME"))
                     {
-                        cls_srvProcessTime srvTime = new cls_srvProcessTime();
+                        cls_srvProcessEmployee srvTime = new cls_srvProcessEmployee();
                         string link = srvTime.doExportEMP(input.company_code, intTaskID.ToString());
                         output["result_link"] = link;
                     }
