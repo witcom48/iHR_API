@@ -2208,6 +2208,15 @@ namespace HRFocusWCFSystem
                     }
                     //TA1
 
+                    //golf 07/12/2023
+                    else if (input.task_type.Trim().Equals("EMP_TIME"))
+                    {
+                        cls_srvProcessTime srvTime = new cls_srvProcessTime();
+                        string link = srvTime.doExportEMP(input.company_code, intTaskID.ToString());
+                        output["result_link"] = link;
+                    }
+                   //
+
 
                     //BONUS
                     else if (input.task_type.Trim().Equals("CAL_BONUS"))
@@ -5632,6 +5641,7 @@ namespace HRFocusWCFSystem
                     json.Add("self_admin", model.self_admin);
 
                     json.Add("worker_empstatus", model.worker_empstatus);
+                    json.Add("worker_empstatus_name", model.worker_empstatus_name);
 
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);
@@ -5699,6 +5709,8 @@ namespace HRFocusWCFSystem
                 model.self_admin = input.self_admin;
 
                 model.worker_empstatus = input.worker_empstatus;
+                model.worker_empstatus_name = input.worker_empstatus_name;
+
                 
                 model.modified_by = input.modified_by;
                 model.flag = model.flag;

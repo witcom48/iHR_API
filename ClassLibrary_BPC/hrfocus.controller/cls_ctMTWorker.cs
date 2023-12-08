@@ -110,11 +110,11 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                     model.worker_probationdate = Convert.ToDateTime(dr["WORKER_PROBATIONDATE"]);
                     model.worker_probationenddate = Convert.ToDateTime(dr["WORKER_PROBATIONENDDATE"]);
-                    
+
                     model.hrs_perday = Convert.ToDouble(dr["HRS_PERDAY"]);
 
                     model.worker_taxmethod = dr["WORKER_TAXMETHOD"].ToString();
-                    
+
                     model.modified_by = dr["MODIFIED_BY"].ToString();
                     model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
 
@@ -124,12 +124,12 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.self_admin = Convert.ToBoolean(dr["SELF_ADMIN"]);
 
                     model.worker_empstatus = dr["EMPSTATUS_CODE"].ToString();
-                                                                                                                      
+
                     list_model.Add(model);
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Message = "ERROR::(Worker.getData)" + ex.ToString();
             }
@@ -168,13 +168,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
             {
                 strCondition += " AND WORKER_CODE IN (SELECT DISTINCT WORKER_CODE FROM HRM_TR_EMPLOCATION WHERE COMPANY_CODE='" + com + "' AND LOCATION_CODE='" + location_code + "' )";
             }
-                
+
 
             if (!include_resign)
             {
                 strCondition += " AND (WORKER_RESIGNSTATUS='0' OR WORKER_RESIGNSTATUS IS NULL) ";
             }
-                
+
 
             return this.getData(strCondition);
         }
@@ -183,15 +183,15 @@ namespace ClassLibrary_BPC.hrfocus.controller
         {
             string strCondition = "";
 
-            
+
             strCondition += " AND COMPANY_CODE='" + com + "'";
-            strCondition += " AND WORKER_CODE='" + worker_code + "'";            
+            strCondition += " AND WORKER_CODE='" + worker_code + "'";
 
             return this.getData(strCondition);
         }
 
         public List<cls_MTWorker> getDataByCompanyCode(string com)
-        {          
+        {
             return this.getData(" AND COMPANY_CODE='" + com + "'");
         }
 
@@ -208,7 +208,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             string strCondition = "";
 
 
-            
+
             strCondition += " AND WORKER_CODE='" + worker_code + "'";
             strCondition += " AND WORKER_PWD='" + worker_pwd + "'";
 
@@ -234,7 +234,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" WHERE 1=1 ");
                 obj_str.Append(" AND COMPANY_CODE='" + com + "'");
                 obj_str.Append(" AND WORKER_CODE='" + code + "'");
-                                                
+
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
                 if (dt.Rows.Count > 0)
@@ -259,7 +259,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("SELECT WORKER_CODE");
                 obj_str.Append(" FROM HRM_MT_WORKER");
-                obj_str.Append(" WHERE 1=1 ");                
+                obj_str.Append(" WHERE 1=1 ");
                 obj_str.Append(" AND WORKER_CODE='" + id + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
@@ -285,7 +285,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
                 obj_str.Append("SELECT TOP 1 WORKER_CODE");
-                obj_str.Append(" FROM HRM_MT_WORKER");                
+                obj_str.Append(" FROM HRM_MT_WORKER");
                 obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
                 obj_str.Append(" AND WORKER_CODE LIKE '" + prefix + "%'");
                 obj_str.Append(" ORDER BY WORKER_CODE DESC");
@@ -299,7 +299,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     strID = strID.Replace(prefix, "");
 
                     intResult = Convert.ToInt32(strID) + 1;
-                    
+
                 }
             }
             catch (Exception ex)
@@ -335,7 +335,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return intResult;
         }
 
-        public int getID( string com, string empid)
+        public int getID(string com, string empid)
         {
             int intResult = 0;
             try
@@ -374,7 +374,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" DELETE FROM HRM_MT_WORKER");
                 obj_str.Append(" WHERE 1=1 ");
                 obj_str.Append(" AND WORKER_ID='" + id + "'");
-                                              
+
                 blnResult = obj_conn.doExecuteSQL(obj_str.ToString());
 
             }
@@ -423,8 +423,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                         return "yes";
                 }
                 cls_ctSYSPackage Package = new cls_ctSYSPackage();
-                var empcounts =  this.empcount();
-                List<cls_SYSPackage> listPackage =   Package.getData();
+                var empcounts = this.empcount();
+                List<cls_SYSPackage> listPackage = Package.getData();
                 if (Convert.ToInt32(this.Decrypt(listPackage[0].packege_emp).Split('E')[1]) <= empcounts)
                 {
                     return "limit";
@@ -460,7 +460,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     obj_str.Append(", WORKER_RESIGNREASON ");
                 }
 
-                
+
                 obj_str.Append(", WORKER_PROBATIONDATE ");
                 obj_str.Append(", WORKER_PROBATIONENDDATE ");
 
@@ -470,11 +470,12 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append(", WORKER_PWD ");
                 obj_str.Append(", SELF_ADMIN ");
-                if (model.worker_empstatus != null) {
+                if (model.worker_empstatus != null)
+                {
                     obj_str.Append(", EMPSTATUS_CODE ");
                 }
-               
-                
+
+
                 obj_str.Append(", CREATED_BY ");
                 obj_str.Append(", CREATED_DATE ");
                 obj_str.Append(", FLAG ");
@@ -506,7 +507,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     obj_str.Append(", @WORKER_RESIGNDATE ");
                     obj_str.Append(", @WORKER_RESIGNREASON ");
                 }
-                               
+
 
                 obj_str.Append(", @WORKER_PROBATIONDATE ");
                 obj_str.Append(", @WORKER_PROBATIONENDDATE ");
@@ -516,7 +517,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", @WORKER_TAXMETHOD ");
                 obj_str.Append(", @WORKER_PWD ");
                 obj_str.Append(", @SELF_ADMIN ");
-                if (model.worker_empstatus != null) {
+                if (model.worker_empstatus != null)
+                {
                     obj_str.Append(", @EMPSTATUS_CODE ");
                 }
 
@@ -539,7 +541,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@WORKER_CARD", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CARD"].Value = model.worker_card;
 
                 obj_cmd.Parameters.Add("@WORKER_INITIAL", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_INITIAL"].Value = model.worker_initial;
-                
+
                 obj_cmd.Parameters.Add("@WORKER_FNAME_TH", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_FNAME_TH"].Value = model.worker_fname_th;
                 obj_cmd.Parameters.Add("@WORKER_LNAME_TH", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_LNAME_TH"].Value = model.worker_lname_th;
                 obj_cmd.Parameters.Add("@WORKER_FNAME_EN", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_FNAME_EN"].Value = model.worker_fname_en;
@@ -559,7 +561,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     obj_cmd.Parameters.Add("@WORKER_RESIGNREASON", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_RESIGNREASON"].Value = model.worker_resignreason;
                 }
 
-                
+
                 obj_cmd.Parameters.Add("@WORKER_PROBATIONDATE", SqlDbType.DateTime); obj_cmd.Parameters["@WORKER_PROBATIONDATE"].Value = model.worker_probationdate;
                 obj_cmd.Parameters.Add("@WORKER_PROBATIONENDDATE", SqlDbType.DateTime); obj_cmd.Parameters["@WORKER_PROBATIONENDDATE"].Value = model.worker_probationenddate;
 
@@ -569,10 +571,11 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@WORKER_PWD", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_PWD"].Value = model.worker_pwd;
 
                 obj_cmd.Parameters.Add("@SELF_ADMIN", SqlDbType.Bit); obj_cmd.Parameters["@SELF_ADMIN"].Value = model.self_admin;
-                if (model.worker_empstatus != null) {
+                if (model.worker_empstatus != null)
+                {
                     obj_cmd.Parameters.Add("@EMPSTATUS_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@EMPSTATUS_CODE"].Value = model.worker_empstatus;
                 }
-                
+
 
                 obj_cmd.Parameters.Add("@CREATED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@CREATED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@CREATED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@CREATED_DATE"].Value = DateTime.Now;
@@ -644,18 +647,19 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", FLAG=@FLAG ");
 
                 obj_str.Append(" WHERE WORKER_ID=@WORKER_ID ");
-                
-                
+
+
                 obj_conn.doConnect();
 
                 SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
 
-                if (model.worker_id == 0) {
-                    strResult = this.getID(model.company_code,model.worker_code).ToString();
+                if (model.worker_id == 0)
+                {
+                    strResult = this.getID(model.company_code, model.worker_code).ToString();
                 }
 
-                
-                
+
+
                 obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
                 obj_cmd.Parameters.Add("@WORKER_CARD", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CARD"].Value = model.worker_card;
 
@@ -673,13 +677,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@WORKER_HIREDATE", SqlDbType.DateTime); obj_cmd.Parameters["@WORKER_HIREDATE"].Value = model.worker_hiredate;
 
                 obj_cmd.Parameters.Add("@WORKER_RESIGNSTATUS", SqlDbType.Bit); obj_cmd.Parameters["@WORKER_RESIGNSTATUS"].Value = model.worker_resignstatus;
-                
+
                 if (model.worker_resignstatus)
                 {
                     obj_cmd.Parameters.Add("@WORKER_RESIGNDATE", SqlDbType.DateTime); obj_cmd.Parameters["@WORKER_RESIGNDATE"].Value = model.worker_resigndate;
                     obj_cmd.Parameters.Add("@WORKER_RESIGNREASON", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_RESIGNREASON"].Value = model.worker_resignreason;
                 }
-                
+
                 obj_cmd.Parameters.Add("@WORKER_PROBATIONDATE", SqlDbType.DateTime); obj_cmd.Parameters["@WORKER_PROBATIONDATE"].Value = model.worker_probationdate;
                 obj_cmd.Parameters.Add("@WORKER_PROBATIONENDDATE", SqlDbType.DateTime); obj_cmd.Parameters["@WORKER_PROBATIONENDDATE"].Value = model.worker_probationenddate;
 
@@ -690,7 +694,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@SELF_ADMIN", SqlDbType.Bit); obj_cmd.Parameters["@SELF_ADMIN"].Value = model.self_admin;
 
                 obj_cmd.Parameters.Add("@EMPSTATUS_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@EMPSTATUS_CODE"].Value = model.worker_empstatus;
-                
+
 
                 obj_cmd.Parameters.Add("@MODIFIED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@MODIFIED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
@@ -736,7 +740,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@WORKER_PWD", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_PWD"].Value = model.worker_pwd;
                 obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
                 obj_cmd.Parameters.Add("@COMPANY_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@COMPANY_CODE"].Value = model.company_code;
-                
+
 
                 obj_cmd.ExecuteNonQuery();
 

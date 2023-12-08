@@ -144,7 +144,9 @@ namespace HRFocusWCFSystem
 
         [DataMember]
         public string worker_empstatus { get; set; }
-
+         [DataMember]
+        public string worker_empstatus_name { get; set; }
+        
 
         [DataMember]
         public string modified_by { get; set; }

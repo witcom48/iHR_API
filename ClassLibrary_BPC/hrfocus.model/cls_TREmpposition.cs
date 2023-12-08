@@ -34,7 +34,9 @@ namespace ClassLibrary_BPC.hrfocus.model
         public string company_code { get; set; }
         public string worker_code { get; set; }
         public int empposition_id { get; set; }
-        public DateTime empposition_date { get; set; }
+        public string position_name_th { get; set; }
+ 
+         public DateTime empposition_date { get; set; }
         public string empposition_position { get; set; }        
         public string empposition_reason { get; set; }
         public string created_by { get;set; }

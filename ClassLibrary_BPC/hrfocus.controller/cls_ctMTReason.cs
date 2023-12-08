@@ -95,6 +95,19 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(strCondition);
         }
 
+        public List<cls_MTReason> getDatareson(string id, string code)
+        {
+            string strCondition = "";
+
+            if (!id.Equals(""))
+                strCondition += " AND REASON_ID='" + id + "'";
+
+            if (!code.Equals(""))
+                strCondition += " AND REASON_CODE='" + code + "'";
+
+            return this.getData(strCondition);
+        }
+
         public bool checkDataOld(string group, string code)
         {
             bool blnResult = false;
