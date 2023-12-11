@@ -9,14 +9,14 @@ namespace ClassLibrary_BPC
     public class Config
     {
 
-        static public string Database = "IHI";
-        static public string Userid = "Test";
+        static public string Database = "HRM";
+        static public string Userid = "sa";
 
-        
+
         //static public string Server = "83.118.28.242";
         //static public string Server = "161.82.218.95";
 
-        static public string Server = "DESKTOP-VIP623A";
+        static public string Server = ".\\SQLEXPRESS";
         static public string Password = "Sql2019*";
         //static public string Server = ".\\SQL2019";
         //static public string Password = "2019";
