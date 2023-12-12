@@ -147,7 +147,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 //-- Get worker
                 cls_ctMTWorker objWorker = new cls_ctMTWorker();
-                List<cls_MTWorker> list_worker = objWorker.getDataMultipleEmp(com, strEmp);
+                List<cls_MTWorker> list_worker = objWorker.getDataMultipleEmp( com, strEmp);
 
                 //-- Step 2 Get Paytran
                 cls_ctTRPaytran objPay = new cls_ctTRPaytran();
@@ -987,7 +987,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 //-- Get worker
                 cls_ctMTWorker objWorker = new cls_ctMTWorker();
-                List<cls_MTWorker> list_worker = objWorker.getDataMultipleEmp(com, strEmp);
+                List<cls_MTWorker> list_worker = objWorker.getDataMultipleEmp( com, strEmp);
 
                 //-- Step 2 Get Paytran
                 cls_ctTRPaytran objPay = new cls_ctTRPaytran();

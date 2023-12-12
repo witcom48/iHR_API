@@ -403,6 +403,9 @@ namespace HRFocusWCFSystem
         public DateTime modified_date { get; set; }
         [DataMember]
         public int index { get; set; }
+        [DataMember]
+        public string language { get; set; }
+        
     }
 
     [DataContract]

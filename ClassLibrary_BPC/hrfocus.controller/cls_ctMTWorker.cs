@@ -25,7 +25,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             Obj_conn.doClose();
         }
 
-        private List<cls_MTWorker> getData(string condition)
+        private List<cls_MTWorker> getData( string condition)
         {
             List<cls_MTWorker> list_model = new List<cls_MTWorker>();
             cls_MTWorker model;
@@ -176,7 +176,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             }
 
 
-            return this.getData(strCondition);
+            return this.getData( strCondition);
         }
 
         public List<cls_MTWorker> getDataByWorkerCode(string com, string worker_code)
@@ -195,7 +195,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(" AND COMPANY_CODE='" + com + "'");
         }
 
-        public List<cls_MTWorker> getDataMultipleEmp(string com, string worker)
+        public List<cls_MTWorker> getDataMultipleEmp( string com, string worker)
         {
             string strCondition = " AND COMPANY_CODE='" + com + "'";
             strCondition += " AND WORKER_CODE IN (" + worker + ") ";
@@ -212,7 +212,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             strCondition += " AND WORKER_CODE='" + worker_code + "'";
             strCondition += " AND WORKER_PWD='" + worker_pwd + "'";
 
-            List<cls_MTWorker> list_model = this.getData(strCondition);
+            List<cls_MTWorker> list_model = this.getData( strCondition);
 
             if (list_model.Count > 0)
                 return list_model[0];
