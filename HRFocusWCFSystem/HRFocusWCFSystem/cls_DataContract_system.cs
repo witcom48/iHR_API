@@ -937,6 +937,9 @@ namespace HRFocusWCFSystem
 
         [DataMember]
         public string created_by { get; set; }
+
+        [DataMember]
+        public string reportjob_section { get; set; }
         
     }
 

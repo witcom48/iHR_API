@@ -5095,6 +5095,7 @@ namespace HRFocusWCFSystem
                     json.Add("reportjob_paydate", model.reportjob_paydate);
 
                     json.Add("reportjob_language", model.reportjob_language);
+                    json.Add("reportjob_section", model.reportjob_section);
 
                     json.Add("created_by", model.created_by);
                     json.Add("created_date", model.created_date);
@@ -5178,6 +5179,8 @@ namespace HRFocusWCFSystem
                 model.reportjob_fromdate = Convert.ToDateTime(input.reportjob_fromdate);
                 model.reportjob_todate = Convert.ToDateTime(input.reportjob_todate);
                 model.reportjob_paydate = Convert.ToDateTime(input.reportjob_paydate);
+
+                model.reportjob_section = input.reportjob_section;
 
                 model.company_code = input.company_code;
                 model.created_by = input.created_by;
