@@ -128,6 +128,10 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     model.worker_fname_en = dr["firstname_en"].ToString();
                                     model.worker_lname_en = dr["lastname_en"].ToString();
                                     model.worker_emptype = dr["emptype_code"].ToString();
+
+                                    model.worker_empstatus = dr["empstatus_code"].ToString();
+
+
                                     model.worker_gender = dr["emp_gender"].ToString();
                                     model.worker_birthdate = Convert.ToDateTime(dr["emp_birthday"]);
                                     model.worker_hiredate = Convert.ToDateTime(dr["emp_startdate"]);
