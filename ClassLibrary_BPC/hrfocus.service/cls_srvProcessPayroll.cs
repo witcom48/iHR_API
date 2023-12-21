@@ -1890,5 +1890,227 @@ namespace ClassLibrary_BPC.hrfocus.service
         }
         //TRN_SSF
 
+        //Mizuho
+        public string doExportmizuho(string com, string taskid)
+        { 
+            string strResult = "";
+            cls_ctMTTask objMTTask = new cls_ctMTTask();
+            List<cls_MTTask> listMTTask = objMTTask.getDataByFillter(com, taskid, "TRN_MIZUHO", "");
+            List<string> listError = new List<string>();
+            if (listMTTask.Count > 0)
+            {
+                cls_MTTask task = listMTTask[0];
+
+                task.task_start = DateTime.Now;
+
+                cls_ctMTTask objTaskDetail = new cls_ctMTTask();
+                cls_TRTaskdetail task_detail = objTaskDetail.getTaskDetail(task.task_id.ToString());
+
+                cls_ctMTTask objTaskWhose = new cls_ctMTTask();
+                List<cls_TRTaskwhose> listWhose = objTaskWhose.getTaskWhose(task.task_id.ToString());
+
+                DateTime dateEff = task_detail.taskdetail_fromdate;
+                DateTime datePay = task_detail.taskdetail_paydate;
+                DateTime dateto = task_detail.taskdetail_todate;
+
+                StringBuilder objStr = new StringBuilder();
+                foreach (cls_TRTaskwhose whose in listWhose)
+                {
+                    objStr.Append("'" + whose.worker_code + "',");
+                }
+
+                string strEmp = objStr.ToString().Substring(0, objStr.ToString().Length - 1);
+
+                //-- Get worker
+                cls_ctMTWorker objWorker = new cls_ctMTWorker();
+                List<cls_MTWorker> list_worker = objWorker.getDataMultipleEmp(com, strEmp);
+
+                //-- Get worker
+                cls_ctMTInitial objInitial = new cls_ctMTInitial();
+                List<cls_MTInitial> list_initial = objInitial.getDataByFillter("","");
+
+                //-- Get Emp bankacc
+                cls_ctTREmpbank objEmpbank = new cls_ctTREmpbank();
+                List<cls_TREmpbank> list_empbank = objEmpbank.getDataMultipleEmp(com, strEmp);
+
+                //-- Get bank
+                cls_ctMTBank objbank = new cls_ctMTBank();
+                List<cls_MTBank> list_bank = objbank.getDataByFillter("", "");
+
+                //-- Get Paytran
+                cls_ctTRPaytran objPay = new cls_ctTRPaytran();
+                List<cls_TRPaytran> list_paytran = objPay.getDataMultipleEmp("TH", com, datePay, datePay, strEmp);
+                cls_TRPaytran paybank = list_paytran[0];
+
+                //-- Step 6 Get pay bank
+                cls_ctTRPaybank objPaybank = new cls_ctTRPaybank();
+                List<cls_TRPaybank> list_paybank = objPaybank.getDataByFillterDate(com, strEmp, datePay);
+
+                string tmpData = "";
+                if (list_worker.Count > 0)
+                {
+                    string bkData;
+
+                    foreach (cls_MTWorker MTWorkers in list_worker)
+                    {
+                        string empname = "";
+
+                        cls_MTWorker obj_worker = new cls_MTWorker();
+                        cls_MTInitial obj_initial = new cls_MTInitial();
+                        cls_TREmpbank obj_empbank = new cls_TREmpbank();
+                        cls_TRPaytran obj_paytran = new cls_TRPaytran();
+                        cls_TRPaybank obj_paybank = new cls_TRPaybank();
+
+
+                        foreach (cls_MTWorker worker in list_worker)
+                        {
+                            if (MTWorkers.worker_code.Equals(worker.worker_code))
+                            {
+                                empname = worker.initial_name_en + " " + worker.worker_fname_en + " " + worker.worker_lname_en;
+                                obj_worker = worker;
+                                break;
+                            }
+                        }
+
+                        foreach (cls_TREmpbank bank in list_empbank)
+                        {
+                            if (MTWorkers.worker_code.Equals(bank.worker_code))
+                            {
+                                obj_empbank = bank;
+                                break;
+                            }
+                        }
+
+                        foreach (cls_TRPaybank pbank in list_paybank)
+                        {
+                            if (MTWorkers.worker_code.Equals(pbank.worker_code))
+                            {
+                                obj_paybank = pbank;
+                                break;
+                            }
+                        }
+
+                        if (empname.Equals(""))
+                            continue;
+
+                        if (list_worker.Count > 0)
+                        {
+                            //1 รหัสพนักงาน
+                            bkData = obj_worker.worker_code + "|";
+
+                            //2 คำนำหน้าชื่อ(อังกฤษ)
+                            bkData += obj_worker.initial_name_en + "|";
+
+                            //3 ชื่อ(อังกฤษ)
+                            bkData += obj_worker.worker_fname_en + "|";
+
+                            //4 นามสกุล(อังกฤษ)
+                            bkData += obj_worker.worker_lname_en + "|";
+
+                            //5 ธนาคาร
+                            cls_MTBank obj_Bank1 = null;
+                            bool foundbank = false;
+
+                            foreach (cls_TREmpbank empbank in list_empbank)
+                            {
+                                if (MTWorkers.worker_code.Equals(empbank.worker_code))
+                                {
+                                    foreach (cls_MTBank bank in list_bank)
+                                    {
+                                        if (empbank.empbank_bankcode != null && empbank.empbank_bankcode.Equals(bank.bank_code))
+                                        {
+                                            obj_Bank1 = bank;
+                                            bkData += obj_Bank1.bank_name_en + " |";
+                                            //6 เลขที่บัญชี
+                                            bkData += obj_empbank.empbank_bankaccount + "|";
+                                            foundbank = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            if (!foundbank)
+                            {
+                                bkData += " |";
+
+                                bkData += " |";
+                            }
+
+                            
+
+                            //7 วันที่สิ้นสุด
+                            bkData += dateto.ToString("dd/MM/yyyy") + "|";
+
+                            //8 วันที่จ่าย
+                            bkData += datePay.ToString("dd/MM/yyyy") + "|";
+
+                            //9 โอนธนาคาร
+                            if (!obj_paybank.paybank_bankamount.Equals(""))
+                            {
+                                bkData += obj_paybank.paybank_bankamount + "|";
+                            }
+                            else
+                            {
+                                bkData += " |";
+                            }
+                            
+
+                            tmpData += bkData + '\r' + '\n';
+
+                        }
+                    }
+
+                    int record = list_worker.Count;
+
+                    try
+                    {
+                        //-- Step 1 create file
+                        string filename = "TRN_MIZUHO" + DateTime.Now.ToString("yyMMddHHmm") + "." + "xls";
+                        string filepath = Path.Combine
+                       (ClassLibrary_BPC.Config.PathFileExport, filename);
+
+                        // Check if file already exists. If yes, delete it.     
+                        if (File.Exists(filepath))
+                        {
+                            File.Delete(filepath);
+                        }
+                        DataSet ds = new DataSet();
+                        string str = tmpData.Replace("\r\n", "]");
+                        string[] data = str.Split(']');
+
+                         DataTable dataTable = ds.Tables.Add();
+                         dataTable.Columns.AddRange(new DataColumn[10] { new DataColumn("Emp ID"), new DataColumn("Name Prefix"), new DataColumn("First Name"), new DataColumn("Last Name"), new DataColumn("Bank"), new DataColumn("Bank Account Number"),
+                                                                        new DataColumn("Period Close Date"), new DataColumn("Pay Date"),new DataColumn("Sum Pay"),new DataColumn(" ")});
+
+                         // ใช้ลูปเพื่อเพิ่มข้อมูลจาก array เข้า DataTable
+                         string[] rows = str.Split(']');
+                         foreach (var row in rows)
+                         {
+                             if (string.IsNullOrEmpty(row))
+                                 continue;
+                             string[] rowData = row.Split('|');
+                             dataTable.Rows.Add(rowData);
+                         }
+                         ExcelLibrary.DataSetHelper.CreateWorkbook(filepath, ds);
+                         strResult = filename;
+                    }
+                    catch (Exception ex)
+                    {
+                        strResult = ex.ToString();
+                    }
+                }
+                task.task_end = DateTime.Now;
+                task.task_status = "F";
+                task.task_note = strResult;
+                objMTTask.updateStatus(task);
+            }
+            else
+            {
+
+            }
+
+            return strResult;
+        }
+
     }
 }
