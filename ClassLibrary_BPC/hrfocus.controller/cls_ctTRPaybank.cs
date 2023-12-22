@@ -92,7 +92,18 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getpaybank(strCondition);
         }
 
-        
+        public List<cls_TRPaybank> getDataByFillterDate(string com, string worker,DateTime to)
+        {
+
+
+            string strCondition = " AND COMPANY_CODE='" + com + "'";
+            strCondition += " AND WORKER_CODE IN (" + worker + ") ";
+            strCondition += " AND PAYBANK_PAYDATE = '" + to.ToString("MM/dd/yyyy") + "' ";
+
+
+
+            return this.getpaybank(strCondition);
+        }
 
 
     

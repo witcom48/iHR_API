@@ -2289,11 +2289,17 @@ namespace HRFocusWCFSystem
                         string link = srvImport.doImportExcel(input.company_code, intTaskID.ToString());
                         output["result_link"] = link;
                     }
-
-                 
-
                     //IMP_XLS
-                   
+
+                    //TRN_MIZUHO
+                    else if (input.task_type.Trim().Equals("TRN_MIZUHO"))
+                    {
+                        cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
+                        string link = srvPay.doExportmizuho(input.company_code, intTaskID.ToString());
+
+                        output["result_link"] = link;
+                    }
+                    //BANK
 
 
                 }
