@@ -621,8 +621,29 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.empfamily_fname_en = dr["empfamily_fname_en"].ToString();
                                         model.empfamily_lname_en = dr["empfamily_lname_en"].ToString();
 
+                                        string strExpire = "9999-12-31";
+                                        try
+                                        {
+                                            if (dr["empfamily_birthdate"].ToString() != "")
+                                                strExpire = dr["empfamily_birthdate"].ToString();
+                                        }
+                                        catch { }
+
+                                        model.empfamily_birthdate = Convert.ToDateTime(strExpire);
 
                                         model.empfamily_birthdate = Convert.ToDateTime(dr["empfamily_birthdate"]);
+
+                               
+                                        //if (dr["empfamily_birthdate"] != DBNull.Value && !string.IsNullOrEmpty(dr["empfamily_birthdate"].ToString()))
+                                        //{
+                                        //    model.empfamily_birthdate = Convert.ToDateTime(dr["empfamily_birthdate"]);
+                                        //}
+                                        //else
+                                        //{
+                                        //     model.empfamily_birthdate = DateTime.MinValue;
+                                            
+                                        //}
+
                                         model.family_type = dr["family_type"].ToString();
 
 
