@@ -631,7 +631,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                         model.empfamily_birthdate = Convert.ToDateTime(strExpire);
 
-                                        model.empfamily_birthdate = Convert.ToDateTime(dr["empfamily_birthdate"]);
+                                        //model.empfamily_birthdate = Convert.ToDateTime(dr["empfamily_birthdate"]);
 
                                
                                         //if (dr["empfamily_birthdate"] != DBNull.Value && !string.IsNullOrEmpty(dr["empfamily_birthdate"].ToString()))
