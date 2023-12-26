@@ -2104,7 +2104,7 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
-        public string doManageTask(InputMTTask input)
+        public string doManageTask(InputMTTask input )
         {
             JObject output = new JObject();
 
@@ -2199,6 +2199,23 @@ namespace HRFocusWCFSystem
                         output["result_link"] = link;
                     }
                     //TIME
+                    //TA1
+                    else if (input.task_type.Trim().Equals("EXP_TIME"))
+                    {
+                        cls_srvProcessTime srvTime = new cls_srvProcessTime();
+                        string link = srvTime.doExportTA(input.company_code, intTaskID.ToString());
+                        output["result_link"] = link;
+                    }
+                    //TA1
+
+                    //golf 07/12/2023
+                    else if (input.task_type.Trim().Equals("EMP_TIME"))
+                    {
+                        cls_srvProcessEmployee srvTime = new cls_srvProcessEmployee();
+                        string link = srvTime.doExportEMP(input.company_code, intTaskID.ToString());
+                        output["result_link"] = link;
+                    }
+                   //
 
 
                     //BONUS
@@ -2272,11 +2289,17 @@ namespace HRFocusWCFSystem
                         string link = srvImport.doImportExcel(input.company_code, intTaskID.ToString());
                         output["result_link"] = link;
                     }
-
-                 
-
                     //IMP_XLS
-                   
+
+                    //TRN_MIZUHO
+                    else if (input.task_type.Trim().Equals("TRN_MIZUHO"))
+                    {
+                        cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
+                        string link = srvPay.doExportmizuho(input.company_code, intTaskID.ToString());
+
+                        output["result_link"] = link;
+                    }
+                    //BANK
 
 
                 }
@@ -5078,6 +5101,7 @@ namespace HRFocusWCFSystem
                     json.Add("reportjob_paydate", model.reportjob_paydate);
 
                     json.Add("reportjob_language", model.reportjob_language);
+                    json.Add("reportjob_section", model.reportjob_section);
 
                     json.Add("created_by", model.created_by);
                     json.Add("created_date", model.created_date);
@@ -5161,6 +5185,8 @@ namespace HRFocusWCFSystem
                 model.reportjob_fromdate = Convert.ToDateTime(input.reportjob_fromdate);
                 model.reportjob_todate = Convert.ToDateTime(input.reportjob_todate);
                 model.reportjob_paydate = Convert.ToDateTime(input.reportjob_paydate);
+
+                model.reportjob_section = input.reportjob_section;
 
                 model.company_code = input.company_code;
                 model.created_by = input.created_by;
@@ -5624,6 +5650,7 @@ namespace HRFocusWCFSystem
                     json.Add("self_admin", model.self_admin);
 
                     json.Add("worker_empstatus", model.worker_empstatus);
+                    json.Add("worker_empstatus_name", model.worker_empstatus_name);
 
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);
@@ -5691,6 +5718,8 @@ namespace HRFocusWCFSystem
                 model.self_admin = input.self_admin;
 
                 model.worker_empstatus = input.worker_empstatus;
+                model.worker_empstatus_name = input.worker_empstatus_name;
+
                 
                 model.modified_by = input.modified_by;
                 model.flag = model.flag;
@@ -9672,6 +9701,98 @@ namespace HRFocusWCFSystem
 
                 array.Add(json);
 
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }        
+
+        //--PR1 kim Add
+        public string getTRPR1List(InputTRPaytran input)
+        {
+            JObject output = new JObject();
+
+            cls_ctTRPaytran objPaytran = new cls_ctTRPaytran();
+            StringBuilder objStr = new StringBuilder();
+            foreach (cls_MTWorker emp in input.emp_data)
+            {
+                objStr.Append("'" + emp.worker_code + "',");
+            }
+            string strEmp = objStr.ToString().Substring(0, objStr.ToString().Length - 1);
+            List<cls_TRPaytran> listPaytran = objPaytran.getExport(input.language, input.com, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate), strEmp);
+            JArray array = new JArray();
+
+            if (listPaytran.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRPaytran model in listPaytran)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("company_code", model.company_code);
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("worker_detail", model.worker_detail);
+                    json.Add("position", model.position);
+                    json.Add("level01", model.level01);
+                    json.Add("level02", model.level02);
+
+                    json.Add("a01", model.A01);
+                    json.Add("a02", model.A02);
+                    json.Add("al03", model.AL03);
+                    json.Add("bo01", model.BO01);
+                    json.Add("dg01", model.DG01);
+                    json.Add("ga01", model.GA01);
+                    json.Add("ot01", model.OT01);
+                    json.Add("sa01", model.SA01);
+                    json.Add("sa02", model.SA02);
+
+                    json.Add("lv01", model.LV01);
+                    json.Add("slf1", model.SLF1);
+
+
+                    json.Add("paytran_ssoemp", model.paytran_ssoemp);
+                    json.Add("paytran_pfemp", model.paytran_pfemp);
+
+                    json.Add("paytran_ssocom", model.paytran_ssocom);
+                    json.Add("paytran_pfcom", model.paytran_pfcom);
+
+                    double tax = model.paytran_tax_401 + model.paytran_tax_4012 + model.paytran_tax_4013 + model.paytran_tax_402I + model.paytran_tax_402O;
+                    json.Add("tax", tax);
+
+                    json.Add("paytran_income_notax", model.paytran_income_notax);
+                    json.Add("paytran_deduct_notax", model.paytran_deduct_notax);
+
+                    json.Add("paytran_income_total", model.paytran_income_total);
+                    json.Add("paytran_deduct_total", model.paytran_deduct_total);
+
+                    json.Add("paytran_netpay_b", model.paytran_netpay_b);
+                    json.Add("paytran_netpay_c", model.paytran_netpay_c);
+
+                    json.Add("paytran_netpay", model.paytran_netpay_b + model.paytran_netpay_c);
+
+                    json.Add("employment_date", model.employment_date);
+                    json.Add("bankaccount", model.bankaccount);
+                    json.Add("type", model.type);
+
+                    json.Add("modified_by", model.modified_by);
+                    json.Add("modified_date", model.modified_date);
+                    json.Add("flag", model.flag);
+
+                    json.Add("index", index);
+                    index++;
+
+                    array.Add(json);
+                }
 
                 output["result"] = "1";
                 output["result_text"] = "1";

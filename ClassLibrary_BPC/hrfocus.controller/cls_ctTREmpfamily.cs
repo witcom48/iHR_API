@@ -294,6 +294,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@EMPFAMILY_LNAME_TH", SqlDbType.VarChar); obj_cmd.Parameters["@EMPFAMILY_LNAME_TH"].Value = model.empfamily_lname_th;
                 obj_cmd.Parameters.Add("@EMPFAMILY_FNAME_EN", SqlDbType.VarChar); obj_cmd.Parameters["@EMPFAMILY_FNAME_EN"].Value = model.empfamily_fname_en;
                 obj_cmd.Parameters.Add("@EMPFAMILY_LNAME_EN", SqlDbType.VarChar); obj_cmd.Parameters["@EMPFAMILY_LNAME_EN"].Value = model.empfamily_lname_en;
+                //obj_cmd.Parameters.Add("@EMPFAMILY_BIRTHDATE", SqlDbType.DateTime); obj_cmd.Parameters["@EMPFAMILY_BIRTHDATE"].Value = (object)model.empfamily_birthdate ?? DBNull.Value;
                 obj_cmd.Parameters.Add("@EMPFAMILY_BIRTHDATE", SqlDbType.DateTime); obj_cmd.Parameters["@EMPFAMILY_BIRTHDATE"].Value = model.empfamily_birthdate;
 
                 obj_cmd.Parameters.Add("@COMPANY_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@COMPANY_CODE"].Value = model.company_code;
@@ -361,7 +362,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@EMPFAMILY_FNAME_EN", SqlDbType.VarChar); obj_cmd.Parameters["@EMPFAMILY_FNAME_EN"].Value = model.empfamily_fname_en;
                 obj_cmd.Parameters.Add("@EMPFAMILY_LNAME_EN", SqlDbType.VarChar); obj_cmd.Parameters["@EMPFAMILY_LNAME_EN"].Value = model.empfamily_lname_en;
                 obj_cmd.Parameters.Add("@EMPFAMILY_BIRTHDATE", SqlDbType.DateTime); obj_cmd.Parameters["@EMPFAMILY_BIRTHDATE"].Value = model.empfamily_birthdate;
-                
+                //obj_cmd.Parameters.Add("@EMPFAMILY_BIRTHDATE", SqlDbType.DateTime); obj_cmd.Parameters["@EMPFAMILY_BIRTHDATE"].Value = (object)model.empfamily_birthdate ?? DBNull.Value;
+
                 obj_cmd.Parameters.Add("@MODIFIED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@MODIFIED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
                 obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit); obj_cmd.Parameters["@FLAG"].Value = false;

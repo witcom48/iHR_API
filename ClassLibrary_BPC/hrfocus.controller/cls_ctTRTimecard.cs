@@ -157,6 +157,20 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(strCondition);
         }
 
+        public List<cls_TRTimecard> getDataTimeMultipleEmp(string com, string worker, DateTime fromdate, DateTime todate)
+        {
+            string strCondition = "";
+
+            strCondition += " AND COMPANY_CODE='" + com + "'";
+
+            strCondition += " AND (TIMECARD_WORKDATE BETWEEN '" + fromdate.ToString(this.FormatDateDB) + "' AND '" + todate.ToString(this.FormatDateDB) + "' )";
+
+            if (!worker.Equals(""))
+                strCondition += " AND WORKER_CODE IN (" + worker + ")";
+
+            return this.getData(strCondition);
+        }
+
         public bool checkDataOld(string com, string worker, DateTime workdate)
         {
             bool blnResult = false;

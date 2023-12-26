@@ -109,6 +109,16 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(strCondition);
         }
 
+        //
+        public List<cls_TREmpcard> getDataEmp(string com, string worker )
+        {
+            string strCondition = " AND COMPANY_CODE='" + com + "'";
+            //strCondition += " AND CARD_TYPE ='" + type + "'";
+            strCondition += " AND WORKER_CODE IN (" + worker + ") ";
+
+            return this.getData(strCondition);
+        }
+
         public bool checkDataOld(string com, string emp, string type)
         {
             bool blnResult = false;

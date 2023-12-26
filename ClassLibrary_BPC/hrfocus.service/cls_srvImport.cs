@@ -128,6 +128,10 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     model.worker_fname_en = dr["firstname_en"].ToString();
                                     model.worker_lname_en = dr["lastname_en"].ToString();
                                     model.worker_emptype = dr["emptype_code"].ToString();
+
+                                    model.worker_empstatus = dr["empstatus_code"].ToString();
+
+
                                     model.worker_gender = dr["emp_gender"].ToString();
                                     model.worker_birthdate = Convert.ToDateTime(dr["emp_birthday"]);
                                     model.worker_hiredate = Convert.ToDateTime(dr["emp_startdate"]);
@@ -617,8 +621,29 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         model.empfamily_fname_en = dr["empfamily_fname_en"].ToString();
                                         model.empfamily_lname_en = dr["empfamily_lname_en"].ToString();
 
+                                        string strExpire = "9999-12-31";
+                                        try
+                                        {
+                                            if (dr["empfamily_birthdate"].ToString() != "")
+                                                strExpire = dr["empfamily_birthdate"].ToString();
+                                        }
+                                        catch { }
+
+                                        model.empfamily_birthdate = Convert.ToDateTime(strExpire);
 
                                         model.empfamily_birthdate = Convert.ToDateTime(dr["empfamily_birthdate"]);
+
+                               
+                                        //if (dr["empfamily_birthdate"] != DBNull.Value && !string.IsNullOrEmpty(dr["empfamily_birthdate"].ToString()))
+                                        //{
+                                        //    model.empfamily_birthdate = Convert.ToDateTime(dr["empfamily_birthdate"]);
+                                        //}
+                                        //else
+                                        //{
+                                        //     model.empfamily_birthdate = DateTime.MinValue;
+                                            
+                                        //}
+
                                         model.family_type = dr["family_type"].ToString();
 
 

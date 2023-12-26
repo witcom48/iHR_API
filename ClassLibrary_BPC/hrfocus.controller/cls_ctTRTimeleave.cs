@@ -145,6 +145,23 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(language, strCondition);
         }
 
+        public List<cls_TRTimeleave> getDataMultipleEmp(string language, string com, string emp, DateTime datefrom, DateTime dateto)
+        {
+            string strCondition = "";
+
+            strCondition += " AND HRM_TR_TIMELEAVE.COMPANY_CODE='" + com + "'";
+
+            if (!emp.Equals(""))
+            {
+                strCondition += " AND HRM_TR_TIMELEAVE.WORKER_CODE IN(" + emp + ")";
+            }
+
+            strCondition += " AND (TIMELEAVE_FROMDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "'";
+            strCondition += "  OR TIMELEAVE_TODATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')";
+
+
+            return this.getData(language, strCondition);
+        }
 
         public cls_TRTimeleave getDataByID(string id)
         {

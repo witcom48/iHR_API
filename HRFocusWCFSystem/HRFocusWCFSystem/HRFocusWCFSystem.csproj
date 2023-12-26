@@ -41,8 +41,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExcelLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ExcelLibrary">
       <HintPath>C:\Users\phattaraphon.p\Downloads\ExcelLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Google.Authenticator">

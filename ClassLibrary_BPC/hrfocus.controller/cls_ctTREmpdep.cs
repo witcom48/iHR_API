@@ -118,7 +118,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
         {
             string strCondition = " AND COMPANY_CODE='" + com + "'";          
             strCondition += " AND WORKER_CODE IN (" + worker + ") ";
-            strCondition += " AND EMPDEP_DATE <= " + paydate.ToString("MM/dd/yyyy") + " ";
+            strCondition += " AND EMPDEP_DATE <= '" + paydate.ToString("MM/dd/yyyy") + "'";
             return this.getData(strCondition);
         }
 
