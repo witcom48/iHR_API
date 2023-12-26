@@ -55,12 +55,15 @@ namespace ClassLibrary_BPC.hrfocus.service
          //golf 07/12/2023
         public string doExportEMP(string com, string taskid )
         {
+            string emperror = "";
             string strResult = "";
             cls_ctMTTask objMTTask = new cls_ctMTTask();
             List<cls_MTTask> listMTTask = objMTTask.getDataByFillter(com, taskid, "EMP_TIME", "");
             List<string> listError = new List<string>();
             if (listMTTask.Count > 0)
             {
+                try
+                {
                 cls_MTTask task = listMTTask[0];
 
                 task.task_start = DateTime.Now;
@@ -155,6 +158,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                     foreach (cls_MTWorker MTWorkers in list_worker)
                     {
+                        emperror = MTWorkers.worker_code;
                         string empname = "";
 
                         cls_MTWorker obj_worker = new cls_MTWorker();
@@ -774,8 +778,6 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                     int record = list_worker.Count;
 
-                    try
-                    {
                         //-- Step 1 create file
                         string filename = "TRN_EMP" + DateTime.Now.ToString("yyMMddHHmm") + "." + "xls";
                         string filepath = Path.Combine
@@ -808,16 +810,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                             if (string.IsNullOrEmpty(row))
                                 continue;
                             string[] rowData = row.Split('|');
-                            dataTable.Rows.Add(rowData);
+                            if (rowData.Length == 53)
+                            {
+                                dataTable.Rows.Add(rowData);
+                            }
                         }
                         ExcelLibrary.DataSetHelper.CreateWorkbook(filepath, ds);
                         strResult = filename;
-                    }
-                    catch (Exception ex)
-                    {
-                        strResult = ex.ToString();
-                    }
-                    
+                
                 }
 
             
@@ -825,6 +825,13 @@ namespace ClassLibrary_BPC.hrfocus.service
                 task.task_status = "F";
                 task.task_note = strResult;
                 objMTTask.updateStatus(task);
+
+                        }
+                    catch (Exception ex)
+                    {
+                        strResult = ex.ToString() + emperror;
+                    }
+                    
             }
             else
             {
