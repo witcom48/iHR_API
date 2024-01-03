@@ -17669,7 +17669,1545 @@ namespace HRFocusWCFSystem
         }
         //-
 
+        private async Task<bool> doUploadFile(string fileName, Stream stream)
+        {
+            bool result = false;
 
+            try
+            {
+                string FilePath = Path.Combine
+                (ClassLibrary_BPC.Config.PathFileImport + "\\Imports", fileName);
+                //string FilePath = Path.Combine
+                //  (HostingEnvironment.MapPath("~/Uploads"), fileName);
+
+                MultipartParser parser = new MultipartParser(stream);
+
+                if (parser.Success)
+                {
+                    //absolute filename, extension included.
+                    var filename = parser.Filename;
+                    var filetype = parser.ContentType;
+                    var ext = Path.GetExtension(filename);
+
+                    using (var file = File.Create(FilePath))
+                    {
+                        await file.WriteAsync(parser.FileContents, 0, parser.FileContents.Length);
+                        result = true;
+
+                    }
+                }
+
+            }
+            catch { }
+
+            return result;
+
+        }
+        public byte[] DownloadFile(string filePath)
+        {
+            byte[] data = { };
+            try
+            {
+                data = File.ReadAllBytes(filePath);
+            }
+            catch
+            {
+            }
+            return data;
+        }
+        public string DeleteFile(string filePath)
+        {
+            JObject output = new JObject();
+            try
+            {
+                File.Delete(filePath);
+                output["success"] = true;
+                output["message"] = filePath;
+            }
+            catch
+            {
+                output["success"] = false;
+                output["message"] = filePath;
+            }
+            return output.ToString(Formatting.None);
+        }
+        public async Task<string> doUploadMTReqdoc(string token, string by, string fileName, Stream stream)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+               
+                bool upload = await this.doUploadFile(fileName, stream);
+
+                if (upload)
+                {
+                    string FilePath = Path.Combine
+              (ClassLibrary_BPC.Config.PathFileImport + "\\Imports", fileName);
+                    output["success"] = true;
+                    output["message"] = FilePath;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Upload data not successfully";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Upload data not successfully";
+
+            }
+            finally
+            {
+
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string doAuthen(RequestData input)
+        {
+            JObject output = new JObject();
+            JArray array1 = new JArray();
+            try
+            {
+                if (input.usname.Equals("admin") && input.pwd.Equals("2021"))
+                {
+                    JObject json1 = new JObject();
+
+                    json1.Add("company_code", input.company_code);
+                    json1.Add("account_user", input.usname);
+                    //json.Add("account_pwd", model.account_pwd);
+                    json1.Add("account_type", "APR");
+
+                    array1.Add(json1);
+                    output["success"] = true;
+                    output["message"] = "";
+                    output["user_data"] = array1;
+                    return output.ToString(Formatting.None);
+                }
+                cls_ctMTAccount Account = new cls_ctMTAccount();
+                List<cls_MTAccount> list = Account.getDataByFillter(input.company_code, input.usname, "", 0, "");
+
+                JArray array = new JArray();
+
+                if (list.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_MTAccount model in list)
+                    {
+                        JObject json = new JObject();
+
+                        json.Add("company_code", model.company_code);
+                        json.Add("account_user", model.account_user);
+                        //json.Add("account_pwd", model.account_pwd);
+                        json.Add("account_pwd", "");
+                        json.Add("account_type", model.account_type);
+                        json.Add("account_level", model.account_level);
+                        json.Add("account_email", model.account_email);
+                        json.Add("account_email_alert", model.account_email_alert);
+                        json.Add("account_line", model.account_line);
+                        json.Add("account_line_alert", model.account_line_alert);
+                        json.Add("polmenu_code", model.polmenu_code);
+
+                        json.Add("modified_by", model.modified_by);
+                        json.Add("modified_date", model.modified_date);
+                        json.Add("flag", model.flag);
+                        cls_ctTRAccountpos objTRAccountpos = new cls_ctTRAccountpos();
+                        List<cls_TRAccountpos> listTRAccountpos = objTRAccountpos.getDataByFillter(model.company_code, model.account_user, model.account_type, "");
+                        JArray arrayTRAccountpos = new JArray();
+                        if (listTRAccountpos.Count > 0)
+                        {
+                            int indexTRAccount = 1;
+
+                            foreach (cls_TRAccountpos modelTRAccount in listTRAccountpos)
+                            {
+                                JObject jsonTRPlan = new JObject();
+                                jsonTRPlan.Add("company_code", modelTRAccount.company_code);
+                                jsonTRPlan.Add("account_user", modelTRAccount.account_user);
+                                jsonTRPlan.Add("account_type", modelTRAccount.account_type);
+                                jsonTRPlan.Add("position_code", modelTRAccount.position_code);
+
+                                jsonTRPlan.Add("index", indexTRAccount);
+
+
+                                indexTRAccount++;
+
+                                arrayTRAccountpos.Add(jsonTRPlan);
+                            }
+                            json.Add("position_data", arrayTRAccountpos);
+                        }
+                        else
+                        {
+                            json.Add("position_data", arrayTRAccountpos);
+                        }
+                        cls_ctTRAccountdep objTRAccountdep = new cls_ctTRAccountdep();
+                        List<cls_TRAccountdep> listTRAccountdep = objTRAccountdep.getDataByFillter(model.company_code, model.account_user, model.account_type, "", "");
+                        JArray arrayTRAccountdep = new JArray();
+                        if (listTRAccountdep.Count > 0)
+                        {
+                            int indexTRAccountdep = 1;
+
+                            foreach (cls_TRAccountdep modelTRAccountdep in listTRAccountdep)
+                            {
+                                JObject jsonTRdep = new JObject();
+                                jsonTRdep.Add("company_code", modelTRAccountdep.company_code);
+                                jsonTRdep.Add("account_user", modelTRAccountdep.account_user);
+                                jsonTRdep.Add("account_type", modelTRAccountdep.account_type);
+                                jsonTRdep.Add("level_code", modelTRAccountdep.level_code);
+                                jsonTRdep.Add("dep_code", modelTRAccountdep.dep_code);
+
+                                jsonTRdep.Add("index", indexTRAccountdep);
+
+
+                                indexTRAccountdep++;
+
+                                arrayTRAccountdep.Add(jsonTRdep);
+                            }
+                            json.Add("dep_data", arrayTRAccountdep);
+                        }
+                        else
+                        {
+                            json.Add("dep_data", arrayTRAccountdep);
+                        }
+
+                        cls_ctTRAccount objTRAccount = new cls_ctTRAccount();
+                        List<cls_TRAccount> listTRAccount = objTRAccount.getDataByFillter(model.company_code, model.account_user, model.account_type, "");
+                        JArray arrayTRAccount = new JArray();
+                        if (listTRAccount.Count > 0)
+                        {
+                            int indexTRAccount = 1;
+
+                            foreach (cls_TRAccount modelTRAccount in listTRAccount)
+                            {
+                                JObject jsonTRdep = new JObject();
+                                jsonTRdep.Add("company_code", modelTRAccount.company_code);
+                                jsonTRdep.Add("account_user", modelTRAccount.account_user);
+                                jsonTRdep.Add("account_type", modelTRAccount.account_type);
+                                jsonTRdep.Add("worker_code", modelTRAccount.worker_code);
+
+                                jsonTRdep.Add("index", indexTRAccount);
+
+
+                                indexTRAccount++;
+
+                                arrayTRAccount.Add(jsonTRdep);
+                            }
+                            json.Add("worker_data", arrayTRAccount);
+                        }
+                        else
+                        {
+                            json.Add("worker_data", arrayTRAccount);
+                        }
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+                    if (input.usname.Equals(list[0].account_user) && input.pwd.Equals(list[0].account_pwd))
+                    {
+                        RequestData aa = new RequestData();
+                        aa.usname = input.usname;
+                        aa.pwd = input.pwd;
+                        aa.company_code = input.company_code;
+                        output["success"] = true;
+                        output["message"] = "";
+                        output["user_data"] = array;
+                    }
+                    else
+                    {
+                        output["success"] = false;
+                        output["message"] = "No access rights";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Retrieved data not successfully" + ex.ToString() ;
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        #region MTAccount
+        public string getMTAccountList(InputMTAccount input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTAccount objMTAccount = new cls_ctMTAccount();
+                List<cls_MTAccount> list = objMTAccount.getDataByFillter(input.company_code, input.account_user, input.account_type, input.account_id, input.typenotin);
+
+                JArray array = new JArray();
+
+                if (list.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_MTAccount model in list)
+                    {
+                        JObject json = new JObject();
+
+                        json.Add("company_code", model.company_code);
+                        json.Add("account_id", model.account_id);
+                        json.Add("account_user", model.account_user);
+                        //json.Add("account_pwd", model.account_pwd);
+                        json.Add("account_pwd", "");
+                        json.Add("account_type", model.account_type);
+                        json.Add("account_level", model.account_level);
+                        json.Add("account_email", model.account_email);
+                        json.Add("account_email_alert", model.account_email_alert);
+                        json.Add("account_line", model.account_line);
+                        json.Add("account_line_alert", model.account_line_alert);
+                        json.Add("polmenu_code", model.polmenu_code);
+
+                        json.Add("modified_by", model.modified_by);
+                        json.Add("modified_date", model.modified_date);
+                        json.Add("flag", model.flag);
+                        cls_ctTRAccountpos objTRAccountpos = new cls_ctTRAccountpos();
+                        List<cls_TRAccountpos> listTRAccountpos = objTRAccountpos.getDataByFillter(model.company_code, model.account_user, model.account_type, "");
+                        JArray arrayTRAccountpos = new JArray();
+                        if (listTRAccountpos.Count > 0)
+                        {
+                            int indexTRAccount = 1;
+
+                            foreach (cls_TRAccountpos modelTRAccount in listTRAccountpos)
+                            {
+                                JObject jsonTRPlan = new JObject();
+                                jsonTRPlan.Add("company_code", modelTRAccount.company_code);
+                                jsonTRPlan.Add("account_user", modelTRAccount.account_user);
+                                jsonTRPlan.Add("account_type", modelTRAccount.account_type);
+                                jsonTRPlan.Add("position_code", modelTRAccount.position_code);
+
+                                jsonTRPlan.Add("index", indexTRAccount);
+
+
+                                indexTRAccount++;
+
+                                arrayTRAccountpos.Add(jsonTRPlan);
+                            }
+                            json.Add("position_data", arrayTRAccountpos);
+                        }
+                        else
+                        {
+                            json.Add("position_data", arrayTRAccountpos);
+                        }
+                        cls_ctTRAccountdep objTRAccountdep = new cls_ctTRAccountdep();
+                        List<cls_TRAccountdep> listTRAccountdep = objTRAccountdep.getDataByFillter(model.company_code, model.account_user, model.account_type, "", "");
+                        JArray arrayTRAccountdep = new JArray();
+                        if (listTRAccountdep.Count > 0)
+                        {
+                            int indexTRAccountdep = 1;
+
+                            foreach (cls_TRAccountdep modelTRAccountdep in listTRAccountdep)
+                            {
+                                JObject jsonTRdep = new JObject();
+                                jsonTRdep.Add("company_code", modelTRAccountdep.company_code);
+                                jsonTRdep.Add("account_user", modelTRAccountdep.account_user);
+                                jsonTRdep.Add("account_type", modelTRAccountdep.account_type);
+                                jsonTRdep.Add("level_code", modelTRAccountdep.level_code);
+                                jsonTRdep.Add("dep_code", modelTRAccountdep.dep_code);
+
+                                jsonTRdep.Add("index", indexTRAccountdep);
+
+
+                                indexTRAccountdep++;
+
+                                arrayTRAccountdep.Add(jsonTRdep);
+                            }
+                            json.Add("dep_data", arrayTRAccountdep);
+                        }
+                        else
+                        {
+                            json.Add("dep_data", arrayTRAccountdep);
+                        }
+
+                        cls_ctTRAccount objTRAccount = new cls_ctTRAccount();
+                        List<cls_TRAccount> listTRAccount = objTRAccount.getDataByFillter(model.company_code, model.account_user, model.account_type, "");
+                        JArray arrayTRAccount = new JArray();
+                        if (listTRAccount.Count > 0)
+                        {
+                            int indexTRAccount = 1;
+
+                            foreach (cls_TRAccount modelTRAccount in listTRAccount)
+                            {
+                                JObject jsonTRdep = new JObject();
+                                jsonTRdep.Add("company_code", modelTRAccount.company_code);
+                                jsonTRdep.Add("account_user", modelTRAccount.account_user);
+                                jsonTRdep.Add("account_type", modelTRAccount.account_type);
+                                jsonTRdep.Add("worker_code", modelTRAccount.worker_code);
+                                jsonTRdep.Add("worker_detail_en", modelTRAccount.worker_detail_en);
+                                jsonTRdep.Add("worker_detail_th", modelTRAccount.worker_detail_th);
+
+                                jsonTRdep.Add("index", indexTRAccount);
+
+
+                                indexTRAccount++;
+
+                                arrayTRAccount.Add(jsonTRdep);
+                            }
+                            json.Add("worker_data", arrayTRAccount);
+                        }
+                        else
+                        {
+                            json.Add("worker_data", arrayTRAccount);
+                        }
+
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageMTAccount(InputMTAccount input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTAccount objMTAccount = new cls_ctMTAccount();
+                cls_MTAccount model = new cls_MTAccount();
+                Authen objAuthen = new Authen();
+                model.company_code = input.company_code;
+                model.account_id = input.account_id;
+                model.account_user = input.account_user;
+                //model.account_pwd = objAuthen.Encrypt(input.account_pwd);
+                model.account_pwd = input.account_pwd;
+                model.account_type = input.account_type;
+                model.account_level = input.account_level;
+                model.account_email = input.account_email;
+                model.account_email_alert = input.account_email_alert;
+                model.account_line = input.account_line;
+                model.account_line_alert = input.account_line_alert;
+                model.polmenu_code = input.polmenu_code;
+
+                model.modified_by = input.username;
+                model.flag = input.flag;
+                string strID = objMTAccount.insert(model);
+                if (!strID.Equals(""))
+                {
+                    try
+                    {
+                        cls_ctTRAccountpos objTRAccoutpos = new cls_ctTRAccountpos();
+                        cls_ctTRAccountdep objTRAccoutdep = new cls_ctTRAccountdep();
+                        cls_ctTRAccount objTRAccout = new cls_ctTRAccount();
+                        //objTRLineapp.delete(input.company_code, input.workflow_type,input.workflow_code,"");
+                        if (input.positonn_data.Count > 0)
+                        {
+                            objTRAccoutpos.insert(input.positonn_data);
+                        }
+                        else
+                        {
+                            objTRAccoutpos.delete(input.company_code, input.account_user, input.account_type);
+                        }
+                        if (input.dep_data.Count > 0)
+                        {
+                            objTRAccoutdep.insert(input.dep_data);
+                        }
+                        else
+                        {
+                            objTRAccoutdep.delete(input.company_code, input.account_user, input.account_type, "", "");
+                        }
+                        if (input.worker_data.Count > 0)
+                        {
+                            objTRAccout.insert(input.worker_data);
+                        }
+                        else
+                        {
+                            objTRAccout.delete(input.company_code, input.account_user, input.account_type, "");
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        string str = ex.ToString();
+                    }
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Retrieved data not successfully";
+
+                    objMTAccount.dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteeMTAccount(InputMTAccount input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+              
+                cls_ctMTAccount controller = new cls_ctMTAccount();
+                bool blnResult = controller.delete(input.company_code, input.account_user, input.account_type, input.account_id);
+                if (blnResult)
+                {
+                    try
+                    {
+                        cls_ctTRAccountpos objTRpos = new cls_ctTRAccountpos();
+                        cls_ctTRAccountdep objTRdep = new cls_ctTRAccountdep();
+                        cls_ctTRAccount objTRAcount = new cls_ctTRAccount();
+                        objTRpos.delete(input.company_code, input.account_user, input.account_type);
+                        objTRdep.delete(input.company_code, input.account_user, input.account_type, "", "");
+                        objTRAcount.delete(input.company_code, input.account_user, input.account_type, "");
+                    }
+                    catch (Exception ex)
+                    {
+                        string str = ex.ToString();
+                    }
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+            }
+            finally
+            {
+            }
+
+
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string getMTAccountworkflowList(InputMTAccount input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRAccount objTRAccount = new cls_ctTRAccount();
+                List<cls_TRAccount> listTRAccount = objTRAccount.getDataworkflowByFillter(input.company_code, input.account_user, input.worker_code, input.account_type, input.workflow_type);
+
+                JArray array = new JArray();
+
+                if (listTRAccount.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_TRAccount model in listTRAccount)
+                    {
+                        JObject json = new JObject();
+
+                        json.Add("company_code", model.company_code);
+                        json.Add("account_user", model.account_user);
+                        json.Add("account_type", model.account_type);
+                        json.Add("worker_code", model.worker_code);
+                        json.Add("empposition_position", model.empposition_position);
+                        json.Add("position_level", model.position_level);
+                        json.Add("workflow_code", model.workflow_code);
+                        json.Add("workflow_type", model.workflow_type);
+                        json.Add("totalapprove", model.totalapprove);
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        #endregion
+
+        #region TRAccountpos
+        public string getTRAccountposList(InputTRAccountpos input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRAccountpos objMTAccountpost = new cls_ctTRAccountpos();
+                List<cls_TRAccountpos> list = objMTAccountpost.getDataByFillter(input.company_code, input.account_user, input.account_type, input.position_code);
+
+                JArray array = new JArray();
+
+                if (list.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_TRAccountpos model in list)
+                    {
+                        JObject json = new JObject();
+
+                        json.Add("company_code", model.company_code);
+                        json.Add("account_user", model.account_user);
+                        json.Add("account_type", model.account_type);
+                        json.Add("position_code", model.position_code);
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageTRAccountpos(InputTRAccountpos input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRAccountpos objTRAccountpos = new cls_ctTRAccountpos();
+                cls_TRAccountpos model = new cls_TRAccountpos();
+                model.company_code = input.company_code;
+                model.account_user = input.account_user;
+                model.account_type = input.account_type;
+                model.position_code = input.position_code;
+                string strID = objTRAccountpos.insert(model);
+                if (!strID.Equals(""))
+                {
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Retrieved data not successfully";
+                }
+
+                objTRAccountpos.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+  
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteeTRAccountpos(InputTRAccountpos input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+
+                cls_ctTRAccountpos controller = new cls_ctTRAccountpos();
+                bool blnResult = controller.delete(input.company_code, input.account_user, input.account_type);
+                if (blnResult)
+                {
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+
+            }
+            finally
+            {
+                
+            }
+
+
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
+        #region TRAccountdep
+        public string getTRAccountdepList(InputTRAccountdep input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRAccountdep objMTAccountpost = new cls_ctTRAccountdep();
+                List<cls_TRAccountdep> list = objMTAccountpost.getDataByFillter(input.company_code, input.account_user, input.account_type, input.level_code, input.dep_code);
+
+                JArray array = new JArray();
+
+                if (list.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_TRAccountdep model in list)
+                    {
+                        JObject json = new JObject();
+
+                        json.Add("company_code", model.company_code);
+                        json.Add("account_user", model.account_user);
+                        json.Add("account_type", model.account_type);
+                        json.Add("level_code", model.level_code);
+                        json.Add("dep_code", model.dep_code);
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+               
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageTRAccountdep(InputTRAccountdep input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctTRAccountdep objTRAccountdep = new cls_ctTRAccountdep();
+                cls_TRAccountdep model = new cls_TRAccountdep();
+                model.company_code = input.company_code;
+                model.account_user = input.account_user;
+                model.account_type = input.account_type;
+                model.level_code = input.level_code;
+                model.dep_code = input.dep_code;
+                string strID = objTRAccountdep.insert(model);
+                if (!strID.Equals(""))
+                {
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Retrieved data not successfully";
+                }
+
+                objTRAccountdep.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+                
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteeTRAccountdep(InputTRAccountdep input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+
+                cls_ctTRAccountdep controller = new cls_ctTRAccountdep();
+                bool blnResult = controller.delete(input.company_code, input.account_user, input.account_type, input.level_code, input.dep_code);
+                if (blnResult)
+                {
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+            }
+            finally
+            {
+            }
+
+
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
+        #region MTPdpafile
+        public string getMTPdpafileList(InputMTPdpafile input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTPdpafile controller = new cls_ctMTPdpafile();
+                List<cls_MTPdpafile> list = controller.getDataByFillter(input.company_code, input.document_id);
+
+                JArray array = new JArray();
+
+                if (list.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_MTPdpafile model in list)
+                    {
+                        JObject json = new JObject();
+
+                        json.Add("company_code", model.company_code);
+                        json.Add("document_id", model.document_id);
+                        json.Add("document_name", model.document_name);
+                        json.Add("document_path", model.document_path);
+                        json.Add("document_type", model.document_type);
+                        json.Add("created_by", model.created_by);
+                        json.Add("created_date", model.created_date);
+
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageMTPdpafile(InputMTPdpafile input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTPdpafile controller = new cls_ctMTPdpafile();
+                cls_MTPdpafile model = new cls_MTPdpafile();
+                model.company_code = input.company_code;
+                model.document_id = input.document_id;
+                model.document_name = input.document_name;
+                model.document_path = input.document_path;
+                model.document_type = input.document_type;
+
+                model.created_by = input.username;
+                string strID = controller.insert(model);
+                if (!strID.Equals(""))
+                {
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Retrieved data not successfully";
+                }
+
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteMTPdpafile(InputMTPdpafile input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctMTPdpafile controller = new cls_ctMTPdpafile();
+                bool blnResult = controller.delete(input.company_code, input.document_id);
+                if (blnResult)
+                {
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+            }
+            finally
+            {
+            }
+
+
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
+        #region TRPdpa
+        public string getTRPdpaList(InputTRPdpa input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRPdpa controller = new cls_ctTRPdpa();
+                List<cls_TRPdpa> list = controller.getDataByFillter(input.company_code, input.worker_code, input.status);
+
+                JArray array = new JArray();
+
+                if (list.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_TRPdpa model in list)
+                    {
+                        JObject json = new JObject();
+
+                        json.Add("company_code", model.company_code);
+                        json.Add("worker_code", model.worker_code);
+                        json.Add("worker_detail_th", model.worker_detail_th);
+                        json.Add("worker_detail_en", model.worker_detail_en);
+                        json.Add("status", model.status);
+                        json.Add("created_by", model.created_by);
+                        json.Add("created_date", model.created_date);
+
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageTRPdpa(InputTRPdpa input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRPdpa controller = new cls_ctTRPdpa();
+                cls_TRPdpa model = new cls_TRPdpa();
+                model.company_code = input.company_code;
+                model.worker_code = input.worker_code;
+                model.status = input.status;
+
+                model.created_by = input.username;
+                string strID = controller.insert(model);
+                if (!strID.Equals(""))
+                {
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Retrieved data not successfully";
+                }
+
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteTRPdpa(InputTRPdpa input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRPdpa controller = new cls_ctTRPdpa();
+                bool blnResult = controller.delete(input.company_code, input.worker_code);
+                if (blnResult)
+                {
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+            }
+            finally
+            {
+            }
+
+
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
+        #region MTWorkflow
+        public string getMTWorkflowList(InputMTWorkflow input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTWorkflow objMT = new cls_ctMTWorkflow();
+                List<cls_MTWorkflow> list = objMT.getDataByFillter(input.company_code, input.workflow_id, input.workflow_code, input.workflow_type);
+
+                JArray array = new JArray();
+
+                if (list.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_MTWorkflow model in list)
+                    {
+                        JObject json = new JObject();
+                        json.Add("company_code", model.company_code);
+                        json.Add("workflow_id", model.workflow_id);
+                        json.Add("workflow_code", model.workflow_code);
+                        json.Add("workflow_name_th", model.workflow_name_th);
+                        json.Add("workflow_name_en", model.workflow_name_en);
+                        json.Add("workflow_type", model.workflow_type);
+
+                        json.Add("step1", model.step1);
+                        json.Add("step2", model.step2);
+                        json.Add("step3", model.step3);
+                        json.Add("step4", model.step4);
+                        json.Add("step5", model.step5);
+
+                        json.Add("totalapprove", model.totalapprove);
+
+                        json.Add("modified_by", model.modified_by);
+                        json.Add("modified_date", model.modified_date);
+                        json.Add("flag", model.flag);
+                        cls_ctTRLineapprove objTRLineapp = new cls_ctTRLineapprove();
+                        List<cls_TRLineapprove> listTRLineapp = objTRLineapp.getDataByFillter(model.company_code, model.workflow_type, model.workflow_code, "");
+                        JArray arrayTRLineapp = new JArray();
+                        if (listTRLineapp.Count > 0)
+                        {
+                            int indexTRLineapp = 1;
+
+                            foreach (cls_TRLineapprove modelTRLineapp in listTRLineapp)
+                            {
+                                JObject jsonTRPlan = new JObject();
+                                jsonTRPlan.Add("company_code", modelTRLineapp.company_code);
+                                jsonTRPlan.Add("workflow_type", modelTRLineapp.workflow_type);
+                                jsonTRPlan.Add("workflow_code", modelTRLineapp.workflow_code);
+                                jsonTRPlan.Add("position_level", modelTRLineapp.position_level);
+
+                                jsonTRPlan.Add("index", indexTRLineapp);
+
+
+                                indexTRLineapp++;
+
+                                arrayTRLineapp.Add(jsonTRPlan);
+                            }
+                            json.Add("lineapprove_data", arrayTRLineapp);
+                        }
+                        else
+                        {
+                            json.Add("lineapprove_data", arrayTRLineapp);
+                        }
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageMTWorkflow(InputMTWorkflow input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTWorkflow objMT = new cls_ctMTWorkflow();
+                cls_MTWorkflow model = new cls_MTWorkflow();
+                model.company_code = input.company_code;
+                model.workflow_id = input.workflow_id.Equals("") ? 0 : Convert.ToInt32(input.workflow_id);
+                model.workflow_code = input.workflow_code;
+                model.workflow_name_th = input.workflow_name_th;
+                model.workflow_name_en = input.workflow_name_en;
+                model.workflow_type = input.workflow_type;
+
+                model.step1 = input.step1;
+                model.step2 = input.step2;
+                model.step3 = input.step3;
+                model.step4 = input.step4;
+                model.step5 = input.step5;
+
+                model.totalapprove = input.totalapprove;
+
+                model.modified_by = input.username;
+                model.flag = input.flag;
+
+                string strID = objMT.insert(model);
+                if (!strID.Equals(""))
+                {
+                    try
+                    {
+                        cls_ctTRLineapprove objTRLineapp = new cls_ctTRLineapprove();
+                        //objTRLineapp.delete(input.company_code, input.workflow_type,input.workflow_code,"");
+                        if (input.lineapprove_data.Count > 0)
+                        {
+                            objTRLineapp.delete(input.company_code, input.workflow_type, input.workflow_code, "");
+                            objTRLineapp.insert(input.lineapprove_data, input.username);
+                        }
+                        else
+                        {
+                            objTRLineapp.delete(input.company_code, input.workflow_type, input.workflow_code, "");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        string str = ex.ToString();
+                    }
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Retrieved data not successfully";
+                }
+
+                objMT.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteMTWorkflow(InputMTWorkflow input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTWorkflow controller = new cls_ctMTWorkflow();
+
+                bool blnResult = controller.delete(input.workflow_id, input.company_code);
+
+                if (blnResult)
+                {
+                    try
+                    {
+                        cls_ctTRLineapprove objTRLineapp = new cls_ctTRLineapprove();
+                        objTRLineapp.delete(input.company_code, input.workflow_type, input.workflow_code, "");
+                    }
+                    catch (Exception ex)
+                    {
+                        string str = ex.ToString();
+                    }
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+            }
+            finally
+            {
+            }
+
+
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string getPositionLevelList(InputMTWorkflow input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTWorkflow objMT = new cls_ctMTWorkflow();
+                List<cls_MTWorkflow> list = objMT.getpositionlevel(input.company_code);
+
+                JArray array = new JArray();
+
+                if (list.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_MTWorkflow model in list)
+                    {
+                        JObject json = new JObject();
+                        json.Add("position_level", model.position_level);
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(model.position_level);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        #endregion
+
+        #region TRLineapprove
+        public string getTRLineapproveList(InputTRLineapprove input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRLineapprove objTRLineapprove = new cls_ctTRLineapprove();
+                List<cls_TRLineapprove> list = objTRLineapprove.getDataByFillter(input.company_code, input.workflow_type, input.workflow_code, input.position_level);
+
+                JArray array = new JArray();
+
+                if (list.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_TRLineapprove model in list)
+                    {
+                        JObject json = new JObject();
+
+                        json.Add("company_code", model.company_code);
+                        json.Add("workflow_type", model.workflow_type);
+                        json.Add("workflow_code", model.workflow_code);
+                        json.Add("position_level", model.position_level);
+
+                        json.Add("modified_by", model.modified_by);
+                        json.Add("modified_date", model.modified_date);
+                        json.Add("flag", model.flag);
+
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageTRLineapprove(InputTRLineapprove input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRLineapprove objTRTimeleave = new cls_ctTRLineapprove();
+                bool strID = objTRTimeleave.insert(input.lineapprove_data, input.username);
+                if (strID)
+                {
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Retrieved data not successfully";
+                }
+
+                objTRTimeleave.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteTRLineapprove(InputTRLineapprove input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRLineapprove controller = new cls_ctTRLineapprove();
+                bool blnResult = controller.delete(input.company_code, input.workflow_type, input.workflow_code, input.position_level);
+                if (blnResult)
+                {
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+            }
+            finally
+            {
+            }
+
+
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
     }
 
     [DataContract]
@@ -17678,6 +19216,14 @@ namespace HRFocusWCFSystem
         [DataMember(Order = 0)]
         public string usname { get; set; }
         [DataMember(Order = 1)]
+        public string pwd { get; set; }
+    }
+
+    public class RequestData
+    {
+        public RequestData() { }
+        public string company_code { get; set; }
+        public string usname { get; set; }
         public string pwd { get; set; }
     }
 

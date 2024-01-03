@@ -1547,6 +1547,133 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/doUploadExcel?fileName={fileName}", ResponseFormat = WebMessageFormat.Json)]
         Task<string> doUploadExcel(string fileName, Stream stream);
+
+
+
+
+
+        [OperationContract(Name = "doAuthen2")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doAuthen(RequestData input);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", UriTemplate = "/doUploadMTReqdoc?fileName={fileName}&token={token}&by={by}", ResponseFormat = WebMessageFormat.Json)]
+        Task<string> doUploadMTReqdoc(string token, string by, string fileName, Stream stream);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", UriTemplate = "/doGetMTReqdoc?file_Path={file_path}", ResponseFormat = WebMessageFormat.Json)]
+        byte[] DownloadFile(string file_Path);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", UriTemplate = "/doDeleteMTReqdoc?file_Path={file_path}", ResponseFormat = WebMessageFormat.Json)]
+        string DeleteFile(string file_Path);
+
+        #region MTAccount
+        [OperationContract(Name = "account_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getMTAccountList(InputMTAccount input);
+
+        [OperationContract(Name = "account")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageMTAccount(InputMTAccount input);
+
+        [OperationContract(Name = "account_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteeMTAccount(InputMTAccount input);
+
+
+        [OperationContract(Name = "account_workflow")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getMTAccountworkflowList(InputMTAccount input);
+        #endregion
+
+        #region TRAccountpos
+        [OperationContract(Name = "accountpos_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRAccountposList(InputTRAccountpos input);
+
+        [OperationContract(Name = "accountpos")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRAccountpos(InputTRAccountpos input);
+
+        [OperationContract(Name = "accountpos_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteeTRAccountpos(InputTRAccountpos input);
+        #endregion
+
+        #region TRAccountdep
+        [OperationContract(Name = "accountdep_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRAccountdepList(InputTRAccountdep input);
+
+        [OperationContract(Name = "accountdep")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRAccountdep(InputTRAccountdep input);
+
+        [OperationContract(Name = "accountdep_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteeTRAccountdep(InputTRAccountdep input);
+        #endregion
+
+        #region MTPdpafile
+        [OperationContract(Name = "pdpafile_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getMTPdpafileList(InputMTPdpafile input);
+
+        [OperationContract(Name = "pdpafile")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageMTPdpafile(InputMTPdpafile input);
+
+        [OperationContract(Name = "pdpafile_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteMTPdpafile(InputMTPdpafile input);
+        #endregion
+
+        #region TRPdpa
+        [OperationContract(Name = "pdpa_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRPdpaList(InputTRPdpa input);
+
+        [OperationContract(Name = "pdpa")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRPdpa(InputTRPdpa input);
+
+        [OperationContract(Name = "pdpa_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteTRPdpa(InputTRPdpa input);
+        #endregion
+
+        #region MTWorkflow
+        [OperationContract(Name = "workflow_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getMTWorkflowList(InputMTWorkflow input);
+
+        [OperationContract(Name = "workflow")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageMTWorkflow(InputMTWorkflow input);
+
+        [OperationContract(Name = "workflow_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteMTWorkflow(InputMTWorkflow input);
+
+        [OperationContract(Name = "positionlevel")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getPositionLevelList(InputMTWorkflow input);
+        #endregion
+
+        #region TRLineapprove
+        [OperationContract(Name = "lineapprove_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRLineapproveList(InputTRLineapprove input);
+
+        [OperationContract(Name = "lineapprove")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRLineapprove(InputTRLineapprove input);
+
+        [OperationContract(Name = "lineapprove_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteTRLineapprove(InputTRLineapprove input);
+        #endregion
         
     }
 
