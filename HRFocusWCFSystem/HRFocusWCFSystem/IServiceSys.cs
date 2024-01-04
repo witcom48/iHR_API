@@ -1674,6 +1674,29 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteTRLineapprove(InputTRLineapprove input);
         #endregion
+
+        #region TRTimeleave
+        [OperationContract(Name = "timeleave_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRTimeleaveList(InputTRTimeleaveself input);
+
+        [OperationContract(Name = "timeleave")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRTimeleave(InputTRTimeleaveself input);
+
+        [OperationContract(Name = "timeleave_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteTRTimeleave(InputTRTimeleaveself input);
+        #endregion
+
+        #region Approvedoc
+        [OperationContract(Name = "approve_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string Approvegetdoc(InputApprovedoc input);
+        [OperationContract(Name = "approve")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string Approve(InputApprovedoc input);
+        #endregion
         
     }
 

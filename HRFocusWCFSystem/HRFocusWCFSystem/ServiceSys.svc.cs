@@ -19208,6 +19208,390 @@ namespace HRFocusWCFSystem
 
         }
         #endregion
+
+        public string Approvegetdoc(InputApprovedoc input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ApproveJob controller = new cls_ApproveJob();
+                JArray countdoc = new JArray();
+                JArray list = controller.ApproveJob_get(input.company_code, input.job_type, input.username, input.status, input.fromdate, input.todate);
+                JObject jsonCount = new JObject();
+                jsonCount.Add("docapprove_wait", controller.getCountDoc(input.company_code, input.job_type, input.username, "0", DateTime.Now.Year.ToString() + "-01-01", DateTime.Now.Year.ToString() + "-12-31"));
+                jsonCount.Add("docapprove_all", controller.getCountDoc(input.company_code, input.job_type, input.username, "1", DateTime.Now.Year.ToString() + "-01-01", DateTime.Now.Year.ToString() + "-12-31"));
+                jsonCount.Add("docapprove_approve", controller.getCountDoc(input.company_code, input.job_type, input.username, "3", DateTime.Now.Year.ToString() + "-01-01", DateTime.Now.Year.ToString() + "-12-31"));
+                jsonCount.Add("docapprove_reject", controller.getCountDoc(input.company_code, input.job_type, input.username, "4", DateTime.Now.Year.ToString() + "-01-01", DateTime.Now.Year.ToString() + "-12-31"));
+                countdoc.Add(jsonCount);
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = list;
+                output["total"] = countdoc;
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string Approve(InputApprovedoc input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ApproveJob controller = new cls_ApproveJob();
+                int success = 0;
+                int fail = 0;
+                JArray array = new JArray();
+                foreach (string id in input.job_id)
+                {
+                    JObject json = new JObject();
+                    bool Status = false;
+                    string result = controller.ApproveJob(ref Status, input.company_code, id, input.job_type, input.username, input.approve_status, input.lang);
+                    if (Status)
+                    {
+                        success++;
+                        if(input.job_type.Equals("LEA")){
+                            cls_ctMTJobtable job = new cls_ctMTJobtable();
+                            List<cls_MTJobtable> list = job.getDataByFillter(input.company_code, 0, id, input.job_type, "", "", "", "");
+                            if (list.Count > 0)
+                            {
+                                cls_ctTRTimeleaveself leve = new cls_ctTRTimeleaveself();
+                                cls_TRTimeleaveself dataleve = leve.getDataByID(list[0].jobtable_id);
+                                cls_ctTRTimeleave timeleavecontroller = new cls_ctTRTimeleave();
+                                cls_TRTimeleave timeleave = new cls_TRTimeleave();
+                                timeleave.company_code = dataleve.company_code;
+                                timeleave.worker_code = dataleve.worker_code;
+                                timeleave.timeleave_doc = dataleve.timeleave_doc;
+                                timeleave.timeleave_fromdate = dataleve.timeleave_fromdate;
+                                timeleave.timeleave_todate = dataleve.timeleave_todate;
+                                timeleave.timeleave_type = dataleve.timeleave_type;
+                                timeleave.timeleave_min = dataleve.timeleave_min;
+                                timeleave.timeleave_actualday = dataleve.timeleave_actualday;
+                                timeleave.timeleave_incholiday = dataleve.timeleave_incholiday;
+                                timeleave.timeleave_deduct = dataleve.timeleave_deduct;
+                                timeleave.timeleave_note = dataleve.timeleave_note;
+                                timeleave.leave_code = dataleve.leave_code;
+                                timeleave.reason_code = dataleve.reason_code;
+                                timeleave.modified_by = dataleve.modified_by;
+                                timeleavecontroller.insert(timeleave);
+                             }
+                        }
+                    }
+                    else
+                    {
+                        fail++;
+                        json.Add("job_id", id);
+                        json.Add("job_type", input.job_type);
+                        json.Add("file_detail", result);
+                        array.Add(json);
+                    }
+                    Status = false;
+                }
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+                output["success"] = success;
+                output["fail"] = fail;
+                output["error"] = controller.getMessage();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+
+        #region TRTimeleave
+        public string getTRTimeleaveList(InputTRTimeleaveself input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRTimeleaveself objTRTimeleave = new cls_ctTRTimeleaveself();
+                List<cls_TRTimeleaveself> listTRTimeleave = objTRTimeleave.getDataByFillter(input.timeleave_id, input.status, input.company_code, input.worker_code, input.timeleave_fromdate, input.timeleave_todate);
+
+                JArray array = new JArray();
+
+                if (listTRTimeleave.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_TRTimeleaveself model in listTRTimeleave)
+                    {
+                        JObject json = new JObject();
+
+                        json.Add("company_code", model.company_code);
+                        json.Add("worker_code", model.worker_code);
+                        json.Add("leave_code", model.leave_code);
+
+                        json.Add("worker_detail_th", model.worker_detail_th);
+                        json.Add("leave_detail_th", model.leave_detail_th);
+                        json.Add("worker_detail_en", model.worker_detail_en);
+                        json.Add("leave_detail_en", model.leave_detail_en);
+
+                        json.Add("timeleave_id", model.timeleave_id);
+                        json.Add("timeleave_doc", model.timeleave_doc);
+
+                        json.Add("timeleave_fromdate", model.timeleave_fromdate);
+                        json.Add("timeleave_todate", model.timeleave_todate);
+
+                        json.Add("timeleave_type", model.timeleave_type);
+                        json.Add("timeleave_min", model.timeleave_min);
+
+                        json.Add("timeleave_actualday", model.timeleave_actualday);
+                        json.Add("timeleave_incholiday", model.timeleave_incholiday);
+                        json.Add("timeleave_deduct", model.timeleave_deduct);
+
+                        json.Add("timeleave_note", model.timeleave_note);
+                        json.Add("reason_code", model.reason_code);
+                        json.Add("reason_th", model.reason_th);
+                        json.Add("reason_en", model.reason_en);
+                        json.Add("status", model.status);
+                        json.Add("status_job", model.status_job);
+
+                        json.Add("modified_by", model.modified_by);
+                        json.Add("modified_date", model.modified_date);
+                        json.Add("flag", model.flag);
+                        cls_ctMTReqdocument objMTReqdoc = new cls_ctMTReqdocument();
+                        List<cls_MTReqdocument> listTRReqdoc = objMTReqdoc.getDataByFillter(model.company_code, 0, model.timeleave_id.ToString(), "LEA");
+                        JArray arrayTRReqdoc = new JArray();
+                        if (listTRReqdoc.Count > 0)
+                        {
+                            int indexTRReqdoc = 1;
+
+                            foreach (cls_MTReqdocument modelTRReqdoc in listTRReqdoc)
+                            {
+                                JObject jsonTRReqdoc = new JObject();
+                                jsonTRReqdoc.Add("company_code", modelTRReqdoc.company_code);
+                                jsonTRReqdoc.Add("document_id", modelTRReqdoc.document_id);
+                                jsonTRReqdoc.Add("job_id", modelTRReqdoc.job_id);
+                                jsonTRReqdoc.Add("job_type", modelTRReqdoc.job_type);
+                                jsonTRReqdoc.Add("document_name", modelTRReqdoc.document_name);
+                                jsonTRReqdoc.Add("document_type", modelTRReqdoc.document_type);
+                                jsonTRReqdoc.Add("document_path", modelTRReqdoc.document_path);
+                                jsonTRReqdoc.Add("created_by", modelTRReqdoc.created_by);
+                                jsonTRReqdoc.Add("created_date", modelTRReqdoc.created_date);
+
+                                jsonTRReqdoc.Add("index", indexTRReqdoc);
+
+
+                                indexTRReqdoc++;
+
+                                arrayTRReqdoc.Add(jsonTRReqdoc);
+                            }
+                            json.Add("reqdoc_data", arrayTRReqdoc);
+                        }
+                        else
+                        {
+                            json.Add("reqdoc_data", arrayTRReqdoc);
+                        }
+
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageTRTimeleave(InputTRTimeleaveself input)
+        {
+            JObject output = new JObject();
+            string message = "Retrieved data not successfully";
+            string strID = "";
+            try
+            {
+                cls_ctTRTimeleaveself objTRTimeleave = new cls_ctTRTimeleaveself();
+                var jsonArray = JsonConvert.DeserializeObject<List<cls_TRTimeleaveself>>(input.leave_data);
+                foreach (cls_TRTimeleaveself leavedata in jsonArray)
+                {
+                    cls_TRTimeleaveself model = new cls_TRTimeleaveself();
+
+                    model.company_code = leavedata.company_code;
+                    model.worker_code = leavedata.worker_code;
+                    model.timeleave_id = leavedata.timeleave_id.Equals("") ? 0 : Convert.ToInt32(leavedata.timeleave_id);
+                    model.timeleave_doc = leavedata.timeleave_doc;
+
+                    model.timeleave_fromdate = Convert.ToDateTime(leavedata.timeleave_fromdate);
+                    model.timeleave_todate = Convert.ToDateTime(leavedata.timeleave_todate);
+
+                    model.timeleave_type = leavedata.timeleave_type;
+                    model.timeleave_min = leavedata.timeleave_min;
+
+                    model.timeleave_actualday = leavedata.timeleave_actualday;
+                    model.timeleave_incholiday = leavedata.timeleave_incholiday;
+                    model.timeleave_deduct = leavedata.timeleave_deduct;
+
+                    model.timeleave_note = leavedata.timeleave_note;
+                    model.leave_code = leavedata.leave_code;
+                    model.reason_code = leavedata.reason_code;
+                    model.status = leavedata.status;
+
+                    model.modified_by = input.username;
+                    model.flag = leavedata.flag;
+
+                    strID = objTRTimeleave.insert(model);
+                    if (!strID.Equals(""))
+                    {
+                        cls_ctTRAccount objTRAccount = new cls_ctTRAccount();
+                        List<cls_TRAccount> listTRAccount = objTRAccount.getDataworkflowByFillter(model.company_code, "", model.worker_code, "", "LEA");
+                        if (listTRAccount.Count > 0)
+                        {
+                            cls_ctMTJobtable objMTJob = new cls_ctMTJobtable();
+                            cls_MTJobtable modeljob = new cls_MTJobtable();
+                            modeljob.company_code = model.company_code;
+                            modeljob.jobtable_id = 0;
+                            modeljob.job_id = strID;
+                            modeljob.job_type = "LEA";
+                            modeljob.status_job = "W";
+                            modeljob.job_date = Convert.ToDateTime(leavedata.timeleave_fromdate);
+                            modeljob.job_nextstep = listTRAccount[0].totalapprove;
+                            modeljob.workflow_code = listTRAccount[0].workflow_code;
+                            modeljob.created_by = input.username;
+                            string strID1 = objMTJob.insert(modeljob);
+                        }
+                        else
+                        {
+                            objTRTimeleave.delete(Convert.ToInt32(strID));
+                            strID = "";
+                            message = "There are no workflow contexts for this worker_code :" + leavedata.worker_code;
+                            break;
+                        }
+                        if (leavedata.reqdoc_data.Count > 0)
+                        {
+                            foreach (cls_MTReqdocument reqdoc in leavedata.reqdoc_data)
+                            {
+                                cls_ctMTReqdocument objMTReqdocu = new cls_ctMTReqdocument();
+                                cls_MTReqdocument modelreqdoc = new cls_MTReqdocument();
+                                modelreqdoc.company_code = reqdoc.company_code;
+                                modelreqdoc.document_id = reqdoc.document_id;
+                                modelreqdoc.job_id = strID;
+                                modelreqdoc.job_type = reqdoc.job_type;
+                                modelreqdoc.document_name = reqdoc.document_name;
+                                modelreqdoc.document_type = reqdoc.document_type;
+                                modelreqdoc.document_path = reqdoc.document_path;
+
+                                modelreqdoc.created_by = input.username;
+                                string strIDs = objMTReqdocu.insert(modelreqdoc);
+                            }
+                        }
+                        cls_srvProcessTime srv_time = new cls_srvProcessTime();
+                        srv_time.doCalleaveacc(model.timeleave_fromdate.Year.ToString(), model.company_code, model.worker_code, model.modified_by);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (!strID.Equals(""))
+                {
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = message;
+                }
+
+                objTRTimeleave.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteTRTimeleave(InputTRTimeleaveself input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctTRTimeleaveself controller = new cls_ctTRTimeleaveself();
+                cls_TRTimeleaveself model = controller.getDataByID(input.timeleave_id);
+                bool blnResult = controller.delete(input.timeleave_id);
+
+                if (blnResult)
+                {
+                    cls_srvProcessTime srv_time = new cls_srvProcessTime();
+                    srv_time.doCalleaveacc(model.timeleave_fromdate.Year.ToString(), model.company_code, model.worker_code, model.modified_by);
+                    cls_ctMTJobtable MTJob = new cls_ctMTJobtable();
+                    MTJob.delete(model.company_code, 0, model.timeleave_id.ToString(), "LEA");
+                    cls_ctMTReqdocument MTReqdoc = new cls_ctMTReqdocument();
+                    List<cls_MTReqdocument> filelist = MTReqdoc.getDataByFillter(model.company_code, 0, model.timeleave_id.ToString(), "LEA");
+                    if (filelist.Count > 0)
+                    {
+                        foreach (cls_MTReqdocument filedata in filelist)
+                        {
+                            File.Delete(filedata.document_path);
+                        }
+                    }
+                    MTReqdoc.delete(model.company_code, 0, model.timeleave_id.ToString(), "LEA");
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
     }
 
     [DataContract]

@@ -135,7 +135,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.account_type = dr["ACCOUNT_TYPE"].ToString();
                     model.worker_code = dr["WORKER_CODE"].ToString();
                     model.empposition_position = dr["EMPPOSITION_POSITION"].ToString();
-                    model.position_level = Convert.ToInt32(dr["POSITION_LEVEL"].ToString());
+                    //model.position_level = dr["POSITION_LEVEL"].ToString();
                     model.workflow_code = dr["WORKFLOW_CODE"].ToString();
                     model.workflow_type = dr["WORKFLOW_TYPE"].ToString();
                     model.totalapprove = Convert.ToInt32(dr["TOTALAPPROVE"]);

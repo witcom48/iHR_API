@@ -1181,4 +1181,100 @@ namespace HRFocusWCFSystem
 
     }
     #endregion
+
+    #region InputTRTimeleaveself
+    [DataContract]
+    public class InputTRTimeleaveself
+    {
+        [DataMember]
+        public string device_name { get; set; }
+        [DataMember]
+        public string ip { get; set; }
+        [DataMember]
+        public string username { get; set; }
+        [DataMember]
+        public string company_code { get; set; }
+        [DataMember]
+        public string worker_code { get; set; }
+        [DataMember]
+        public string worker_name { get; set; }
+        [DataMember]
+        public int timeleave_id { get; set; }
+        [DataMember]
+        public string timeleave_doc { get; set; }
+        [DataMember]
+        public string timeleave_fromdate { get; set; }
+        [DataMember]
+        public string timeleave_todate { get; set; }
+        [DataMember]
+        public string timeleave_type { get; set; }
+        [DataMember]
+        public int timeleave_min { get; set; }
+        [DataMember]
+        public int timeleave_actualday { get; set; }
+        [DataMember]
+        public bool timeleave_incholiday { get; set; }
+        [DataMember]
+        public bool timeleave_deduct { get; set; }
+        [DataMember]
+        public string timeleave_note { get; set; }
+        [DataMember]
+        public string leave_code { get; set; }
+        [DataMember]
+        public string reason_code { get; set; }
+        [DataMember]
+        public int status { get; set; }
+        [DataMember]
+        public string modified_by { get; set; }
+        [DataMember]
+        public DateTime modified_date { get; set; }
+        [DataMember]
+        public bool flag { get; set; }
+        [DataMember]
+        public string leave_data { get; set; }
+        [DataMember]
+        public string project_code { get; set; }
+        [DataMember]
+        public string year_code { get; set; }
+    }
+    #endregion  
+
+    #region InputApprovedoc
+    [DataContract]
+    public class InputApprovedoc
+    {
+        [DataMember]
+        public string device_name { get; set; }
+        [DataMember]
+        public string ip { get; set; }
+        [DataMember]
+        public string username { get; set; }
+        [DataMember]
+        public string company_code { get; set; }
+        [DataMember]
+        public string job_type { get; set; }
+        [DataMember]
+        public string approve_status { get; set; }
+        [DataMember]
+        public List<string> job_id { get; set; }
+        [DataMember]
+        public string lang { get; set; }
+        [DataMember]
+        public int status { get; set; }
+        [DataMember]
+        public string fromdate { get; set; }
+        [DataMember]
+        public string todate { get; set; }
+
+    }
+
+    public class Jobdetail
+    {
+        public string job_id { get; set; }
+        public string worker_code { get; set; }
+        public string workdate { get; set; }
+
+    }
+    #endregion
+
 }
