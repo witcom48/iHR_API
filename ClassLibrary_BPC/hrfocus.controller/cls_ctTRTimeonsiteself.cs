@@ -42,12 +42,12 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", INITIAL_NAME_TH + WORKER_FNAME_TH + ' ' + WORKER_LNAME_TH AS WORKER_DETAIL_TH");
                 obj_str.Append(", INITIAL_NAME_EN + WORKER_FNAME_EN + ' ' + WORKER_LNAME_EN AS WORKER_DETAIL_EN");
                 obj_str.Append(", ISNULL(SELF_TR_TIMEONSITE.REASON_CODE, '') AS REASON_CODE");
-                obj_str.Append(", ISNULL(SYS_MT_REASON.REASON_NAME_TH, '') AS REASON_NAME_TH");
-                obj_str.Append(", ISNULL(SYS_MT_REASON.REASON_NAME_EN, '') AS REASON_NAME_EN");
+                obj_str.Append(", ISNULL(HRM_MT_REASON.REASON_NAME_TH, '') AS REASON_NAME_TH");
+                obj_str.Append(", ISNULL(HRM_MT_REASON.REASON_NAME_EN, '') AS REASON_NAME_EN");
                 obj_str.Append(", ISNULL(SELF_TR_TIMEONSITE.LOCATION_CODE, '') AS LOCATION_CODE");
-                obj_str.Append(", ISNULL(SYS_MT_LOCATION.LOCATION_NAME_TH, '') AS LOCATION_NAME_TH");
-                obj_str.Append(", ISNULL(SYS_MT_LOCATION.LOCATION_NAME_EN, '') AS LOCATION_NAME_EN");
-                obj_str.Append(", ISNULL(SYS_MT_LOCATION.LOCATION_NAME_EN, '') AS LOCATION_NAME_EN");
+                obj_str.Append(", ISNULL(HRM_MT_LOCATION.LOCATION_NAME_TH, '') AS LOCATION_NAME_TH");
+                obj_str.Append(", ISNULL(HRM_MT_LOCATION.LOCATION_NAME_EN, '') AS LOCATION_NAME_EN");
+                obj_str.Append(", ISNULL(HRM_MT_LOCATION.LOCATION_NAME_EN, '') AS LOCATION_NAME_EN");
 
                 obj_str.Append(", ISNULL(SELF_TR_TIMEONSITE.MODIFIED_BY, SELF_TR_TIMEONSITE.CREATED_BY) AS MODIFIED_BY");
                 obj_str.Append(", ISNULL(SELF_TR_TIMEONSITE.MODIFIED_DATE, SELF_TR_TIMEONSITE.CREATED_DATE) AS MODIFIED_DATE");
@@ -55,12 +55,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", SELF_MT_JOBTABLE.STATUS_JOB");
 
                 obj_str.Append(" FROM SELF_TR_TIMEONSITE");
-                obj_str.Append(" INNER JOIN EMP_MT_WORKER ON EMP_MT_WORKER.COMPANY_CODE=SELF_TR_TIMEONSITE.COMPANY_CODE AND EMP_MT_WORKER.WORKER_CODE=SELF_TR_TIMEONSITE.WORKER_CODE");
-                obj_str.Append(" INNER JOIN EMP_MT_INITIAL ON EMP_MT_INITIAL.INITIAL_CODE=EMP_MT_WORKER.WORKER_INITIAL");
-                obj_str.Append(" INNER JOIN SYS_MT_REASON ON SELF_TR_TIMEONSITE.COMPANY_CODE=SYS_MT_REASON.COMPANY_CODE");
-                obj_str.Append(" AND SYS_MT_REASON.REASON_CODE=SELF_TR_TIMEONSITE.REASON_CODE AND SYS_MT_REASON.REASON_GROUP = 'ONS'");
-                obj_str.Append(" INNER JOIN SYS_MT_LOCATION ON SELF_TR_TIMEONSITE.COMPANY_CODE=SYS_MT_LOCATION.COMPANY_CODE");
-                obj_str.Append(" AND SYS_MT_LOCATION.LOCATION_CODE=SELF_TR_TIMEONSITE.LOCATION_CODE");
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_MT_WORKER.COMPANY_CODE=SELF_TR_TIMEONSITE.COMPANY_CODE AND HRM_MT_WORKER.WORKER_CODE=SELF_TR_TIMEONSITE.WORKER_CODE");
+                obj_str.Append(" INNER JOIN HRM_MT_INITIAL ON HRM_MT_INITIAL.INITIAL_CODE=HRM_MT_WORKER.WORKER_INITIAL");
+                obj_str.Append(" INNER JOIN HRM_MT_REASON ON HRM_MT_REASON.REASON_CODE=SELF_TR_TIMEONSITE.REASON_CODE AND HRM_MT_REASON.REASON_GROUP = 'ONS'");
+                obj_str.Append(" INNER JOIN HRM_MT_LOCATION ON HRM_MT_LOCATION.LOCATION_CODE=SELF_TR_TIMEONSITE.LOCATION_CODE");
                 obj_str.Append(" INNER JOIN SELF_MT_JOBTABLE ON SELF_TR_TIMEONSITE.COMPANY_CODE=SELF_MT_JOBTABLE.COMPANY_CODE");
                 obj_str.Append(" AND SELF_MT_JOBTABLE.JOB_ID = SELF_TR_TIMEONSITE.TIMEONSITE_ID AND SELF_MT_JOBTABLE.JOB_TYPE = 'ONS'");
                 obj_str.Append(" WHERE 1=1");
@@ -131,6 +129,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
             if (!status.Equals(1))
                 strCondition += " AND SELF_TR_TIMEONSITE.STATUS='" + status + "'";
 
+            return this.getData(strCondition);
+        }
+        public List<cls_TRTimeonsiteself> getDataByID(int id)
+        {
+            string strCondition = "";
+            if (!id.Equals(0))
+                strCondition += " AND SELF_TR_TIMEONSITE.TIMEONSITE_ID='" + id + "'";
             return this.getData(strCondition);
         }
         public bool checkDataOld(string com, int id, string worker_code)

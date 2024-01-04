@@ -19303,6 +19303,24 @@ namespace HRFocusWCFSystem
                                 timedata.modified_by = data.modified_by;
                                 timecontroller.insert(timedata);
                             }
+                            if (input.job_type.Equals("ONS"))
+                            {
+                                cls_ctTRTimeonsiteself con = new cls_ctTRTimeonsiteself();
+                                cls_TRTimeonsiteself data = con.getDataByID(Convert.ToInt32(list[0].job_id))[0];
+                                cls_ctTRTimeonsite timecontroller = new cls_ctTRTimeonsite();
+                                cls_TRTimeonsite timedata = new cls_TRTimeonsite();
+                                timedata.company_code = data.company_code;
+                                timedata.worker_code = data.worker_code;
+                                timedata.timeonsite_doc = data.timeonsite_doc;
+                                timedata.timeonsite_workdate = data.timeonsite_workdate;
+                                timedata.timeonsite_in = data.timeonsite_in;
+                                timedata.timeonsite_out = data.timeonsite_out;
+                                timedata.timeonsite_note = data.timeonsite_note;
+                                timedata.reason_code = data.reason_code;
+                                timedata.location_code = data.location_code;
+                                timedata.modified_by = data.modified_by;
+                                timecontroller.insert(timedata);
+                            }
                         }
                     }
                     else
@@ -19878,6 +19896,270 @@ namespace HRFocusWCFSystem
                     }
                     MTReqdoc.delete(input.company_code, 0, input.timeot_id.ToString(), "OT");
 
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+            }
+            finally
+            {
+            }
+
+
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
+        #region TRTimeonsite
+        public string getTRTimeonsiteList(InputTRTimeonsiteself input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRTimeonsiteself objTRTimeonsite = new cls_ctTRTimeonsiteself();
+                List<cls_TRTimeonsiteself> listTRTimeonsite = objTRTimeonsite.getDataByFillter(input.company_code, input.timeonsite_id, input.location_code, input.worker_code, input.timeonsite_workdate, input.timeonstie_todate, input.status);
+
+                JArray array = new JArray();
+
+                if (listTRTimeonsite.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_TRTimeonsiteself model in listTRTimeonsite)
+                    {
+                        JObject json = new JObject();
+                        json.Add("company_code", model.company_code);
+                        json.Add("timeonsite_id", model.timeonsite_id);
+                        json.Add("timeonsite_doc", model.timeonsite_doc);
+                        json.Add("timeonsite_workdate", model.timeonsite_workdate.ToString("yyyy-MM-dd"));
+                        json.Add("timeonsite_in", model.timeonsite_in);
+                        json.Add("timeonsite_out", model.timeonsite_out);
+                        json.Add("timeonsite_note", model.timeonsite_note);
+                        json.Add("reason_code", model.reason_code);
+                        json.Add("reason_name_en", model.reason_name_en);
+                        json.Add("reason_name_th", model.reason_name_th);
+                        //cls_ctMTReason objRason = new cls_ctMTReason();
+                        //List<cls_MTReason> listReason = objRason.getDataByFillter("ONS", "", model.reason_code, model.company_code);
+                        //json.Add("reason_name_th", listReason[0].reason_name_th);
+                        //json.Add("reason_name_en", listReason[0].reason_name_en);
+                        json.Add("location_code", model.location_code);
+                        json.Add("location_name_en", model.location_name_en);
+                        json.Add("location_name_th", model.location_name_th);
+                        //cls_ctMTLocation objlocation = new cls_ctMTLocation();
+                        //List<cls_MTLocation> listlocation = objlocation.getDataByFillter("",model.location_code,model.company_code);
+                        //json.Add("location_name_th", listlocation[0].location_name_th);
+                        //json.Add("location_name_en", listlocation[0].location_name_en);
+                        json.Add("worker_code", model.worker_code);
+                        json.Add("worker_detail_en", model.worker_detail_en);
+                        json.Add("worker_detail_th", model.worker_detail_th);
+                        json.Add("status", model.status);
+                        json.Add("status_job", model.status_job);
+
+                        json.Add("modified_by", model.modified_by);
+                        json.Add("modified_date", model.modified_date);
+                        json.Add("flag", model.flag);
+                        cls_ctMTReqdocument objMTReqdoc = new cls_ctMTReqdocument();
+                        List<cls_MTReqdocument> listTRReqdoc = objMTReqdoc.getDataByFillter(model.company_code, 0, model.timeonsite_id.ToString(), "ONS");
+                        JArray arrayTRReqdoc = new JArray();
+                        if (listTRReqdoc.Count > 0)
+                        {
+                            int indexTRReqdoc = 1;
+
+                            foreach (cls_MTReqdocument modelTRReqdoc in listTRReqdoc)
+                            {
+                                JObject jsonTRReqdoc = new JObject();
+                                jsonTRReqdoc.Add("company_code", modelTRReqdoc.company_code);
+                                jsonTRReqdoc.Add("document_id", modelTRReqdoc.document_id);
+                                jsonTRReqdoc.Add("job_id", modelTRReqdoc.job_id);
+                                jsonTRReqdoc.Add("job_type", modelTRReqdoc.job_type);
+                                jsonTRReqdoc.Add("document_name", modelTRReqdoc.document_name);
+                                jsonTRReqdoc.Add("document_type", modelTRReqdoc.document_type);
+                                jsonTRReqdoc.Add("document_path", modelTRReqdoc.document_path);
+                                jsonTRReqdoc.Add("created_by", modelTRReqdoc.created_by);
+                                jsonTRReqdoc.Add("created_date", modelTRReqdoc.created_date);
+
+                                jsonTRReqdoc.Add("index", indexTRReqdoc);
+
+
+                                indexTRReqdoc++;
+
+                                arrayTRReqdoc.Add(jsonTRReqdoc);
+                            }
+                            json.Add("reqdoc_data", arrayTRReqdoc);
+                        }
+                        else
+                        {
+                            json.Add("reqdoc_data", arrayTRReqdoc);
+                        }
+
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageTRTimeonsite(InputTRTimeonsiteself input)
+        {
+            JObject output = new JObject();
+            string message = "Retrieved data not successfully";
+            string strID = "";
+            try
+            {
+                cls_ctTRTimeonsiteself objTRTimeonsite = new cls_ctTRTimeonsiteself();
+                var jsonArray = JsonConvert.DeserializeObject<List<cls_TRTimeonsiteself>>(input.timeonsite_data);
+                foreach (cls_TRTimeonsiteself data in jsonArray)
+                {
+                    cls_TRTimeonsiteself model = new cls_TRTimeonsiteself();
+
+                    model.company_code = data.company_code;
+                    model.timeonsite_id = data.timeonsite_id.Equals("") ? 0 : Convert.ToInt32(data.timeonsite_id);
+                    model.timeonsite_doc = data.timeonsite_doc;
+                    model.timeonsite_workdate = Convert.ToDateTime(data.timeonsite_workdate);
+                    model.timeonsite_in = data.timeonsite_in;
+                    model.timeonsite_out = data.timeonsite_out;
+                    model.timeonsite_note = data.timeonsite_note;
+                    model.reason_code = data.reason_code;
+                    model.location_code = data.location_code;
+                    model.worker_code = data.worker_code;
+                    model.status = data.status;
+                    model.modified_by = input.username;
+                    model.flag = data.flag;
+
+                    strID = objTRTimeonsite.insert(model);
+                    if (!strID.Equals(""))
+                    {
+                        cls_ctTRAccount objTRAccount = new cls_ctTRAccount();
+                        List<cls_TRAccount> listTRAccount = objTRAccount.getDataworkflowByFillter(model.company_code, "", model.worker_code, "", "ONS");
+                        if (listTRAccount.Count > 0)
+                        {
+                            cls_ctMTJobtable objMTJob = new cls_ctMTJobtable();
+                            cls_MTJobtable modeljob = new cls_MTJobtable();
+                            modeljob.company_code = model.company_code;
+                            modeljob.jobtable_id = 0;
+                            modeljob.job_id = strID;
+                            modeljob.job_type = "ONS";
+                            modeljob.status_job = "W";
+                            modeljob.job_date = Convert.ToDateTime(data.timeonsite_workdate);
+                            modeljob.job_nextstep = listTRAccount[0].totalapprove;
+                            modeljob.workflow_code = listTRAccount[0].workflow_code;
+                            modeljob.created_by = input.username;
+                            string strID1 = objMTJob.insert(modeljob);
+                        }
+                        else
+                        {
+                            objTRTimeonsite.delete(data.company_code, Convert.ToInt32(strID), data.worker_code);
+                            strID = "";
+                            message = "There are no workflow contexts for this worker_code :" + data.worker_code;
+                            break;
+                        }
+                        if (data.reqdoc_data.Count > 0)
+                        {
+                            foreach (cls_MTReqdocument reqdoc in data.reqdoc_data)
+                            {
+                                cls_ctMTReqdocument objMTReqdocu = new cls_ctMTReqdocument();
+                                cls_MTReqdocument modelreqdoc = new cls_MTReqdocument();
+                                modelreqdoc.company_code = reqdoc.company_code;
+                                modelreqdoc.document_id = reqdoc.document_id;
+                                modelreqdoc.job_id = strID;
+                                modelreqdoc.job_type = reqdoc.job_type;
+                                modelreqdoc.document_name = reqdoc.document_name;
+                                modelreqdoc.document_type = reqdoc.document_type;
+                                modelreqdoc.document_path = reqdoc.document_path;
+
+                                modelreqdoc.created_by = input.username;
+                                string strIDs = objMTReqdocu.insert(modelreqdoc);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (!strID.Equals(""))
+                {
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = message;
+                }
+
+                objTRTimeonsite.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteTRTimeonsite(InputTRTimeonsiteself input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRTimeonsiteself controller = new cls_ctTRTimeonsiteself();
+                bool blnResult = controller.delete(input.company_code, input.timeonsite_id, input.worker_code);
+
+                if (blnResult)
+                {
+                    cls_ctMTJobtable MTJob = new cls_ctMTJobtable();
+                    MTJob.delete(input.company_code, 0, input.timeonsite_id.ToString(), "ONS");
+                    cls_ctMTReqdocument MTReqdoc = new cls_ctMTReqdocument();
+                    List<cls_MTReqdocument> filelist = MTReqdoc.getDataByFillter(input.company_code, 0, input.timeonsite_id.ToString(), "ONS");
+                    if (filelist.Count > 0)
+                    {
+                        foreach (cls_MTReqdocument filedata in filelist)
+                        {
+                            File.Delete(filedata.document_path);
+                        }
+                    }
+                    MTReqdoc.delete(input.company_code, 0, input.timeonsite_id.ToString(), "ONS");
                     output["success"] = true;
                     output["message"] = "Remove data successfully";
                 }

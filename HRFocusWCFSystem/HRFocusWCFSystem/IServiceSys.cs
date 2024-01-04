@@ -1703,6 +1703,20 @@ namespace HRFocusWCFSystem
         string doDeleteTRTimeot(InputTRTimeotself input);
         #endregion
 
+        #region TRTimeonsite
+        [OperationContract(Name = "timeonsite_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRTimeonsiteList(InputTRTimeonsiteself input);
+
+        [OperationContract(Name = "timeonsite")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRTimeonsite(InputTRTimeonsiteself input);
+
+        [OperationContract(Name = "timeonsite_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteTRTimeonsite(InputTRTimeonsiteself input);
+        #endregion
+
         #region Approvedoc
         [OperationContract(Name = "approve_list")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
