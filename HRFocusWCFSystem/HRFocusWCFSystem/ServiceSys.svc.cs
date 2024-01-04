@@ -19257,13 +19257,14 @@ namespace HRFocusWCFSystem
                     if (Status)
                     {
                         success++;
-                        if(input.job_type.Equals("LEA")){
-                            cls_ctMTJobtable job = new cls_ctMTJobtable();
-                            List<cls_MTJobtable> list = job.getDataByFillter(input.company_code, 0, id, input.job_type, "", "", "", "");
-                            if (list.Count > 0)
+                        cls_ctMTJobtable job = new cls_ctMTJobtable();
+                        List<cls_MTJobtable> list = job.getDataByFillter(input.company_code, Convert.ToInt32(id), "", input.job_type, "", "", "", "");
+                        if (list.Count > 0)
+                        {
+                            if (input.job_type.Equals("LEA"))
                             {
                                 cls_ctTRTimeleaveself leve = new cls_ctTRTimeleaveself();
-                                cls_TRTimeleaveself dataleve = leve.getDataByID(list[0].jobtable_id);
+                                cls_TRTimeleaveself dataleve = leve.getDataByID(Convert.ToInt32(list[0].job_id));
                                 cls_ctTRTimeleave timeleavecontroller = new cls_ctTRTimeleave();
                                 cls_TRTimeleave timeleave = new cls_TRTimeleave();
                                 timeleave.company_code = dataleve.company_code;
@@ -19281,7 +19282,27 @@ namespace HRFocusWCFSystem
                                 timeleave.reason_code = dataleve.reason_code;
                                 timeleave.modified_by = dataleve.modified_by;
                                 timeleavecontroller.insert(timeleave);
-                             }
+                            }
+                            if (input.job_type.Equals("OT"))
+                            {
+                                cls_ctTRTimeotself con = new cls_ctTRTimeotself();
+                                cls_TRTimeotself data = con.getDataByID(Convert.ToInt32(list[0].job_id))[0];
+                                cls_ctTRTimeot timecontroller = new cls_ctTRTimeot();
+                                cls_TRTimeot timedata = new cls_TRTimeot();
+                                timedata.company_code = data.company_code;
+                                timedata.worker_code = data.worker_code;
+                                timedata.timeot_doc = data.timeot_doc;
+                                timedata.timeot_workdate = data.timeot_workdate;
+                                timedata.timeot_beforemin = data.timeot_beforemin;
+                                timedata.timeot_normalmin = data.timeot_normalmin;
+                                timedata.timeot_break = data.timeot_breakmin;
+                                timedata.timeot_aftermin = data.timeot_aftermin;
+                                timedata.timeot_note = data.timeot_note;
+                                timedata.reason_code = data.reason_code;
+                                timedata.location_code = data.location_code;
+                                timedata.modified_by = data.modified_by;
+                                timecontroller.insert(timedata);
+                            }
                         }
                     }
                     else
@@ -19312,7 +19333,6 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
-
 
         #region TRTimeleave
         public string getTRTimeleaveList(InputTRTimeleaveself input)
@@ -19592,6 +19612,298 @@ namespace HRFocusWCFSystem
 
         }
         #endregion
+
+        #region TRTimeot
+        public string getTRTimeotList(InputTRTimeotself input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                DateTime datefrom = Convert.ToDateTime(input.timeot_workdate);
+                DateTime dateto = Convert.ToDateTime(input.timeot_todate);
+
+                cls_ctTRTimeotself objTRTime = new cls_ctTRTimeotself();
+                List<cls_TRTimeotself> listTRTime = objTRTime.getDataByFillter(input.timeot_id, input.status, input.company_code, input.worker_code, datefrom, dateto);
+
+                JArray array = new JArray();
+
+                if (listTRTime.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_TRTimeotself model in listTRTime)
+                    {
+                        JObject json = new JObject();
+                        json.Add("company_code", model.company_code);
+                        json.Add("worker_code", model.worker_code);
+
+                        json.Add("worker_detail_th", model.worker_detail_th);
+                        json.Add("worker_detail_en", model.worker_detail_en);
+
+                        json.Add("timeot_id", model.timeot_id);
+                        json.Add("timeot_doc", model.timeot_doc);
+
+                        json.Add("timeot_workdate", model.timeot_workdate);
+
+                        json.Add("timeot_beforemin", model.timeot_beforemin);
+                        json.Add("timeot_normalmin", model.timeot_normalmin);
+                        json.Add("timeot_breakmin", model.timeot_breakmin);
+                        json.Add("timeot_aftermin", model.timeot_aftermin);
+
+                        int hrs = (model.timeot_beforemin) / 60;
+                        int min = (model.timeot_beforemin) - (hrs * 60);
+                        json.Add("timeot_beforemin_hrs", hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0'));
+
+                        hrs = (model.timeot_normalmin) / 60;
+                        min = (model.timeot_normalmin) - (hrs * 60);
+                        json.Add("timeot_normalmin_hrs", hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0'));
+
+                        hrs = (model.timeot_breakmin) / 60;
+                        min = (model.timeot_breakmin) - (hrs * 60);
+                        json.Add("timeot_break_hrs", hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0'));
+
+                        hrs = (model.timeot_aftermin) / 60;
+                        min = (model.timeot_aftermin) - (hrs * 60);
+                        json.Add("timeot_aftermin_hrs", hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0'));
+
+
+                        json.Add("timeot_note", model.timeot_note);
+                        json.Add("location_code", model.location_code);
+                        json.Add("location_name_th", model.location_name_th);
+                        json.Add("location_name_en", model.location_name_en);
+                        json.Add("reason_code", model.reason_code);
+                        json.Add("reason_name_th", model.reason_name_th);
+                        json.Add("reason_name_en", model.reason_name_en);
+                        json.Add("status", model.status);
+                        json.Add("status_job", model.status_job);
+
+                        json.Add("modified_by", model.modified_by);
+                        json.Add("modified_date", model.modified_date);
+                        json.Add("flag", model.flag);
+                        cls_ctMTReqdocument objMTReqdoc = new cls_ctMTReqdocument();
+                        List<cls_MTReqdocument> listTRReqdoc = objMTReqdoc.getDataByFillter(model.company_code, 0, model.timeot_id.ToString(), "OT");
+                        JArray arrayTRReqdoc = new JArray();
+                        if (listTRReqdoc.Count > 0)
+                        {
+                            int indexTRReqdoc = 1;
+
+                            foreach (cls_MTReqdocument modelTRReqdoc in listTRReqdoc)
+                            {
+                                JObject jsonTRReqdoc = new JObject();
+                                jsonTRReqdoc.Add("company_code", modelTRReqdoc.company_code);
+                                jsonTRReqdoc.Add("document_id", modelTRReqdoc.document_id);
+                                jsonTRReqdoc.Add("job_id", modelTRReqdoc.job_id);
+                                jsonTRReqdoc.Add("job_type", modelTRReqdoc.job_type);
+                                jsonTRReqdoc.Add("document_name", modelTRReqdoc.document_name);
+                                jsonTRReqdoc.Add("document_type", modelTRReqdoc.document_type);
+                                jsonTRReqdoc.Add("document_path", modelTRReqdoc.document_path);
+                                jsonTRReqdoc.Add("created_by", modelTRReqdoc.created_by);
+                                jsonTRReqdoc.Add("created_date", modelTRReqdoc.created_date);
+
+                                jsonTRReqdoc.Add("index", indexTRReqdoc);
+
+
+                                indexTRReqdoc++;
+
+                                arrayTRReqdoc.Add(jsonTRReqdoc);
+                            }
+                            json.Add("reqdoc_data", arrayTRReqdoc);
+                        }
+                        else
+                        {
+                            json.Add("reqdoc_data", arrayTRReqdoc);
+                        }
+
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageTRTimeot(InputTRTimeotself input)
+        {
+            JObject output = new JObject();
+            string message = "Retrieved data not successfully";
+            string strID = "";
+            try
+            {
+                cls_ctTRTimeotself objTRTime = new cls_ctTRTimeotself();
+                var jsonArray = JsonConvert.DeserializeObject<List<cls_TRTimeotself>>(input.ot_data);
+                foreach (cls_TRTimeotself otdata in jsonArray)
+                {
+                    cls_TRTimeotself model = new cls_TRTimeotself();
+
+                    model.company_code = otdata.company_code;
+                    model.worker_code = otdata.worker_code;
+                    model.timeot_id = otdata.timeot_id.Equals("") ? 0 : Convert.ToInt32(otdata.timeot_id);
+                    model.timeot_doc = otdata.timeot_doc;
+
+                    model.timeot_workdate = Convert.ToDateTime(otdata.timeot_workdate);
+
+                    model.timeot_beforemin = otdata.timeot_beforemin;
+                    model.timeot_normalmin = otdata.timeot_normalmin;
+                    model.timeot_breakmin = otdata.timeot_breakmin;
+                    model.timeot_aftermin = otdata.timeot_aftermin;
+
+                    model.timeot_note = otdata.timeot_note;
+                    model.location_code = otdata.location_code;
+                    model.reason_code = otdata.reason_code;
+                    model.status = otdata.status;
+
+                    model.modified_by = input.username;
+                    model.flag = otdata.flag;
+
+                    strID = objTRTime.insert(model);
+                    if (!strID.Equals(""))
+                    {
+                        cls_ctTRAccount objTRAccount = new cls_ctTRAccount();
+                        List<cls_TRAccount> listTRAccount = objTRAccount.getDataworkflowByFillter(model.company_code, "", model.worker_code, "", "OT");
+                        if (listTRAccount.Count > 0)
+                        {
+                            cls_ctMTJobtable objMTJob = new cls_ctMTJobtable();
+                            cls_MTJobtable modeljob = new cls_MTJobtable();
+                            modeljob.company_code = model.company_code;
+                            modeljob.jobtable_id = 0;
+                            modeljob.job_id = strID;
+                            modeljob.job_type = "OT";
+                            modeljob.status_job = "W";
+                            modeljob.job_date = Convert.ToDateTime(otdata.timeot_workdate);
+                            modeljob.job_nextstep = listTRAccount[0].totalapprove;
+                            modeljob.workflow_code = listTRAccount[0].workflow_code;
+                            modeljob.created_by = input.username;
+                            string strID1 = objMTJob.insert(modeljob);
+                        }
+                        else
+                        {
+                            objTRTime.delete(Convert.ToInt32(strID));
+                            strID = "";
+                            message = "There are no workflow contexts for this worker_code :" + otdata.worker_code;
+                            break;
+                        }
+                        if (otdata.reqdoc_data.Count > 0)
+                        {
+                            foreach (cls_MTReqdocument reqdoc in otdata.reqdoc_data)
+                            {
+                                cls_ctMTReqdocument objMTReqdocu = new cls_ctMTReqdocument();
+                                cls_MTReqdocument modelreqdoc = new cls_MTReqdocument();
+                                modelreqdoc.company_code = reqdoc.company_code;
+                                modelreqdoc.document_id = reqdoc.document_id;
+                                modelreqdoc.job_id = strID;
+                                modelreqdoc.job_type = reqdoc.job_type;
+                                modelreqdoc.document_name = reqdoc.document_name;
+                                modelreqdoc.document_type = reqdoc.document_type;
+                                modelreqdoc.document_path = reqdoc.document_path;
+
+                                modelreqdoc.created_by = input.username;
+                                string strIDs = objMTReqdocu.insert(modelreqdoc);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (!strID.Equals(""))
+                {
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = message;
+                }
+
+                objTRTime.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteTRTimeot(InputTRTimeotself input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRTimeotself controller = new cls_ctTRTimeotself();
+                bool blnResult = controller.delete(input.timeot_id);
+
+                if (blnResult)
+                {
+                    cls_ctMTJobtable MTJob = new cls_ctMTJobtable();
+                    MTJob.delete(input.company_code, 0, input.timeot_id.ToString(), "OT");
+                    cls_ctMTReqdocument MTReqdoc = new cls_ctMTReqdocument();
+                    List<cls_MTReqdocument> filelist = MTReqdoc.getDataByFillter(input.company_code, 0, input.timeot_id.ToString(), "OT");
+                    if (filelist.Count > 0)
+                    {
+                        foreach (cls_MTReqdocument filedata in filelist)
+                        {
+                            File.Delete(filedata.document_path);
+                        }
+                    }
+                    MTReqdoc.delete(input.company_code, 0, input.timeot_id.ToString(), "OT");
+
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+            }
+            finally
+            {
+            }
+
+
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
     }
 
     [DataContract]

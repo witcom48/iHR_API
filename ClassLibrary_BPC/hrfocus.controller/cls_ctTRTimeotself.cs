@@ -50,11 +50,11 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ISNULL(TIMEOT_NOTE, '') AS TIMEOT_NOTE");
 
                 obj_str.Append(", ISNULL(SELF_TR_TIMEOT.REASON_CODE, '') AS REASON_CODE");
-                obj_str.Append(", ISNULL(SYS_MT_REASON.REASON_NAME_TH, '') AS REASON_NAME_TH");
-                obj_str.Append(", ISNULL(SYS_MT_REASON.REASON_NAME_EN, '') AS REASON_NAME_EN");
+                obj_str.Append(", ISNULL(HRM_MT_REASON.REASON_NAME_TH, '') AS REASON_NAME_TH");
+                obj_str.Append(", ISNULL(HRM_MT_REASON.REASON_NAME_EN, '') AS REASON_NAME_EN");
                 obj_str.Append(", ISNULL(SELF_TR_TIMEOT.LOCATION_CODE, '') AS LOCATION_CODE");
-                obj_str.Append(", ISNULL(SYS_MT_LOCATION.LOCATION_NAME_TH, '') AS LOCATION_NAME_TH");
-                obj_str.Append(", ISNULL(SYS_MT_LOCATION.LOCATION_NAME_EN, '') AS LOCATION_NAME_EN");
+                obj_str.Append(", ISNULL(HRM_MT_LOCATION.LOCATION_NAME_TH, '') AS LOCATION_NAME_TH");
+                obj_str.Append(", ISNULL(HRM_MT_LOCATION.LOCATION_NAME_EN, '') AS LOCATION_NAME_EN");
                 obj_str.Append(", ISNULL(STATUS, 0) AS STATUS");
 
                 obj_str.Append(", ISNULL(SELF_TR_TIMEOT.MODIFIED_BY, SELF_TR_TIMEOT.CREATED_BY) AS MODIFIED_BY");
@@ -63,10 +63,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append(" FROM SELF_TR_TIMEOT");
 
-                obj_str.Append(" INNER JOIN EMP_MT_WORKER ON EMP_MT_WORKER.COMPANY_CODE=SELF_TR_TIMEOT.COMPANY_CODE AND EMP_MT_WORKER.WORKER_CODE=SELF_TR_TIMEOT.WORKER_CODE");
-                obj_str.Append(" INNER JOIN EMP_MT_INITIAL ON EMP_MT_INITIAL.INITIAL_CODE=EMP_MT_WORKER.WORKER_INITIAL ");
-                obj_str.Append(" INNER JOIN SYS_MT_REASON ON SELF_TR_TIMEOT.COMPANY_CODE=SYS_MT_REASON.COMPANY_CODE AND SYS_MT_REASON.REASON_CODE=SELF_TR_TIMEOT.REASON_CODE AND SYS_MT_REASON.REASON_GROUP = 'OT' ");
-                obj_str.Append(" INNER JOIN SYS_MT_LOCATION ON SELF_TR_TIMEOT.COMPANY_CODE=SYS_MT_LOCATION.COMPANY_CODE AND SYS_MT_LOCATION.LOCATION_CODE=SELF_TR_TIMEOT.LOCATION_CODE ");
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_MT_WORKER.COMPANY_CODE=SELF_TR_TIMEOT.COMPANY_CODE AND HRM_MT_WORKER.WORKER_CODE=SELF_TR_TIMEOT.WORKER_CODE");
+                obj_str.Append(" INNER JOIN HRM_MT_INITIAL ON HRM_MT_INITIAL.INITIAL_CODE=HRM_MT_WORKER.WORKER_INITIAL ");
+                obj_str.Append(" INNER JOIN HRM_MT_REASON ON HRM_MT_REASON.REASON_CODE=SELF_TR_TIMEOT.REASON_CODE AND HRM_MT_REASON.REASON_GROUP = 'OT' ");
+                obj_str.Append(" INNER JOIN HRM_MT_LOCATION ON HRM_MT_LOCATION.LOCATION_CODE=SELF_TR_TIMEOT.LOCATION_CODE ");
                 obj_str.Append(" INNER JOIN SELF_MT_JOBTABLE ON SELF_TR_TIMEOT.COMPANY_CODE=SELF_MT_JOBTABLE.COMPANY_CODE ");
                 obj_str.Append(" AND SELF_MT_JOBTABLE.JOB_ID = SELF_TR_TIMEOT.TIMEOT_ID AND SELF_MT_JOBTABLE.JOB_TYPE = 'OT' ");
 
@@ -137,6 +137,14 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 strCondition += " AND SELF_TR_TIMEOT.WORKER_CODE='" + emp + "'";
             strCondition += " AND (TIMEOT_WORKDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')";
 
+            return this.getData(strCondition);
+        }
+
+        public List<cls_TRTimeotself> getDataByID(int id)
+        {
+            string strCondition = "";
+            if (!id.Equals(0))
+                strCondition += " AND SELF_TR_TIMEOT.TIMEOT_ID='" + id + "'";
             return this.getData(strCondition);
         }
 

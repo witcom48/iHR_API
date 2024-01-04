@@ -203,7 +203,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                         json.Add("worker_detail_th", dr["WORKER_DETAIL_TH"].ToString());
                         json.Add("worker_detail_en", dr["WORKER_DETAIL_EN"].ToString());
 
-                        json.Add("timeot_id", Convert.ToInt32(dr["TIMEOT_ID"]));
+                        json.Add("timeot_id", Convert.ToInt32(dr["TIMEOT_ID"].ToString()));
                         json.Add("timeot_doc", dr["TIMEOT_DOC"].ToString());
 
                         json.Add("timeot_workdate", Convert.ToDateTime(dr["TIMEOT_WORKDATE"]));

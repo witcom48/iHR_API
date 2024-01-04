@@ -1689,6 +1689,20 @@ namespace HRFocusWCFSystem
         string doDeleteTRTimeleave(InputTRTimeleaveself input);
         #endregion
 
+        #region TRTimeot
+        [OperationContract(Name = "timeot_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRTimeotList(InputTRTimeotself input);
+
+        [OperationContract(Name = "timeot")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRTimeot(InputTRTimeotself input);
+
+        [OperationContract(Name = "timeot_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteTRTimeot(InputTRTimeotself input);
+        #endregion
+
         #region Approvedoc
         [OperationContract(Name = "approve_list")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
