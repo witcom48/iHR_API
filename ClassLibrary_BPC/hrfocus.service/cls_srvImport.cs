@@ -128,13 +128,27 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     model.worker_fname_en = dr["firstname_en"].ToString();
                                     model.worker_lname_en = dr["lastname_en"].ToString();
                                     model.worker_emptype = dr["emptype_code"].ToString();
-
                                     model.worker_empstatus = dr["empstatus_code"].ToString();
 
-
                                     model.worker_gender = dr["emp_gender"].ToString();
-                                    model.worker_birthdate = Convert.ToDateTime(dr["emp_birthday"]);
-                                    model.worker_hiredate = Convert.ToDateTime(dr["emp_startdate"]);
+
+
+                                    //model.worker_birthdate = Convert.ToDateTime(dr["emp_birthday"]);
+                                    if (dr["emp_birthday"] != null && dr["emp_birthday"] != DBNull.Value && !string.IsNullOrEmpty(dr["emp_birthday"].ToString()))
+                                    {
+                                        model.worker_birthdate = Convert.ToDateTime(dr["emp_birthday"]);
+                                        string worker_age = dr["worker_age"].ToString();
+                                     }
+
+
+                                    //model.worker_hiredate = Convert.ToDateTime(dr["emp_startdate"]);
+                                    if (dr["emp_startdate"] != null && dr["emp_startdate"] != DBNull.Value && !string.IsNullOrEmpty(dr["emp_startdate"].ToString()))
+                                    {
+                                        model.worker_hiredate = Convert.ToDateTime(dr["emp_startdate"]);
+                                        string hiredate = dr["hiredate"].ToString();
+                                     }
+
+
 
                                     if (dr["emp_resign_status"].ToString().Equals("1"))
                                     {
