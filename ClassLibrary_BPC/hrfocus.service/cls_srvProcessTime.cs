@@ -1316,25 +1316,52 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                     list_leaveacc_new.Add(model);
                 }
-
                 //-- Step 3 get leave request
-                cls_ctTRTimeleaveself objTRTimeleave = new cls_ctTRTimeleaveself();
-                List<cls_TRTimeleaveself> listTRTimeleave = objTRTimeleave.getDataByFillteracc("", "4", com, emp, Convert.ToDateTime(md_year.year_fromdate), Convert.ToDateTime(md_year.year_todate));
-                //cls_ctTRTimeleave objTRTimeleave = new cls_ctTRTimeleave();
-                //List<cls_TRTimeleave> listTRTimeleave = objTRTimeleave.getDataByFillter("EN", com, emp, md_year.year_fromdate, md_year.year_todate);
-
-                foreach (cls_TRTimeleaveself leave_used in listTRTimeleave)
+                cls_ctSYSAccount account = new cls_ctSYSAccount();
+                if (modified_by.Equals("Admin") || account.checkDataOld(modified_by))
                 {
+                    cls_ctTRTimeleave objTRTimeleave = new cls_ctTRTimeleave();
+                    List<cls_TRTimeleave> listTRTimeleave = objTRTimeleave.getDataByFillter("EN", com, emp, md_year.year_fromdate, md_year.year_todate);
 
-                    foreach (cls_TREmpleaveacc leave_acc in list_leaveacc_new)
+                    foreach (cls_TRTimeleave leave_used in listTRTimeleave)
                     {
 
-                        if (leave_used.leave_code.Equals(leave_acc.leave_code))
+                        foreach (cls_TREmpleaveacc leave_acc in list_leaveacc_new)
                         {
-                            if (leave_used.timeleave_type.Equals("F"))
-                                leave_acc.empleaveacc_used += leave_used.timeleave_actualday;
-                            else
-                                leave_acc.empleaveacc_used += (leave_used.timeleave_min / 480.0);
+
+                            if (leave_used.leave_code.Equals(leave_acc.leave_code))
+                            {
+                                if (leave_used.timeleave_type.Equals("F"))
+                                    leave_acc.empleaveacc_used += leave_used.timeleave_actualday;
+                                else
+                                    leave_acc.empleaveacc_used += (leave_used.timeleave_min / 480.0);
+                            }
+
+                        }
+
+                    }
+                }
+                else
+                {
+                    cls_ctTRTimeleaveself objTRTimeleave = new cls_ctTRTimeleaveself();
+                    List<cls_TRTimeleaveself> listTRTimeleave = objTRTimeleave.getDataByFillteracc("", "4", com, emp, Convert.ToDateTime(md_year.year_fromdate), Convert.ToDateTime(md_year.year_todate));
+                    //cls_ctTRTimeleave objTRTimeleave = new cls_ctTRTimeleave();
+                    //List<cls_TRTimeleave> listTRTimeleave = objTRTimeleave.getDataByFillter("EN", com, emp, md_year.year_fromdate, md_year.year_todate);
+
+                    foreach (cls_TRTimeleaveself leave_used in listTRTimeleave)
+                    {
+
+                        foreach (cls_TREmpleaveacc leave_acc in list_leaveacc_new)
+                        {
+
+                            if (leave_used.leave_code.Equals(leave_acc.leave_code))
+                            {
+                                if (leave_used.timeleave_type.Equals("F"))
+                                    leave_acc.empleaveacc_used += leave_used.timeleave_actualday;
+                                else
+                                    leave_acc.empleaveacc_used += (leave_used.timeleave_min / 480.0);
+                            }
+
                         }
 
                     }
