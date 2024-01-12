@@ -43,6 +43,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", EMPLEAVEACC_ANNUAL");
                 obj_str.Append(", EMPLEAVEACC_USED");
                 obj_str.Append(", EMPLEAVEACC_REMAIN");
+                obj_str.Append(", HRM_MT_LEAVE.LEAVE_INCHOLIDAY");
+                obj_str.Append(", HRM_MT_LEAVE.LEAVE_DEDUCT");
                 
                 obj_str.Append(", ISNULL(HRM_TR_EMPLEAVEACC.MODIFIED_BY, HRM_TR_EMPLEAVEACC.CREATED_BY) AS MODIFIED_BY");
                 obj_str.Append(", ISNULL(HRM_TR_EMPLEAVEACC.MODIFIED_DATE, HRM_TR_EMPLEAVEACC.CREATED_DATE) AS MODIFIED_DATE");
@@ -89,6 +91,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.empleaveacc_annual = Convert.ToDouble(dr["EMPLEAVEACC_ANNUAL"]);
                     model.empleaveacc_used = Convert.ToDouble(dr["EMPLEAVEACC_USED"]);
                     model.empleaveacc_remain = Convert.ToDouble(dr["EMPLEAVEACC_REMAIN"]);
+                    model.leave_incholiday = dr["LEAVE_INCHOLIDAY"].Equals("Y") ? true : false;
+                    model.leave_deduct = dr["LEAVE_DEDUCT"].Equals("Y") ? true : false;
                     
                     model.worker_detail = Convert.ToString(dr["WORKER_DETAIL"]);
                     model.leave_detail = Convert.ToString(dr["LEAVE_DETAIL"]);
