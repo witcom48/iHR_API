@@ -42,7 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ExcelLibrary">
-      <HintPath>C:\Users\phattaraphon.p\Downloads\ExcelLibrary.dll</HintPath>
+      <HintPath>..\..\..\..\ExcelLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Google.Authenticator">
       <HintPath>..\..\Lib\GoogleAuthenticator.1.2.0\lib\net45\Google.Authenticator.dll</HintPath>
