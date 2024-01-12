@@ -13955,6 +13955,8 @@ namespace HRFocusWCFSystem
 
                     json.Add("worker_detail", model.worker_detail);
                     json.Add("leave_detail", model.leave_detail);
+                    json.Add("leave_incholiday", model.leave_incholiday);
+                    json.Add("leave_deduct", model.leave_deduct);
                     
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);

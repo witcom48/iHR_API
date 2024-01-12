@@ -31,6 +31,8 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         public string worker_detail { get; set; }
         public string leave_detail { get; set; }
+        public bool leave_incholiday { get; set; }
+        public bool leave_deduct { get; set; }
 
     }
 }

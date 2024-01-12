@@ -61,6 +61,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="hrfocus.controller\cls_ApproveJob.cs" />
+    <Compile Include="hrfocus.controller\cls_ctApprovegetmail.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTAccount.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTEmpStatus.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTJobtable.cs" />
