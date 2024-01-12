@@ -210,7 +210,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
 
             strCondition += " AND WORKER_CODE='" + worker_code + "'";
-            strCondition += " AND WORKER_PWD='" + worker_pwd + "'";
+            if (!worker_pwd.Equals(""))
+            {
+                strCondition += " AND WORKER_PWD='" + worker_pwd + "'";
+            }
 
             List<cls_MTWorker> list_model = this.getData( strCondition);
 

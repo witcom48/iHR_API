@@ -19246,6 +19246,8 @@ namespace HRFocusWCFSystem
             try
             {
                 cls_ApproveJob controller = new cls_ApproveJob();
+                cls_ctApprovegetmail sendmaillapp = new cls_ctApprovegetmail();
+                System.Globalization.CultureInfo _cul = new System.Globalization.CultureInfo("th-TH");
                 int success = 0;
                 int fail = 0;
                 JArray array = new JArray();
@@ -19256,6 +19258,7 @@ namespace HRFocusWCFSystem
                     string result = controller.ApproveJob(ref Status, input.company_code, id, input.job_type, input.username, input.approve_status, input.lang);
                     if (Status)
                     {
+                        int appcount = 0;
                         success++;
                         cls_ctMTJobtable job = new cls_ctMTJobtable();
                         List<cls_MTJobtable> list = job.getDataByFillter(input.company_code, Convert.ToInt32(id), "", input.job_type, "", "", "", "");
@@ -19281,7 +19284,12 @@ namespace HRFocusWCFSystem
                                 timeleave.leave_code = dataleve.leave_code;
                                 timeleave.reason_code = dataleve.reason_code;
                                 timeleave.modified_by = dataleve.modified_by;
-                                timeleavecontroller.insert(timeleave);
+                                sendmaillapp.Approvesendmail(ref appcount, timeleave.company_code, "LEA", timeleave.worker_code, list[0].workflow_code, list[0].jobtable_id.ToString(), timeleave.timeleave_fromdate.ToString("dd MMMM yyyy", _cul), timeleave.timeleave_todate.ToString("dd MMMM yyyy", _cul), timeleave.leave_code);
+                                if (appcount.Equals(0))
+                                {
+                                    timeleavecontroller.insert(timeleave);
+                                }
+                                
                             }
                             if (input.job_type.Equals("OT"))
                             {
@@ -19301,7 +19309,13 @@ namespace HRFocusWCFSystem
                                 timedata.reason_code = data.reason_code;
                                 timedata.location_code = data.location_code;
                                 timedata.modified_by = data.modified_by;
-                                timecontroller.insert(timedata);
+                                int total = timedata.timeot_beforemin + timedata.timeot_normalmin + timedata.timeot_break + timedata.timeot_aftermin;
+                                sendmaillapp.Approvesendmail(ref appcount, timedata.company_code, "OT", timedata.worker_code, list[0].workflow_code, list[0].jobtable_id.ToString(), timedata.timeot_workdate.ToString("dd MMMM yyyy", _cul), timedata.timeot_workdate.ToString("dd MMMM yyyy", _cul), (total/60).ToString());
+                                if (appcount.Equals(0))
+                                {
+                                    timecontroller.insert(timedata);
+                                }
+                                
                             }
                             if (input.job_type.Equals("ONS"))
                             {
@@ -19329,6 +19343,7 @@ namespace HRFocusWCFSystem
                         json.Add("job_id", id);
                         json.Add("job_type", input.job_type);
                         json.Add("file_detail", result);
+                        output["error"] = sendmaillapp.getMessage();
                         array.Add(json);
                     }
                     Status = false;
@@ -19521,6 +19536,10 @@ namespace HRFocusWCFSystem
                             modeljob.workflow_code = listTRAccount[0].workflow_code;
                             modeljob.created_by = input.username;
                             string strID1 = objMTJob.insert(modeljob);
+                            cls_ctApprovegetmail sendmaillapp = new cls_ctApprovegetmail();
+                            int appcount = 0;
+                            System.Globalization.CultureInfo _cul = new System.Globalization.CultureInfo("th-TH");
+                            sendmaillapp.Approvesendmail(ref appcount,model.company_code, "LEA", model.worker_code, modeljob.workflow_code, strID1, leavedata.timeleave_fromdate.ToString("dd MMMM yyyy", _cul), leavedata.timeleave_todate.ToString("dd MMMM yyyy", _cul), model.leave_code);
                         }
                         else
                         {
@@ -19814,6 +19833,11 @@ namespace HRFocusWCFSystem
                             modeljob.workflow_code = listTRAccount[0].workflow_code;
                             modeljob.created_by = input.username;
                             string strID1 = objMTJob.insert(modeljob);
+                            cls_ctApprovegetmail sendmaillapp = new cls_ctApprovegetmail();
+                            int appcount = 0;
+                            int total = model.timeot_beforemin + model.timeot_normalmin + model.timeot_breakmin + model.timeot_aftermin;
+                            System.Globalization.CultureInfo _cul = new System.Globalization.CultureInfo("th-TH");
+                            sendmaillapp.Approvesendmail(ref appcount, model.company_code, "OT", model.worker_code, modeljob.workflow_code, strID1, model.timeot_workdate.ToString("dd MMMM yyyy", _cul), model.timeot_workdate.ToString("dd MMMM yyyy", _cul), (total / 60).ToString());
                         }
                         else
                         {
