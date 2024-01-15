@@ -93,6 +93,7 @@
     <Compile Include="hrfocus.controller\cls_ctTRCurrent.cs" />
     <Compile Include="hrfocus.controller\cls_ctTADashboard.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRDashboard.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRKT20.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRLineapprove.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPaybank.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPaypf.cs" />
@@ -238,6 +239,7 @@
     <Compile Include="hrfocus.model\cls_TRCurrent.cs" />
     <Compile Include="hrfocus.model\cls_TADashboard.cs" />
     <Compile Include="hrfocus.model\cls_TRDashboard.cs" />
+    <Compile Include="hrfocus.model\cls_TRKT20.cs" />
     <Compile Include="hrfocus.model\cls_TRLineapprove.cs" />
     <Compile Include="hrfocus.model\cls_TRPaybank.cs" />
     <Compile Include="hrfocus.model\cls_TRPaypf.cs" />

@@ -899,6 +899,11 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getTRPayreduceList(string com, string emp, string paydate);
 
+        //-- KT20
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTRKT20List(string language, string com, string emp, string year, string month);
+
         //-- MTBonus
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]

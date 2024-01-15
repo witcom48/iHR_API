@@ -2112,5 +2112,42 @@ namespace ClassLibrary_BPC.hrfocus.service
             return strResult;
         }
 
+        //CalKT20
+        public string doCalculateKT20(string com, string taskid)
+        {
+            string strResult = "";
+
+            cls_ctConnection obj_conn = new cls_ctConnection();
+
+            try
+            {
+
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_conn.doConnect();
+
+                obj_str.Append(" EXEC [dbo].[HRM_PRO_CALKT20] '" + com + "', '" + taskid + "' ");
+
+                SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
+
+                obj_cmd.CommandType = CommandType.Text;
+
+                int intCountSuccess = obj_cmd.ExecuteNonQuery();
+
+                if (intCountSuccess > 0)
+                {
+                    strResult = "Success::" + intCountSuccess.ToString();
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return strResult;
+        }
+
     }
 }
