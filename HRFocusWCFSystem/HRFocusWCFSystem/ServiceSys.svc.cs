@@ -2301,6 +2301,13 @@ namespace HRFocusWCFSystem
                     }
                     //BANK
 
+                    //CAL_KT20
+                    else if (input.task_type.Trim().Equals("CAL_KT20"))
+                    {
+                        cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
+                        srvPay.doCalculateKT20(input.company_code, intTaskID.ToString());
+                    }
+                    //CAL_KT20
 
                 }
                 else
@@ -9786,6 +9793,65 @@ namespace HRFocusWCFSystem
 
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);
+                    json.Add("flag", model.flag);
+
+                    json.Add("index", index);
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }        
+        #endregion
+
+        #region KT20
+        public string getTRKT20List(string language, string com, string year ,string month)
+        {
+            JObject output = new JObject();
+
+            cls_ctTRKT20 objkt20 = new cls_ctTRKT20();
+            List<cls_TRKT20> listPaytran = objkt20.getDataByFillter(language, com, year , month);
+            JArray array = new JArray();
+
+            if (listPaytran.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRKT20 model in listPaytran)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("company_code", model.company_code);
+                    json.Add("year_code", model.year_code);
+                    json.Add("month_no", model.month_no);
+                    json.Add("kt20_rate", model.kt20_rate);
+                    json.Add("emp", model.emp);
+
+                    json.Add("salary_month_min", model.salary_month_min);
+                    json.Add("salary_daily_min", model.salary_daily_min);
+                    json.Add("salary_month", model.salary_month);
+                    json.Add("salary_daily", model.salary_daily);
+                    json.Add("bonus", model.bonus);
+                    json.Add("overtime", model.overtime);
+                    json.Add("other", model.other);
+                    json.Add("summary", model.summary);
+                    json.Add("more20000", model.more20000);
+                    json.Add("net", model.net);
+
+                    json.Add("created_by", model.created_by);
+                    json.Add("created_date", model.created_date);
                     json.Add("flag", model.flag);
 
                     json.Add("index", index);
