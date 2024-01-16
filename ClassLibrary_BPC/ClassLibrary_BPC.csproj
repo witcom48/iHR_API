@@ -359,6 +359,7 @@
     <Compile Include="hrfocus.model\cls_MTPlanshift.cs" />
     <Compile Include="hrfocus.model\cls_TRPlanschedule.cs" />
     <Compile Include="hrfocus.model\cls_TRTimecard.cs" />
+    <Compile Include="hrfocus.service\cls_payImport.cs" />
     <Compile Include="hrfocus.service\cls_srvAuthen.cs" />
     <Compile Include="hrfocus.service\cls_srvImport.cs" />
     <Compile Include="hrfocus.service\cls_srvProcessEmployee.cs" />

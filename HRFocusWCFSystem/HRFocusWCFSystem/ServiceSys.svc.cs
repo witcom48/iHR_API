@@ -2299,7 +2299,6 @@ namespace HRFocusWCFSystem
 
                         output["result_link"] = link;
                     }
-                    //BANK
 
                     //CAL_KT20
                     else if (input.task_type.Trim().Equals("CAL_KT20"))
@@ -2308,6 +2307,15 @@ namespace HRFocusWCFSystem
                         srvPay.doCalculateKT20(input.company_code, intTaskID.ToString());
                     }
                     //CAL_KT20
+
+                     //PAY_XLS
+                    else if (input.task_type.Trim().Equals("PAY_XLS"))
+                    {
+                        cls_payImport srvImport = new cls_payImport();
+                        string link = srvImport.doImportPayExcel(input.company_code, intTaskID.ToString());
+                        output["result_link"] = link;
+                    }
+           
 
                 }
                 else
