@@ -15,6 +15,8 @@ namespace ClassLibrary_BPC.hrfocus.model
         public string year_code { get; set; }
         public string month_no { get; set; }
 
+        public double kt20_rate { get; set; }
+
         public int emp { get; set; }
 
         public double salary_month_min { get; set; }

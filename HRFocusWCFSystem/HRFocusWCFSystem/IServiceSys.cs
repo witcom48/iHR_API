@@ -902,7 +902,7 @@ namespace HRFocusWCFSystem
         //-- KT20
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getTRKT20List(string language, string com, string emp, string year, string month);
+        string getTRKT20List(string language, string com, string year, string month);
 
         //-- MTBonus
         [OperationContract]

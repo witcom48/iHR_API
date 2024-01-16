@@ -9817,12 +9817,12 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region KT20
-        public string getTRKT20List(string language, string com, string emp, string year ,string month)
+        public string getTRKT20List(string language, string com, string year ,string month)
         {
             JObject output = new JObject();
 
             cls_ctTRKT20 objkt20 = new cls_ctTRKT20();
-            List<cls_TRKT20> listPaytran = objkt20.getDataByFillter(language, com, emp, year , month);
+            List<cls_TRKT20> listPaytran = objkt20.getDataByFillter(language, com, year , month);
             JArray array = new JArray();
 
             if (listPaytran.Count > 0)
@@ -9834,9 +9834,9 @@ namespace HRFocusWCFSystem
                     JObject json = new JObject();
 
                     json.Add("company_code", model.company_code);
-                    json.Add("worker_code", model.worker_code);
                     json.Add("year_code", model.year_code);
                     json.Add("month_no", model.month_no);
+                    json.Add("kt20_rate", model.kt20_rate);
                     json.Add("emp", model.emp);
 
                     json.Add("salary_month_min", model.salary_month_min);
@@ -9850,8 +9850,8 @@ namespace HRFocusWCFSystem
                     json.Add("more20000", model.more20000);
                     json.Add("net", model.net);
 
-                    json.Add("modified_by", model.modified_by);
-                    json.Add("modified_date", model.modified_date);
+                    json.Add("created_by", model.created_by);
+                    json.Add("created_date", model.created_date);
                     json.Add("flag", model.flag);
 
                     json.Add("index", index);
