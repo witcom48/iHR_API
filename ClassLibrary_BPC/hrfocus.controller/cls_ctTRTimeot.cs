@@ -50,7 +50,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ISNULL(TIMEOT_DOC, '') AS TIMEOT_DOC");
 
                 obj_str.Append(", TIMEOT_WORKDATE");
-                obj_str.Append(", TIMEOT_WORKTODATE");
+                obj_str.Append(", ISNULL(TIMEOT_WORKTODATE,TIMEOT_WORKDATE) AS TIMEOT_WORKTODATE");
 
 
                 obj_str.Append(", ISNULL(TIMEOT_BEFOREMIN, 0) AS TIMEOT_BEFOREMIN");

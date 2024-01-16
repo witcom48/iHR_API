@@ -10,7 +10,7 @@ namespace ClassLibrary_BPC
     {
 
         static public string Database = "HRM";
-        static public string Userid = "Test";
+        static public string Userid = "sa";
 
 
 
