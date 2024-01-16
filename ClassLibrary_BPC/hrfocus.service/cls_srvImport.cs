@@ -1406,6 +1406,158 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                     //EM016
 
+                        //
+                        //switch (import_code)
+                        //{
+                        //    case "Quali":
+
+                        //        DataTable dt = doReadExcel(fileName);
+                        //        if (dt.Rows.Count > 0)
+                        //        {
+                        //            foreach (DataRow dr in dt.Rows)
+                        //            {
+                        //                cls_ctMTQualification objpawpt = new cls_ctMTQualification();
+                        //                cls_MTQualification model = new cls_MTQualification();
+
+                        //                if (dr["com"].ToString().Equals(""))
+                        //                    continue;
+                        //                model.company_code = dr["com"].ToString();
+                        //                model.qualification_code = dr["qualification_code"].ToString();
+                        //                model.qualification_name_th = dr["qualification_name_th"].ToString();
+                        //                model.qualification_name_en = dr["qualification_name_en"].ToString();
+                        //                model.modified_by = task.modified_by;
+                        //                model.flag = model.flag;
+
+                        //                bool strID = objpawpt.insert(model);
+
+                        //                if (!strID.Equals(""))
+                        //                {
+                        //                    success++;
+                        //                }
+                        //                else
+                        //                {
+                        //                    objStr.Append(model.company_code );
+                        //                }
+
+                        //            }
+
+                        //            strResult = "";
+
+                        //            if (success > 0)
+                        //                strResult += "Success : " + success.ToString();
+
+                        //            if (objStr.Length > 0)
+                        //                strResult += " Fail : " + objStr.ToString();
+
+                        //        }
+
+                        //        break;
+
+
+                        //}
+                        ////
+                        ////
+                        //switch (import_code)
+                        //{
+                        //    case "major":
+
+                        //        DataTable dt = doReadExcel(fileName);
+                        //        if (dt.Rows.Count > 0)
+                        //        {
+                        //            foreach (DataRow dr in dt.Rows)
+                        //            {
+                        //                cls_ctMTMajor objpawpt = new cls_ctMTMajor();
+                        //                cls_MTMajor model = new cls_MTMajor();
+
+                        //                if (dr["com"].ToString().Equals(""))
+                        //                    continue;
+                        //                model.company_code = dr["com"].ToString();
+                        //                model.major_code = dr["major_code"].ToString();
+                        //                model.major_name_th = dr["major_name_th"].ToString();
+                        //                model.major_name_en = dr["major_name_en"].ToString();
+                        //                model.modified_by = task.modified_by;
+                        //                model.flag = model.flag;
+
+                        //                bool strID = objpawpt.insert(model);
+
+                        //                if (!strID.Equals(""))
+                        //                {
+                        //                    success++;
+                        //                }
+                        //                else
+                        //                {
+                        //                    objStr.Append(model.company_code);
+                        //                }
+
+                        //            }
+
+                        //            strResult = "";
+
+                        //            if (success > 0)
+                        //                strResult += "Success : " + success.ToString();
+
+                        //            if (objStr.Length > 0)
+                        //                strResult += " Fail : " + objStr.ToString();
+
+                        //        }
+
+                        //        break;
+
+
+                        //}
+                        ////
+
+                        ////
+                        //switch (import_code)
+                        //{
+                        //    case "insti":
+
+                        //        DataTable dt = doReadExcel(fileName);
+                        //        if (dt.Rows.Count > 0)
+                        //        {
+                        //            foreach (DataRow dr in dt.Rows)
+                        //            {
+                        //                cls_ctMTInstitute objpawpt = new cls_ctMTInstitute();
+                        //                cls_MTInstitute model = new cls_MTInstitute();
+
+                        //                if (dr["com"].ToString().Equals(""))
+                        //                    continue;
+                        //                model.company_code = dr["com"].ToString();
+                        //                model.institute_code = dr["institute_code"].ToString();
+                        //                model.institute_name_th = dr["institute_name_th"].ToString();
+                        //                model.institute_name_en = dr["institute_name_en"].ToString();
+                        //                model.modified_by = task.modified_by;
+                        //                model.flag = model.flag;
+
+                        //                bool strID = objpawpt.insert(model);
+
+                        //                if (!strID.Equals(""))
+                        //                {
+                        //                    success++;
+                        //                }
+                        //                else
+                        //                {
+                        //                    objStr.Append(model.company_code);
+                        //                }
+
+                        //            }
+
+                        //            strResult = "";
+
+                        //            if (success > 0)
+                        //                strResult += "Success : " + success.ToString();
+
+                        //            if (objStr.Length > 0)
+                        //                strResult += " Fail : " + objStr.ToString();
+
+                        //        }
+
+                        //        break;
+
+
+                        //}
+                        //
+
                         //EM017
 
 
@@ -1477,6 +1629,10 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 }
 
                                 break;
+
+
+
+                               
 
 
                         }
