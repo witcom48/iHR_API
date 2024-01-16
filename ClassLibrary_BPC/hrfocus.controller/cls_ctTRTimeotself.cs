@@ -41,6 +41,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ISNULL(TIMEOT_DOC, '') AS TIMEOT_DOC");
 
                 obj_str.Append(", TIMEOT_WORKDATE");
+                obj_str.Append(", TIMEOT_WORKTODATE");
+
 
                 obj_str.Append(", ISNULL(TIMEOT_BEFOREMIN, 0) AS TIMEOT_BEFOREMIN");
                 obj_str.Append(", ISNULL(TIMEOT_NORMALMIN, 0) AS TIMEOT_NORMALMIN");
@@ -75,7 +77,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append(" ORDER BY SELF_TR_TIMEOT.COMPANY_CODE, SELF_TR_TIMEOT.WORKER_CODE, SELF_TR_TIMEOT.TIMEOT_WORKDATE");
+                obj_str.Append(" ORDER BY SELF_TR_TIMEOT.COMPANY_CODE, SELF_TR_TIMEOT.WORKER_CODE, SELF_TR_TIMEOT.TIMEOT_WORKDATE, , SELF_TR_TIMEOT.TIMEOT_WORKTODATE");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -93,6 +95,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.timeot_doc = dr["TIMEOT_DOC"].ToString();
 
                     model.timeot_workdate = Convert.ToDateTime(dr["TIMEOT_WORKDATE"]);
+
+                    model.timeot_worktodate = Convert.ToDateTime(dr["TIMEOT_WORKTODATE"]);
+
 
                     model.timeot_beforemin = Convert.ToInt32(dr["TIMEOT_BEFOREMIN"]);
                     model.timeot_normalmin = Convert.ToInt32(dr["TIMEOT_NORMALMIN"]);
@@ -136,6 +141,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             if (!emp.Equals(""))
                 strCondition += " AND SELF_TR_TIMEOT.WORKER_CODE='" + emp + "'";
             strCondition += " AND (TIMEOT_WORKDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')";
+            strCondition += "  OR TIMEOT_WORKTODATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')";
 
             return this.getData(strCondition);
         }
@@ -148,7 +154,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(strCondition);
         }
 
-        public bool checkDataOld(string com, string emp, DateTime date)
+        public bool checkDataOld(string com, string emp, DateTime date, DateTime dateto)
         {
             bool blnResult = false;
             try
@@ -160,6 +166,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
                 obj_str.Append(" AND WORKER_CODE='" + emp + "'");
                 obj_str.Append(" AND TIMEOT_WORKDATE='" + date.ToString("MM/dd/yyyy") + "'");
+                obj_str.Append(" AND TIMEOT_WORKTODATE='" + dateto.ToString("MM/dd/yyyy") + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -232,7 +239,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             try
             {
                 //-- Check data old
-                if (this.checkDataOld(model.company_code, model.worker_code, model.timeot_workdate))
+                if (this.checkDataOld(model.company_code, model.worker_code, model.timeot_workdate, model.timeot_workdate))
                 {
                     return this.update(model);
                 }
@@ -249,6 +256,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", TIMEOT_DOC ");
 
                 obj_str.Append(", TIMEOT_WORKDATE ");
+                obj_str.Append(", TIMEOT_WORKTODATE ");
+
 
                 obj_str.Append(", TIMEOT_BEFOREMIN ");
                 obj_str.Append(", TIMEOT_NORMALMIN ");
@@ -273,6 +282,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", @TIMEOT_DOC ");
 
                 obj_str.Append(", @TIMEOT_WORKDATE ");
+                obj_str.Append(", @TIMEOT_WORKTODATE ");
+
 
                 obj_str.Append(", @TIMEOT_BEFOREMIN ");
                 obj_str.Append(", @TIMEOT_NORMALMIN ");
@@ -299,6 +310,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@TIMEOT_ID", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_ID"].Value = id;
                 obj_cmd.Parameters.Add("@TIMEOT_DOC", SqlDbType.VarChar); obj_cmd.Parameters["@TIMEOT_DOC"].Value = model.timeot_doc;
                 obj_cmd.Parameters.Add("@TIMEOT_WORKDATE", SqlDbType.Date); obj_cmd.Parameters["@TIMEOT_WORKDATE"].Value = model.timeot_workdate;
+                obj_cmd.Parameters.Add("@TIMEOT_WORKTODATE", SqlDbType.Date); obj_cmd.Parameters["@TIMEOT_WORKTODATE"].Value = model.timeot_worktodate;
+
 
                 obj_cmd.Parameters.Add("@TIMEOT_BEFOREMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_BEFOREMIN"].Value = model.timeot_beforemin;
                 obj_cmd.Parameters.Add("@TIMEOT_NORMALMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_NORMALMIN"].Value = model.timeot_normalmin;

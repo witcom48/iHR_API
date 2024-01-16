@@ -24,8 +24,8 @@ namespace ClassLibrary_BPC
 
         static public string FormatDateSQL = "MM/dd/yyyy";
 
-        static public string PathFileImport = "D:\\Temp\\HR365";
-        static public string PathFileExport = "D:\\Temp\\HR365\\Export";
+        static public string PathFileImport = "F:\\Temp\\HR365";
+        static public string PathFileExport = "F:\\Temp\\HR365\\Export";
 
     }
 }

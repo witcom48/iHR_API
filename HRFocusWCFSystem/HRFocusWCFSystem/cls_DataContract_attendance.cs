@@ -878,6 +878,9 @@ namespace HRFocusWCFSystem
         public string timeot_doc { get; set; }
         [DataMember]
         public string timeot_workdate { get; set; }
+
+        [DataMember]
+        public string timeot_worktodate { get; set; }
         [DataMember]
         public int timeot_beforemin { get; set; }
         [DataMember]

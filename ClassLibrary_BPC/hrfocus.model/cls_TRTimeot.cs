@@ -17,6 +17,8 @@ namespace ClassLibrary_BPC.hrfocus.model
         public string timeot_doc { get; set; }
 
         public DateTime timeot_workdate { get; set; }
+        public DateTime timeot_worktodate { get; set; }
+
        
         public int timeot_beforemin { get; set; }
         public int timeot_normalmin { get; set; }

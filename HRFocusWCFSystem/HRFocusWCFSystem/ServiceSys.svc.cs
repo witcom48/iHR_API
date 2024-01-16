@@ -14454,6 +14454,7 @@ namespace HRFocusWCFSystem
                     json.Add("timeot_doc", model.timeot_doc);
 
                     json.Add("timeot_workdate", model.timeot_workdate);
+                    json.Add("timeot_worktodate", model.timeot_worktodate);
 
                     json.Add("timeot_beforemin", model.timeot_beforemin);
                     json.Add("timeot_normalmin", model.timeot_normalmin);
@@ -14520,6 +14521,7 @@ namespace HRFocusWCFSystem
                 model.timeot_doc = input.timeot_doc;
                                 
                 model.timeot_workdate = Convert.ToDateTime(input.timeot_workdate);
+                model.timeot_worktodate = Convert.ToDateTime(input.timeot_worktodate);
 
                 model.timeot_beforemin = input.timeot_beforemin;
                 model.timeot_normalmin = input.timeot_normalmin;
@@ -19757,6 +19759,7 @@ namespace HRFocusWCFSystem
                         json.Add("timeot_doc", model.timeot_doc);
 
                         json.Add("timeot_workdate", model.timeot_workdate);
+                        json.Add("timeot_worktodate", model.timeot_worktodate);
 
                         json.Add("timeot_beforemin", model.timeot_beforemin);
                         json.Add("timeot_normalmin", model.timeot_normalmin);
@@ -19905,6 +19908,7 @@ namespace HRFocusWCFSystem
                             modeljob.job_type = "OT";
                             modeljob.status_job = "W";
                             modeljob.job_date = Convert.ToDateTime(otdata.timeot_workdate);
+
                             modeljob.job_nextstep = listTRAccount[0].totalapprove;
                             modeljob.workflow_code = listTRAccount[0].workflow_code;
                             modeljob.created_by = input.username;
