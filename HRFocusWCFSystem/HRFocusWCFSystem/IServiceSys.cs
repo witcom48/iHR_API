@@ -383,6 +383,10 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "doDeleteMTPeriod")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteMTPeriod(InputMTPeriod input);
+        //กรองวันที่
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getMTPeriodList2(string com, string type, string emptype, string year, string fromdate, string todate);
         
         //-- Combranch
         [OperationContract]

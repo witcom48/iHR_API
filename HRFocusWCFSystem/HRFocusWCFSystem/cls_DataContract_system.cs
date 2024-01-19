@@ -615,6 +615,17 @@ namespace HRFocusWCFSystem
         public string period_payment { get; set; }
         [DataMember]
         public bool period_dayonperiod { get; set; }
+
+        [DataMember]
+        public bool period_closeta { get; set; }
+
+        [DataMember]
+        public bool period_closepr { get; set; }
+        [DataMember]
+        public string changestatus_by { get; set; }
+        [DataMember]
+        public DateTime changestatus_date { get; set; }
+        
         [DataMember]
         public string modified_by { get; set; }
         [DataMember]

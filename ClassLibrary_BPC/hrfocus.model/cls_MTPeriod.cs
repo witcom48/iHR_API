@@ -19,6 +19,13 @@ namespace ClassLibrary_BPC.hrfocus.model
         public string period_no { get; set; }      
         public string period_name_th { get; set; }
         public string period_name_en { get; set; }
+
+
+        public bool period_closeta { get; set; }
+        public bool period_closepr { get; set; }
+        public string changestatus_by {get; set; }
+        public DateTime changestatus_date{ get; set; }
+
         public DateTime period_from { get; set; }
         public DateTime period_to { get; set; }
         public DateTime period_payment { get; set; }

@@ -94,6 +94,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(strCondition);
         }
 
+        public List<cls_TRCombranch> getDataTaxMultipleCombranch(string com)
+        {
+            string strCondition = " AND COMPANY_CODE='" + com + "'";
+
+            return this.getData(strCondition);
+        }
+
         public bool checkDataOld(string code)
         {
             bool blnResult = false;
