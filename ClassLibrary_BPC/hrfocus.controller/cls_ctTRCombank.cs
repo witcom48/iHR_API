@@ -24,7 +24,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             Obj_conn.doClose();
         }
 
-        private List<cls_TRCombank> getData(string condition)
+        private List<cls_TRCombank> getData(string language, string condition)
         {
             List<cls_TRCombank> list_model = new List<cls_TRCombank>();
             cls_TRCombank model;
@@ -38,11 +38,22 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", COMBANK_ID");      
                 obj_str.Append(", ISNULL(COMBANK_BANKCODE, '') AS COMBANK_BANKCODE");
                 obj_str.Append(", ISNULL(COMBANK_BANKACCOUNT, '') AS COMBANK_BANKACCOUNT");
-                                      
-                obj_str.Append(", ISNULL(MODIFIED_BY, CREATED_BY) AS MODIFIED_BY");
-                obj_str.Append(", ISNULL(MODIFIED_DATE, CREATED_DATE) AS MODIFIED_DATE");
 
+                obj_str.Append(", ISNULL(HRM_TR_COMBANK.MODIFIED_BY, HRM_TR_COMBANK.CREATED_BY) AS MODIFIED_BY");
+                obj_str.Append(", ISNULL(HRM_TR_COMBANK.MODIFIED_DATE, HRM_TR_COMBANK.CREATED_DATE) AS MODIFIED_DATE");
+
+                if (language.Equals("TH"))
+                {
+                    obj_str.Append(", HRM_MT_BANK.BANK_NAME_EN AS NAME_DETAIL");
+
+                }
+                else
+                {
+                    obj_str.Append(", HRM_MT_BANK.BANK_NAME_TH AS NAME_DETAIL");
+                }
                 obj_str.Append(" FROM HRM_TR_COMBANK");
+                obj_str.Append(" INNER JOIN HRM_MT_BANK  ON HRM_TR_COMBANK.COMBANK_BANKCODE = HRM_MT_BANK.BANK_CODE ");
+
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
@@ -60,7 +71,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.combank_id = Convert.ToInt32(dr["COMBANK_ID"]);
                     model.combank_bankcode = dr["COMBANK_BANKCODE"].ToString();
                     model.combank_bankaccount = dr["COMBANK_BANKACCOUNT"].ToString();
-                                        
+                    model.name_detail = dr["NAME_DETAIL"].ToString();
+
                     model.modified_by = dr["MODIFIED_BY"].ToString();
                     model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
                                                                                                                       
@@ -76,13 +88,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_TRCombank> getDataByFillter(string com)
+        public List<cls_TRCombank> getDataByFillter(string language, string com)
         {
             string strCondition = "";
             strCondition += " AND COMPANY_CODE='" + com + "'";
             //strCondition += " AND COMBANK_BANKCODE IN (" + bankcode + ") ";
-                                    
-            return this.getData(strCondition);
+
+            return this.getData(language, strCondition);
         }
 
         public bool checkDataOld(string com, string bankcode)

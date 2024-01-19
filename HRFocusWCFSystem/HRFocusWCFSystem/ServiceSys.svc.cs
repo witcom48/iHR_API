@@ -4059,7 +4059,7 @@ namespace HRFocusWCFSystem
             JObject output = new JObject();
 
             cls_ctTRCombank objBank = new cls_ctTRCombank();
-            List<cls_TRCombank> listBank = objBank.getDataByFillter(com);
+            List<cls_TRCombank> listBank = objBank.getDataByFillter("", com);
             JArray array = new JArray();
 
             if (listBank.Count > 0)
@@ -4078,7 +4078,8 @@ namespace HRFocusWCFSystem
                     json.Add("combank_id", model.combank_id);
                     json.Add("combank_bankcode", model.combank_bankcode);
                     json.Add("combank_bankaccount", model.combank_bankaccount);
-                    
+                    json.Add("name_detail", model.name_detail);
+
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);
                     json.Add("flag", model.flag);

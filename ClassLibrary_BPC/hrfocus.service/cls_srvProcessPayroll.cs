@@ -159,7 +159,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 //-- Step 3 Get Company acc
                 cls_ctTRCombank objCombank = new cls_ctTRCombank();
-                List<cls_TRCombank> list_combank = objCombank.getDataByFillter(com);
+                List<cls_TRCombank> list_combank = objCombank.getDataByFillter("", com);
                 cls_TRCombank combank = list_combank[0];
 
                 //-- Step 4 Get Company detail
@@ -317,27 +317,33 @@ namespace ClassLibrary_BPC.hrfocus.service
                                             spare1 = spare1.PadRight(32, '0');
 
 
-
                                         foreach (cls_TREmpbank worker in list_empbank)
                                         {
                                             if (paytran.worker_code.Equals(worker.worker_code))
                                             {
-                                                empaccbank = "C";
-                                                break;
-                                            }
-                                            else
-                                            {
                                                 if (worker.empbank_bankpercent != 0)
                                                 {
                                                     empaccbank = "C";
+                                                    break; // เพิ่ม break เมื่อพบเงื่อนไขที่ตรง
                                                 }
                                                 else if (worker.empbank_cashpercent != 0)
                                                 {
                                                     empaccbank = "D";
+                                                    break; // เพิ่ม break เมื่อพบเงื่อนไขที่ตรง
                                                 }
-                                                break;
                                             }
                                         }
+
+                                        // ทำต่อที่นี่หากต้องการจัดการหลังลูป
+
+
+                                        //// ให้ตรวจสอบค่า empaccbank หลังจากลูป
+                                        //if (string.IsNullOrEmpty(empaccbank))
+                                        //{
+                                        //    // กำหนดค่าเริ่มต้นหรือทำอย่างอื่นที่คุณต้องการ
+                                        //    empaccbank = "A";
+                                        //}
+
                                         bkData = "D" + sequence + combank.combank_bankcode + empacc + empaccbank + amount + "02" + "9" + spare1 + departmentcode + user + spare2;
                                         bkData = bkData.PadRight(32, '0');
 
@@ -357,6 +363,8 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                     int record = list_paytran.Count;
                                     sequence = (index + 2).ToString().PadLeft(6, '0');
+                                    string total1 = douTotal.ToString("#.#0").Trim().Replace(".", "").PadLeft(13, '0');
+                                    string total2 = douTotal2.ToString("#.#0").Trim().Replace(".", "").PadLeft(13, '0');
 
                                     string formattedAmount = "";
                                     if (record > 1)
@@ -371,21 +379,45 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     if (spare3.Length < 68)
                                         spare3 = spare3.PadRight(68, '0');
 
+                                    //
 
-                                    int empbankrecord = list_empbank.Count;
+                                    int countEmpbankRecord1 = list_empbank.Count(worker => worker.empbank_bankpercent != 0);
+                                    int countCashEmpbankRecord1 = list_empbank.Count(worker => worker.empbank_cashpercent != 0);
+
+                                    // sequence1
                                     sequence1 = (douTotal).ToString().PadLeft(7, '0');
                                     string empbankrecord1 = "";
-                                    if (record > 1)
+                                    if (countEmpbankRecord1 >= 1)
                                     {
-                                        empbankrecord1 = (empbankrecord).ToString().PadLeft(7, '0');
+                                        int startingValue = 1;
+                                        empbankrecord1 = (startingValue + countEmpbankRecord1 - 1).ToString().PadLeft(6, '0');
+                                    }
+                                    else
+                                    {
+                                        empbankrecord1 = "000000";
                                     }
 
+
+
+                                    // sequence2
                                     sequence2 = (douTotal2).ToString().PadLeft(7, '0');
                                     string empbankrecord2 = "";
-                                    if (record > 1)
+                                    if (countCashEmpbankRecord1 >= 1)
                                     {
-                                        empbankrecord2 = (empbankrecord2).ToString().PadLeft(7, '0');
+                                        int startingValue = 1;
+                                        empbankrecord2 = (startingValue + countCashEmpbankRecord1 - 1).ToString().PadLeft(6, '0');
                                     }
+                                    else
+                                    {
+                                        empbankrecord2 += "000000";
+                                    }
+
+
+                                    //if (countCashEmpbankRecord1 > 1)
+                                    //{
+                                    //    empbankrecord2 = countCashEmpbankRecord1.ToString().PadLeft(7, '0');
+                                    //}
+
 
 
                                     if (spare3.Length < 68)
@@ -395,11 +427,10 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
 
-                                    string total1 = douTotal.ToString("#.#0").Trim().Replace(".", "").PadLeft(13, '0');
-                                    string total2 = douTotal2.ToString("#.#0").Trim().Replace(".", "").PadLeft(13, '0');
 
 
-                                    bkData = "T" + sequence + combank.combank_bankcode + combank.combank_bankaccount + empbankrecord1 + total1 + sequence2 + total2 + spare3;
+
+                                    bkData = "T" + sequence + combank.combank_bankcode + combank.combank_bankaccount + empbankrecord1 + total1 + empbankrecord2 + total2 + spare3;
 
                                     bkData = bkData.PadRight(81, '0');
 
@@ -1113,7 +1144,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 //-- Step 3 Get Company acc
                 cls_ctTRCombank objCombank = new cls_ctTRCombank();
-                List<cls_TRCombank> list_combank = objCombank.getDataByFillter(com);
+                List<cls_TRCombank> list_combank = objCombank.getDataByFillter("", com);
                 cls_TRCombank combank = list_combank[0];
 
                 //-- Step 4 Get Company detail
@@ -1444,7 +1475,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 //-- Step 3 Get Company acc
                 cls_ctTRCombank objCombank = new cls_ctTRCombank();
-                List<cls_TRCombank> list_combank = objCombank.getDataByFillter(com);
+                List<cls_TRCombank> list_combank = objCombank.getDataByFillter("", com);
                 cls_TRCombank combank = list_combank[0];
 
                 //-- Step 4 Get Company detail
@@ -1729,7 +1760,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 //-- Step 3 Get Company acc
                 cls_ctTRCombank objCombank = new cls_ctTRCombank();
-                List<cls_TRCombank> list_combank = objCombank.getDataByFillter(com);
+                List<cls_TRCombank> list_combank = objCombank.getDataByFillter("", com);
                 cls_TRCombank combank = list_combank[0];
 
                 //-- Step 4 Get Company detail
@@ -2006,7 +2037,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                 
                 //-- Step 3 Get Company acc
                 cls_ctTRCombank objCombank = new cls_ctTRCombank();
-                List<cls_TRCombank> list_combank = objCombank.getDataByFillter(com);
+                List<cls_TRCombank> list_combank = objCombank.getDataByFillter("",com);
                 cls_TRCombank combank = list_combank[0];
 
 
@@ -2328,7 +2359,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 //-- Step 3 Get Company acc
                 cls_ctTRCombank objCombank = new cls_ctTRCombank();
-                List<cls_TRCombank> list_combank = objCombank.getDataByFillter(com);
+                List<cls_TRCombank> list_combank = objCombank.getDataByFillter("", com);
                 cls_TRCombank combank = list_combank[0];
 
                 //-- Step 4 Get Company detail

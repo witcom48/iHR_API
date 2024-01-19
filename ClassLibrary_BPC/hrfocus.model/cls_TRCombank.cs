@@ -15,7 +15,10 @@ namespace ClassLibrary_BPC.hrfocus.model
       
         public int combank_id { get; set; }
         public string combank_bankcode { get; set; }
-        public string combank_bankaccount { get; set; }       
+        public string combank_bankaccount { get; set; }
+        public string name_detail { get; set; }      
+
+        
         public string created_by { get;set; }
         public DateTime created_date { get; set; }  
 	    public string modified_by { get;set; }
