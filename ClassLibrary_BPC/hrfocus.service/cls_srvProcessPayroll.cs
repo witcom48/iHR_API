@@ -224,11 +224,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                     cls_TREmpcard obj_card = new cls_TREmpcard();
 
                     //
-                     if (task_bank.Length > 0)
+                if (list_worker.Count > 0)
                     {
-                        switch (paybank.paybank_bankcode)
+                        switch (combank.combank_bankcode)
 
                         {
+           
                             case "002":/// ธนาคารกรุงเทพ
                                 {
                                     //กำหนดค่า tmpData โดยรวมข้อมูล combank.combank_bankcode และ comdetail.company_name_en
