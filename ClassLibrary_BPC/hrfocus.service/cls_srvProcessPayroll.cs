@@ -399,9 +399,68 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                                 int record = list_paytran.Count;
                                                 sequence = (index + 1).ToString().PadLeft(6, '0');
-                                                string total1 = douTotal.ToString("#.#0").Trim().Replace(".", "").PadLeft(13, '0');
-                                                string total2 = douTotal2.ToString("#.#0").Trim().Replace(".", "").PadLeft(13, '0');
+                                                //string total1 = douTotal.ToString("#.#0").Trim().Replace(".", "").PadLeft(13, '0');
+                                                //string total2 = douTotal2.ToString("#.#0").Trim().Replace(".", "").PadLeft(13, '0');
+                                                //
+                                                //string total1record1 = "";
+                                                //int startingValue1 = 1;
 
+                                                //if (douTotal > 0)
+                                                //{
+                                                //    total1record1 = (startingValue1 + (long)Math.Floor(douTotal) - 1).ToString("D13");
+                                                //}
+                                                //else
+                                                //{
+                                                //    total1record1 = "0000000000000";
+                                                //}
+
+                                                //decimal douTotal = paytran.paytran_netpay_b;
+                                                int countdouTotalRecord1 = list_empbank.Count(worker => worker.empbank_bankpercent != 0 && worker.empbank_bankcode == combank.combank_bankcode);
+
+                                                string total1record1 = "";
+
+                                                if (douTotal > 0)
+                                                {
+                                                    decimal numericDouTotal = decimal.Parse(douTotal.ToString("#.#0").Trim().Replace(".", "").PadLeft(13, '0'));
+                                                    long roundedDouTotal = (long)Math.Floor(numericDouTotal * 100);
+                                                    total1record1 = (  roundedDouTotal  ).ToString("D13");
+                                                }
+                                                else
+                                                {
+                                                    total1record1 = "0000000000000";
+                                                }
+
+
+                                                ////
+                                                int countdouTotalRecord2 = list_empbank.Count(worker => worker.empbank_bankpercent != 0 && worker.empbank_bankcode == combank.combank_bankcode);
+                                                string total1record2 = "";
+                                                if (douTotal > 0)
+                                                {
+                                                    decimal numericDouTotal2 = decimal.Parse(douTotal2.ToString("#.#0").Trim().Replace(".", "").PadLeft(13, '0'));
+                                                    long roundedDouTotal2 = (long)Math.Floor(numericDouTotal2 * 100);
+                                                    total1record2 = (  roundedDouTotal2  ).ToString("D13");
+                                                }
+                                                else
+                                                {
+                                                    total1record2 = "0000000000000";
+                                                }
+ 
+
+                                                //string total1record1 = "";
+                                                //int startingValue1 = 1;
+
+                                                //if (douTotal > 0)
+                                                //{
+                                                //    long roundedDouTotal = (long)Math.Floor(douTotal * 100);  
+                                                //    total1record1 = (startingValue1 + roundedDouTotal - 1).ToString("D13");
+                                                //}
+                                                //else
+                                                //{
+                                                //    total1record1 = "0000000000000";
+                                                //}
+
+
+                                                //
                                                 string formattedAmount = "";
                                                 if (record > 1)
                                                 {
@@ -424,10 +483,10 @@ namespace ClassLibrary_BPC.hrfocus.service
                                                 // sequence1
                                                 sequence1 = (douTotal).ToString().PadLeft(7, '0');
                                                 string empbankrecord1 = "";
-                                                if (countEmpbankRecord1 >= 1)
+                                                if (countEmpbankRecord1 > 0)
                                                 {
                                                     int startingValue = 1;
-                                                    empbankrecord1 = (startingValue + countEmpbankRecord1 - 1).ToString().PadLeft(6, '0');
+                                                    empbankrecord1 = ( countEmpbankRecord1  ).ToString().PadLeft(7, '0');
                                                 }
                                                 else
                                                 {
@@ -439,10 +498,10 @@ namespace ClassLibrary_BPC.hrfocus.service
                                                 // sequence2
                                                 sequence2 = (douTotal2).ToString().PadLeft(7, '0');
                                                 string empbankrecord2 = "";
-                                                if (countCashEmpbankRecord1 >= 1)
+                                                if (countCashEmpbankRecord1 >= 0)
                                                 {
                                                     int startingValue = 1;
-                                                    empbankrecord2 = (startingValue + countCashEmpbankRecord1 - 1).ToString().PadLeft(6, '0');
+                                                    empbankrecord2 = ( countCashEmpbankRecord1  ).ToString().PadLeft(7, '0');
                                                 }
                                                 else
                                                 {
@@ -467,7 +526,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
 
-                                                bkData = "T" + sequence + combank.combank_bankcode + combank.combank_bankaccount + empbankrecord1 + total1 + empbankrecord2 + total2 + spare3;
+                                                bkData = "T" + sequence + combank.combank_bankcode + combank.combank_bankaccount + empbankrecord1 + total1record1 + empbankrecord2 + total1record2 + spare3;
 
                                                 bkData = bkData.PadRight(81, '0');
 
