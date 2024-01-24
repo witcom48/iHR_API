@@ -14467,15 +14467,32 @@ namespace HRFocusWCFSystem
             try
             {
                 cls_ctTRTimeleave objTRTime = new cls_ctTRTimeleave();
+                cls_ctTRTimeleaveself objTRTimeself = new cls_ctTRTimeleaveself();
 
                 cls_TRTimeleave model = objTRTime.getDataByID(input.timeleave_id.ToString());
-                
+                cls_TRTimeleaveself modelself = objTRTimeself.getDataByDOC(model.timeleave_doc);
                 bool blnResult = objTRTime.delete(input.timeleave_id.ToString());
+                bool blnResultself = objTRTimeself.delete(model.timeleave_doc);
 
                 if (blnResult)
                 {
                     cls_srvProcessTime srv_time = new cls_srvProcessTime();
                     srv_time.doCalleaveacc(model.timeleave_fromdate.Year.ToString(), model.company_code, model.worker_code, model.modified_by);
+                    if (modelself != null)
+                    {
+                        cls_ctMTJobtable MTJob = new cls_ctMTJobtable();
+                        MTJob.delete(modelself.company_code, 0, modelself.timeleave_id.ToString(), "LEA");
+                        cls_ctMTReqdocument MTReqdoc = new cls_ctMTReqdocument();
+                        List<cls_MTReqdocument> filelist = MTReqdoc.getDataByFillter(modelself.company_code, 0, modelself.timeleave_id.ToString(), "LEA");
+                        if (filelist.Count > 0)
+                        {
+                            foreach (cls_MTReqdocument filedata in filelist)
+                            {
+                                File.Delete(filedata.document_path);
+                            }
+                        }
+                        MTReqdoc.delete(modelself.company_code, 0, modelself.timeleave_id.ToString(), "LEA");
+                    }
 
                     output["result"] = "1";
                     output["result_text"] = "0";
@@ -18214,6 +18231,35 @@ namespace HRFocusWCFSystem
                         {
                             json.Add("worker_data", arrayTRAccount);
                         }
+                        cls_ctTRAccountapprove objTRAccountapp = new cls_ctTRAccountapprove();
+                        List<cls_TRAccountapprove> listTRAccountapp = objTRAccountapp.getDataByFillter(model.company_code, model.account_user, "", "","");
+                        JArray arrayTRAccounappt = new JArray();
+                        if (listTRAccountapp.Count > 0)
+                        {
+                            int indexTRAccountapp = 1;
+
+                            foreach (cls_TRAccountapprove modelTRAccountapp in listTRAccountapp)
+                            {
+                                JObject jsonTRapp = new JObject();
+                                jsonTRapp.Add("company_code", modelTRAccountapp.company_code);
+                                jsonTRapp.Add("account_user", modelTRAccountapp.account_user);
+                                jsonTRapp.Add("worker_code", modelTRAccountapp.worker_code);
+                                jsonTRapp.Add("step", modelTRAccountapp.step);
+                                jsonTRapp.Add("job_type", modelTRAccountapp.job_type);
+
+                                jsonTRapp.Add("index", indexTRAccountapp);
+
+
+                                indexTRAccountapp++;
+
+                                arrayTRAccounappt.Add(jsonTRapp);
+                            }
+                            json.Add("approve_data", arrayTRAccounappt);
+                        }
+                        else
+                        {
+                            json.Add("approve_data", arrayTRAccounappt);
+                        }
 
                         json.Add("index", index);
 
@@ -18278,6 +18324,7 @@ namespace HRFocusWCFSystem
                     {
                         cls_ctTRAccountpos objTRAccoutpos = new cls_ctTRAccountpos();
                         cls_ctTRAccountdep objTRAccoutdep = new cls_ctTRAccountdep();
+                        cls_ctTRAccountapprove objTRAccoutapp = new cls_ctTRAccountapprove();
                         cls_ctTRAccount objTRAccout = new cls_ctTRAccount();
                         //objTRLineapp.delete(input.company_code, input.workflow_type,input.workflow_code,"");
                         if (input.positonn_data.Count > 0)
@@ -18303,6 +18350,14 @@ namespace HRFocusWCFSystem
                         else
                         {
                             objTRAccout.delete(input.company_code, input.account_user, input.account_type, "");
+                        }
+                        if (input.approve_data.Count > 0)
+                        {
+                            objTRAccoutapp.insert(input.approve_data);
+                        }
+                        else
+                        {
+                            objTRAccoutapp.delete(input.company_code, input.account_user,"","","");
                         }
 
                     }
@@ -18352,9 +18407,11 @@ namespace HRFocusWCFSystem
                         cls_ctTRAccountpos objTRpos = new cls_ctTRAccountpos();
                         cls_ctTRAccountdep objTRdep = new cls_ctTRAccountdep();
                         cls_ctTRAccount objTRAcount = new cls_ctTRAccount();
+                        cls_ctTRAccountapprove objTRAcountapp = new cls_ctTRAccountapprove();
                         objTRpos.delete(input.company_code, input.account_user, input.account_type);
                         objTRdep.delete(input.company_code, input.account_user, input.account_type, "", "");
                         objTRAcount.delete(input.company_code, input.account_user, input.account_type, "");
+                        objTRAcountapp.delete(input.company_code, input.account_user,"","","");
                     }
                     catch (Exception ex)
                     {
@@ -19454,6 +19511,7 @@ namespace HRFocusWCFSystem
                                 timedata.worker_code = data.worker_code;
                                 timedata.timeot_doc = data.timeot_doc;
                                 timedata.timeot_workdate = data.timeot_workdate;
+                                timedata.timeot_worktodate = data.timeot_workdate;
                                 timedata.timeot_beforemin = data.timeot_beforemin;
                                 timedata.timeot_normalmin = data.timeot_normalmin;
                                 timedata.timeot_break = data.timeot_breakmin;

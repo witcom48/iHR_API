@@ -1013,6 +1013,9 @@ namespace HRFocusWCFSystem
         public List<cls_TRAccount> worker_data { get; set; }
 
         [DataMember]
+        public List<cls_TRAccountapprove> approve_data { get; set; }
+
+        [DataMember]
         public string modified_by { get; set; }
         [DataMember]
         public DateTime modified_date { get; set; }
