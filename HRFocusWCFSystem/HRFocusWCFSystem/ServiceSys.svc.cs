@@ -2315,6 +2315,15 @@ namespace HRFocusWCFSystem
                         string link = srvImport.doImportPayExcel(input.company_code, intTaskID.ToString());
                         output["result_link"] = link;
                     }
+
+                    //TRN_INDE
+                    else if (input.task_type.Trim().Equals("TRN_INDE"))
+                    {
+                        cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
+                        string link = srvPay.doExportPR1(input.company_code, intTaskID.ToString());
+
+                        output["result_link"] = link;
+                    }
            
 
                 }
@@ -10451,6 +10460,77 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
 
+        }
+        #endregion
+
+        #region PayOT
+        public string getTRPayOTList(string com, string emp, string paydate)
+        {
+            JObject output = new JObject();
+
+            cls_ctTRPayOT objPayOT = new cls_ctTRPayOT();
+            List<cls_TRPayOT> listPayOT = objPayOT.getDataByFillter("", com , emp, Convert.ToDateTime(paydate));
+            JArray array = new JArray();
+
+            if (listPayOT.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRPayOT model in listPayOT)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("company_code", model.company_code);
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("payot_date", model.payot_date);
+                    json.Add("payot_ot1_min", model.payot_ot1_min);
+                    json.Add("payot_ot15_min", model.payot_ot15_min);
+                    json.Add("payot_ot2_min", model.payot_ot2_min);
+                    json.Add("payot_ot3_min", model.payot_ot3_min);
+
+                    json.Add("payot_ot1_amount", model.payot_ot1_amount);
+                    json.Add("payot_ot15_amount", model.payot_ot15_amount);
+                    json.Add("payot_ot2_amount", model.payot_ot2_amount);
+                    json.Add("payot_ot3_amount", model.payot_ot3_amount);
+
+                    int hrs = (model.payot_ot1_min) / 60;
+                    int min = (model.payot_ot1_min) - (hrs * 60);
+                    json.Add("payot_ot1_hrs", hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0'));
+
+                    hrs = (model.payot_ot15_min) / 60;
+                    min = (model.payot_ot15_min) - (hrs * 60);
+                    json.Add("payot_ot15_hrs", hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0'));
+
+                    hrs = (model.payot_ot2_min) / 60;
+                    min = (model.payot_ot2_min) - (hrs * 60);
+                    json.Add("payot_ot2_hrs", hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0'));
+
+                    hrs = (model.payot_ot3_min) / 60;
+                    min = (model.payot_ot3_min) - (hrs * 60);
+                    json.Add("payot_ot3_hrs", hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0'));
+
+                    json.Add("modified_by", model.modified_by);
+                    json.Add("modified_date", model.modified_date);
+                    json.Add("flag", model.flag);
+
+                    json.Add("index", index);
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
         }
         #endregion
 

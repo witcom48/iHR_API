@@ -964,6 +964,11 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteTRPaypolbonus(InputTRPaypolbonus input);
 
+        //PayOT
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTRPayOTList(string com, string emp, string paydate);
+
         #endregion
 
         //-- ********************
