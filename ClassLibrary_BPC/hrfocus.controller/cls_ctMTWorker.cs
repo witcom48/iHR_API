@@ -137,7 +137,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_MTWorker> getDataByFillter(string com, string id, string worker_code, string worker_fname_th, string worker_lname_th, string worker_fname_en, string worker_lname_en, string emptype, string level_code, string depcod_code, string position_code, string group_code, bool include_resign, string location_code, DateTime date_fill)
+        public List<cls_MTWorker> getDataByFillter(string com, string id, string worker_code, string worker_fname_th, string worker_lname_th, string emptype, string worker_fname_en, string worker_lname_en, string level_code, string depcod_code, string position_code, string group_code, bool include_resign, string location_code, DateTime date_fill)
         {
             string strCondition = "";
 
