@@ -5607,12 +5607,12 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region MTWorker
-        public string getMTWorkerList(string com, string id, string code, string fname, string lname, string level, string depcod)
+        public string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod)
         {
             JObject output = new JObject();
 
             cls_ctMTWorker objWorker = new cls_ctMTWorker();
-            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(com, id, code, fname, lname, "", "", "", level, depcod, "", "", false, "", DateTime.Now.Date);
+            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(com, id, code, fname, lname, emptype, "", "", level, depcod, "", "", false, "", DateTime.Now.Date);
 
             JArray array = new JArray();
 
@@ -16291,7 +16291,7 @@ namespace HRFocusWCFSystem
                     json.Add("worker_code", model.worker_code);
                     json.Add("position_name_en", model.position_name_en);
                     json.Add("position_name_th", model.position_name_th);
-                    json.Add("position_name_en", model.position_name_en);
+                    //json.Add("position_name_en", model.position_name_en);
 
                     json.Add("index", index);
 
