@@ -34,17 +34,17 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("SELECT");
 
-                obj_str.Append(" COUNT(WORKER_CODE)as WORKER_CODE");
+                obj_str.Append(" COUNT( WORKER_CODE)as WORKER_CODE");
                 obj_str.Append(", (CASE ISNULL(WORKER_GENDER, '') WHEN 'M' THEN 'Male' WHEN 'F' THEN 'Female' END) AS WORKER_GENDER_EN");
                 obj_str.Append(", (CASE ISNULL(WORKER_GENDER, '') WHEN 'M' THEN 'เพศชาย' WHEN 'F' THEN 'เพศหญิง' END) AS WORKER_GENDER_TH");
+                obj_str.Append(",  WORKER_RESIGNSTATUS");
                 obj_str.Append(" FROM HRM_MT_WORKER");
-
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append(" GROUP BY HRM_MT_WORKER.WORKER_GENDER ");
+                obj_str.Append(" GROUP BY HRM_MT_WORKER.WORKER_GENDER ,WORKER_RESIGNSTATUS");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -55,6 +55,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
                     model.worker_gender_en = dr["WORKER_GENDER_EN"].ToString();
                     model.worker_gender_th = dr["WORKER_GENDER_TH"].ToString();
+                    model.worker_resignstatus = dr["WORKER_RESIGNSTATUS"].ToString();
 
                     list_model.Add(model);
                 }
@@ -67,13 +68,19 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return list_model;
         }
-        public List<cls_MTDashboard> getDataGenderByFillter(string com)
+        public List<cls_MTDashboard> getDataGenderByFillter(string com, string fromdate, string todate, string status)
         {
             string strCondition = "";
 
 
             if (!com.Equals(""))
                 strCondition += " AND COMPANY_CODE ='" + com + "'";
+
+            //strCondition += " AND ( WORKER_DATE BETWEEN '" + fromdate + "' AND '" + todate + "' )";
+
+
+            if (!status.Equals(""))
+                strCondition += " AND WORKER_RESIGNSTATUS='" + status + "'";
 
             return this.getDataGender(strCondition);
         }
@@ -88,18 +95,24 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("SELECT");
 
-                obj_str.Append(" COUNT(WORKER_CODE)as WORKER_CODE");
+                obj_str.Append(" COUNT(HRM_TR_EMPDEP.WORKER_CODE)as WORKER_CODE");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_EN");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_TH");
+
+                obj_str.Append(", HRM_MT_WORKER.WORKER_RESIGNSTATUS");
+
+
                 obj_str.Append(" from HRM_TR_EMPDEP");
                 obj_str.Append(" INNER JOIN HRM_MT_DEP on HRM_TR_EMPDEP.EMPDEP_LEVEL01 = HRM_MT_DEP.DEP_CODE");
 
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_TR_EMPDEP.COMPANY_CODE=HRM_MT_WORKER.COMPANY_CODE");
+                obj_str.Append(" AND HRM_TR_EMPDEP.WORKER_CODE=HRM_MT_WORKER.WORKER_CODE");
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append(" GROUP BY HRM_MT_DEP.DEP_NAME_EN,HRM_MT_DEP.DEP_NAME_TH ");
+                obj_str.Append(" GROUP BY HRM_MT_DEP.DEP_NAME_EN,HRM_MT_DEP.DEP_NAME_TH,HRM_MT_WORKER.WORKER_RESIGNSTATUS ");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -110,6 +123,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
                     model.dep_name_en = dr["DEP_NAME_EN"].ToString();
                     model.dep_name_th = dr["DEP_NAME_TH"].ToString();
+                    model.worker_resignstatus = dr["WORKER_RESIGNSTATUS"].ToString();
 
                     list_model.Add(model);
                 }
@@ -122,13 +136,16 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return list_model;
         }
-        public List<cls_MTDashboard> getDataEmpDepByFillter(string com)
+        public List<cls_MTDashboard> getDataEmpDepByFillter(string com, string status)
         {
             string strCondition = "";
 
 
             if (!com.Equals(""))
                 strCondition += " AND HRM_TR_EMPDEP.COMPANY_CODE ='" + com + "'";
+            if (!status.Equals(""))
+
+                strCondition += " AND WORKER_RESIGNSTATUS='" + status + "'";
 
             return this.getDataEmpDep(strCondition);
         }
@@ -148,6 +165,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" WHEN (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 31 and 40 then '31-40'");
                 obj_str.Append(" WHEN (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 41 and 55 then '41-55'");
                 obj_str.Append(" ELSE '55+' END)AS AGE");
+
+                obj_str.Append(",  WORKER_RESIGNSTATUS");
+
                 obj_str.Append(" FROM HRM_MT_WORKER");
 
                 obj_str.Append(" WHERE 1=1");
@@ -155,7 +175,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append(" GROUP BY (case when (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 18 and 30 then '18-30'");
+                obj_str.Append(" GROUP BY WORKER_RESIGNSTATUS,(case when (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 18 and 30 then '18-30'");
                 obj_str.Append(" WHEN (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 31 and 40 then '31-40'");
                 obj_str.Append(" WHEN (DATEDIFF(YY,WORKER_BIRTHDATE,GETDATE())) between 41 and 55 then '41-55' else '55+' END)");
 
@@ -167,6 +187,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                     model.worker_code = Convert.ToInt32(dr["WORKER_CODE"]);
                     model.age = dr["AGE"].ToString();
+                    model.worker_resignstatus = dr["WORKER_RESIGNSTATUS"].ToString();
 
                     list_model.Add(model);
                 }
@@ -179,14 +200,15 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return list_model;
         }
-        public List<cls_MTDashboard> getDataEmpAgeByFillter(string com)
+        public List<cls_MTDashboard> getDataEmpAgeByFillter(string com, string status)
         {
             string strCondition = "";
 
 
             if (!com.Equals(""))
                 strCondition += " AND HRM_MT_WORKER.COMPANY_CODE ='" + com + "'";
-
+            if (!status.Equals(""))
+                strCondition += " AND WORKER_RESIGNSTATUS='" + status + "'";
             return this.getDataEmpAge(strCondition);
         }
 

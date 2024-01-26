@@ -5607,12 +5607,12 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region MTWorker
-        public string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod)
+        public string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod,string searchemp)
         {
             JObject output = new JObject();
 
             cls_ctMTWorker objWorker = new cls_ctMTWorker();
-            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(com, id, code, fname, lname, emptype, "", "", level, depcod, "", "", false, "", DateTime.Now.Date);
+            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(com, id, code, fname, lname, emptype, "", "", level, depcod, "", "", false, "", DateTime.Now.Date, "");
 
             JArray array = new JArray();
 
@@ -5705,6 +5705,7 @@ namespace HRFocusWCFSystem
 
                 , input.location_code
                 , date_fill
+                , input.searchemp
                 );
 
             JArray array = new JArray();
@@ -16183,7 +16184,7 @@ namespace HRFocusWCFSystem
             JObject output = new JObject();
 
             cls_ctTADashboard objDash = new cls_ctTADashboard();
-            List<cls_TADashboard> listDash = objDash.getDataLeaveByFillter(com);
+            List<cls_TADashboard> listDash = objDash.getDataLeaveByFillter(com,"0");
 
             JArray array = new JArray();
 
@@ -16227,7 +16228,7 @@ namespace HRFocusWCFSystem
             
 
             cls_ctTADashboard objDash = new cls_ctTADashboard();
-            List<cls_TADashboard> listDash = objDash.getDataLateByFillter(com);
+            List<cls_TADashboard> listDash = objDash.getDataLateByFillter(com,"0");
 
             JArray array = new JArray();
 
@@ -16267,7 +16268,7 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Emp
-        public string getEmpPositionDash(string fromdate, string todate)
+        public string getEmpPositionDash(string com,string fromdate, string todate)
         {
             JObject output = new JObject();
 
@@ -16276,7 +16277,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctMTEmpPositionDash objPoDash = new cls_ctMTEmpPositionDash();
-            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(fromdate, todate);
+            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(com,fromdate, todate, "0");
 
             JArray array = new JArray();
 
@@ -16291,7 +16292,7 @@ namespace HRFocusWCFSystem
                     json.Add("worker_code", model.worker_code);
                     json.Add("position_name_en", model.position_name_en);
                     json.Add("position_name_th", model.position_name_th);
-                    //json.Add("position_name_en", model.position_name_en);
+                    json.Add("empposition_position", model.empposition_position);
 
                     json.Add("index", index);
 
@@ -16314,12 +16315,12 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
         }
 
-        public string getDashGenderList(string com)
+        public string getDashGenderList(string com, string fromdate, string todate)
         {
             JObject output = new JObject();
 
             cls_ctMTDashboard objDash = new cls_ctMTDashboard();
-            List<cls_MTDashboard> listDash = objDash.getDataGenderByFillter(com);
+            List<cls_MTDashboard> listDash = objDash.getDataGenderByFillter(com, fromdate, todate, "0");
 
             JArray array = new JArray();
 
@@ -16334,6 +16335,7 @@ namespace HRFocusWCFSystem
                     json.Add("worker_code", model.worker_code);
                     json.Add("worker_gender_en", model.worker_gender_en);
                     json.Add("worker_gender_th", model.worker_gender_th);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
 
                     json.Add("index", index);
@@ -16361,7 +16363,7 @@ namespace HRFocusWCFSystem
             JObject output = new JObject();
 
             cls_ctMTDashboard objDash = new cls_ctMTDashboard();
-            List<cls_MTDashboard > listDash = objDash.getDataEmpDepByFillter(com);
+            List<cls_MTDashboard > listDash = objDash.getDataEmpDepByFillter(com,"0");
 
             JArray array = new JArray();
 
@@ -16376,6 +16378,7 @@ namespace HRFocusWCFSystem
                     json.Add("worker_code", model.worker_code);
                     json.Add("dep_name_th", model.dep_name_th);
                     json.Add("dep_name_en", model.dep_name_en);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
 
                     json.Add("index", index);
@@ -16403,7 +16406,7 @@ namespace HRFocusWCFSystem
             JObject output = new JObject();
 
             cls_ctMTDashboard objDash = new cls_ctMTDashboard();
-            List<cls_MTDashboard> listDash = objDash.getDataEmpAgeByFillter(com);
+            List<cls_MTDashboard> listDash = objDash.getDataEmpAgeByFillter(com,"0");
 
             JArray array = new JArray();
 
@@ -16417,6 +16420,7 @@ namespace HRFocusWCFSystem
 
                     json.Add("worker_code", model.worker_code);
                     json.Add("age", model.age);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
                     json.Add("index", index);
 
@@ -16489,7 +16493,7 @@ namespace HRFocusWCFSystem
             JObject output = new JObject();
 
             cls_ctTRDashboard objDash = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDash = objDash.getDataItemINByFillter(com);
+            List<cls_TRDashboard> listDash = objDash.getDataItemINByFillter(com,"0");
 
             JArray array = new JArray();
 
@@ -16505,6 +16509,7 @@ namespace HRFocusWCFSystem
                     json.Add("ITEM_NAME_EN", model.item_name_en);
                     json.Add("ITEM_NAME_TH", model.item_name_th);
                     json.Add("ITEM_CODE", model.item_code);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
 
                     json.Add("index", index);
@@ -16535,7 +16540,7 @@ namespace HRFocusWCFSystem
             
 
             cls_ctTRDashboard objDash = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDash = objDash.getDataItemDEByFillte(com);
+            List<cls_TRDashboard> listDash = objDash.getDataItemDEByFillte(com,"0");
 
             JArray array = new JArray();
 
@@ -16551,6 +16556,7 @@ namespace HRFocusWCFSystem
                     json.Add("item_name_th", model.item_name_th);
                     json.Add("item_name_en", model.item_name_en);
                     json.Add("item_code", model.item_code);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
 
                     json.Add("index", index);
@@ -16573,7 +16579,7 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
-
+        //จำนวนการทำโอทีตามสังกัด
         public string getDashItemOTDepList(string fromdate, string todate)
         {
             JObject output = new JObject();
@@ -16582,7 +16588,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctTRDashboard objDash = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDash = objDash.getDataOTDepByFillter(datefrom, dateto);
+            List<cls_TRDashboard> listDash = objDash.getDataOTDepByFillter(datefrom, dateto,"0");
 
             JArray array = new JArray();
 
@@ -16597,9 +16603,10 @@ namespace HRFocusWCFSystem
                     //json.Add("before_min", model.before_min);
                     json.Add("dep_name_th", model.dep_name_th);
                     json.Add("dep_name_en", model.dep_name_en);
-
-
-                    json.Add("index", index);
+                    json.Add("overtime_min", model.overtime_min);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
+                    
+                    json.Add("index", index); 
 
                     index++;
 
@@ -16619,16 +16626,19 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
-
+        //จำนวนการทำโอที
         public string getDashItemOTPoList(string fromdate, string todate)
         {
             JObject output = new JObject();
 
-            DateTime datefrom = Convert.ToDateTime(fromdate);
-            DateTime dateto = Convert.ToDateTime(todate);
-
+            //DateTime datefrom = Convert.ToDateTime(fromdate);
+            //DateTime dateto = Convert.ToDateTime(todate);
+            //DateTime datefrom = Convert.ToDateTime(fromdate);
+            //DateTime dateto = Convert.ToDateTime(todate);
             cls_ctTRDashboard objDashh = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom.ToString("yyyy-MM-dd"), dateto.ToString("yyyy-MM-dd"));
+            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter( fromdate, todate,"0");
+
+            //List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom.ToString("yyyy-MM-dd"), dateto.ToString("yyyy-MM-dd"));
 
             JArray array = new JArray();
 
@@ -16645,6 +16655,8 @@ namespace HRFocusWCFSystem
                     json.Add("empposition_position", model.empposition_position);
                     json.Add("position_name_th", model.position_name_th);
                     json.Add("position_name_en", model.position_name_en);
+                    json.Add("overtime_min", model.overtime_min);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
 
                     json.Add("index", index);

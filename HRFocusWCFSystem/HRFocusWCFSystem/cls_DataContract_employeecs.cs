@@ -624,7 +624,9 @@ namespace HRFocusWCFSystem
         public string location_code { get; set; }
 
         [DataMember]
-        public string date_fill { get; set; }      
+        public string date_fill { get; set; }
+        [DataMember]
+        public string searchemp { get; set; }  
         
     }
 
