@@ -5598,12 +5598,12 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region MTWorker
-        public string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod)
+        public string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod,string searchemp)
         {
             JObject output = new JObject();
 
             cls_ctMTWorker objWorker = new cls_ctMTWorker();
-            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(com, id, code, fname, lname, emptype, "", "", level, depcod, "", "", false, "", DateTime.Now.Date);
+            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(com, id, code, fname, lname, emptype, "", "", level, depcod, "", "", false, "", DateTime.Now.Date, "");
 
             JArray array = new JArray();
 
@@ -5696,6 +5696,7 @@ namespace HRFocusWCFSystem
 
                 , input.location_code
                 , date_fill
+                , input.searchemp
                 );
 
             JArray array = new JArray();
