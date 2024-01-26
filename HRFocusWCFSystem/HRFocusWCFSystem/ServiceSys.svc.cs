@@ -16268,7 +16268,7 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Emp
-        public string getEmpPositionDash(string com,string fromdate, string todate)
+        public string getEmpPositionDash(string com, string fromdate, string todate)
         {
             JObject output = new JObject();
 
@@ -16277,7 +16277,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctMTEmpPositionDash objPoDash = new cls_ctMTEmpPositionDash();
-            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(com,fromdate, todate, "0");
+            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(com,fromdate, todate,"0");
 
             JArray array = new JArray();
 

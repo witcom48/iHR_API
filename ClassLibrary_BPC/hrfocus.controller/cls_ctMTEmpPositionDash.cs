@@ -84,11 +84,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_TREmpPositionDash> getDataByFillter(string com,string fromdate, string todate, string status)
+        public List<cls_TREmpPositionDash> getDataByFillter(string com, string fromdate, string todate, string status)
         {
             string strCondition = "";
+
             if (!com.Equals(""))
-                strCondition += " AND HRM_TR_EMPPOSITION.COMPANY_CODE ='" + com + "'";
+
+                strCondition += " AND HRM_MT_WORKER.COMPANY_CODE='" + com + "'";
 
             strCondition += " AND (EMPPOSITION_DATE BETWEEN '" + fromdate + "' AND '" + todate+ "' )";
 
