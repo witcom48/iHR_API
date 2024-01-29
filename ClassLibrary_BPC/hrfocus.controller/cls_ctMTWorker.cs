@@ -174,10 +174,15 @@ namespace ClassLibrary_BPC.hrfocus.controller
             {
                 strCondition += " AND (WORKER_RESIGNSTATUS='0' OR WORKER_RESIGNSTATUS IS NULL) ";
             }
+
             //searchemp
-            if (!searchemp.Equals(""))
+            if (!string.IsNullOrEmpty(searchemp))
             {
-                strCondition += "AND (WORKER_CODE LIKE'" + searchemp + "%' OR WORKER_FNAME_TH LIKE '" + searchemp + "%' OR WORKER_LNAME_TH LIKE '" + searchemp + "%' OR WORKER_FNAME_EN LIKE '" + searchemp + "%' OR WORKER_LNAME_EN LIKE '" + searchemp   + searchemp + "%')";
+                string[] keywords = searchemp.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string keyword in keywords)
+                {
+                    strCondition += " AND (WORKER_CODE LIKE '%" + keyword + "%' OR WORKER_FNAME_TH LIKE '%" + keyword + "%' OR WORKER_LNAME_TH LIKE '%" + keyword + "%' OR WORKER_FNAME_EN LIKE '%" + keyword + "%' OR WORKER_LNAME_EN LIKE '%" + keyword + "%')";
+                }
             }
 
             return this.getData( strCondition);
