@@ -2543,7 +2543,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 //3 นามสกุล(อังกฤษ)
                                 bkData += obj_worker.worker_lname_en + "|";
 
-                                //4 ระดับ01
+                                //4&5 ระดับ01
                                 cls_MTDep bj_MTDep1 = null;
                                 bool foundDep1 = false;
                                 foreach (cls_TREmpdep dep1 in list_TRdep)
@@ -2555,6 +2555,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                             if (dep1.empdep_level01 != null && dep1.empdep_level01.Equals(MTDep1.dep_code))
                                             {
                                                 bj_MTDep1 = MTDep1;
+                                                bkData += bj_MTDep1.dep_code + "|";
                                                 bkData += bj_MTDep1.dep_name_th + "|";
                                                 foundDep1 = true;
                                                 break;
@@ -2566,9 +2567,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 if (!foundDep1)
                                 {
                                     bkData += " " + "|";
+                                    bkData += " " + "|";
+
                                 }
 
-                                //5 ระดับ02
+                                //6&7 ระดับ02
                                 cls_MTDep bj_MTDep2 = null;
                                 bool foundDep2 = false;
                                 foreach (cls_TREmpdep dep2 in list_TRdep)
@@ -2580,6 +2583,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                             if (dep2.empdep_level02 != null && dep2.empdep_level02.Equals(MTDep2.dep_code))
                                             {
                                                 bj_MTDep2 = MTDep2;
+                                                bkData += MTDep2.dep_code + "|";
                                                 bkData += bj_MTDep2.dep_name_th + "|";
                                                 foundDep2 = true;
                                                 break;
@@ -2591,9 +2595,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 if (!foundDep2)
                                 {
                                     bkData += " " + "|";
+                                    bkData += " " + "|";
+
                                 }
 
-                                //6 ระดับ03
+                                //8&9 ระดับ03
                                 //
                                 cls_MTDep bj_MTDep3 = null;
                                 bool foundDep3 = false;
@@ -2607,6 +2613,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                             if (dep3.empdep_level03 != null && dep3.empdep_level03.Equals(MTDep3.dep_code))
                                             {
                                                 bj_MTDep3 = MTDep3;
+                                                bkData += MTDep3.dep_code + "|";
                                                 bkData += bj_MTDep3.dep_name_th + "|";
                                                 foundDep3 = true;
                                                 break;
@@ -2618,9 +2625,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 if (!foundDep3)
                                 {
                                     bkData += " " + "|";
+                                    bkData += " " + "|";
+
                                 }
 
-                                //7&8 ตำแหน่งปัจจุบัน Position
+                                //10&11 ตำแหน่งปัจจุบัน Position
                                 cls_MTPosition bj_Position1 = null;
                                 bool foundPosition = false;
 
@@ -2648,7 +2657,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += " " + "|";
                                 }
 
-                                //9 Salary
+                                //12 Salary
                                 bool hasSAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2664,7 +2673,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //10 Position
+                                //13 Position
                                 bool hasPAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2680,7 +2689,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //11 House
+                                //14 House
                                 bool hasHAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2696,7 +2705,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //12 Commuting
+                                //15 Commuting
                                 bool hasCAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2712,7 +2721,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //13 EN
+                                //16 EN
                                 bool hasEAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2728,7 +2737,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //14 JA
+                                //17 JA
                                 bool hasJAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2744,7 +2753,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //15 Meal
+                                //18 Meal
                                 bool hasMAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2760,15 +2769,34 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //16-19 OT
+                                //19-26 OT
                                 bool hasOTData = false;
                                 foreach (cls_TRPayOT TRPayot in list_payot)
                                 {
                                     if (MTWorkers.worker_code.Equals(TRPayot.worker_code))
                                     {
+                                        //OT 1
+                                        int hrs = (TRPayot.payot_ot1_min) / 60;
+                                        int min = (TRPayot.payot_ot1_min) - (hrs * 60);
+                                        bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
                                         bkData += TRPayot.payot_ot1_amount + "|";
+
+                                        //OT 1.5
+                                        hrs = (TRPayot.payot_ot15_min) / 60;
+                                        min = (TRPayot.payot_ot15_min) - (hrs * 60);
+                                        bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
                                         bkData += TRPayot.payot_ot15_amount + "|";
+
+                                        //OT 2
+                                        hrs = (TRPayot.payot_ot2_min) / 60;
+                                        min = (TRPayot.payot_ot2_min) - (hrs * 60);
+                                        bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
                                         bkData += TRPayot.payot_ot2_amount + "|";
+
+                                        //OT3
+                                        hrs = (TRPayot.payot_ot3_min) / 60;
+                                        min = (TRPayot.payot_ot3_min) - (hrs * 60);
+                                        bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
                                         bkData += TRPayot.payot_ot3_amount + "|";
 
                                         hasOTData = true;
@@ -2776,13 +2804,22 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 }
                                 if (!hasOTData)
                                 {
+                                    //OT 1
                                     bkData += "0|";
                                     bkData += "0|";
+                                    //OT1.5
                                     bkData += "0|";
                                     bkData += "0|";
+                                    //OT2
+                                    bkData += "0|";
+                                    bkData += "0|";
+                                    //OT3
+                                    bkData += "0|";
+                                    bkData += "0|";
+
                                 }
 
-                                //20 Transportation
+                                //27 Transportation
                                 bool hasTAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2798,7 +2835,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //21 Up country
+                                //28 Up country
                                 bool hasUAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2814,7 +2851,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //22 Overnight
+                                //29 Overnight
                                 bool hasOAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2830,7 +2867,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //23 Mobile
+                                //30 Mobile
                                 bool hasJPNData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2846,7 +2883,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //24 Other income
+                                //31 Other income
                                 bool hasOIData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2862,7 +2899,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //25 Bonus
+                                //32 Bonus
                                 bool hasBOData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2878,7 +2915,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //26 Annual Leave
+                                //33 Annual Leave
                                 bool hasALData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2893,7 +2930,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //27 AC1
+                                //34 AC1
                                 bool hasAC1Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2908,7 +2945,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //28 AV1
+                                //35 AV1
                                 bool hasAV1Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2923,7 +2960,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //29 HA1
+                                //36 HA1
                                 bool hasHA1Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2938,7 +2975,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //30 OC1
+                                //37 OC1
                                 bool hasOC1Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2953,7 +2990,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //31 SS1
+                                //38 SS1
                                 bool hasSS1Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2968,7 +3005,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //32 FA
+                                //39 FA
                                 bool hasFAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2983,7 +3020,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //33 CommutingExpat
+                                //40 CommutingExpat
                                 bool hasCommutingExpatData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -2998,7 +3035,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //34 ACC
+                                //41 ACC
                                 bool hasACCData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3013,7 +3050,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //35 Cold
+                                //42 Cold
                                 bool hasColdData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3028,7 +3065,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //36 COM
+                                //43 COM
                                 bool hasCOMData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3043,7 +3080,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //37 Emergency
+                                //44 Emergency
                                 bool hasEmergencyData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3058,7 +3095,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //38 INCOME_ACC
+                                //45 INCOME_ACC
                                 bool hasINCOME_ACCData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3073,7 +3110,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //39 PHA
+                                //46 PHA
                                 bool hasPHAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3088,7 +3125,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //40 SBA
+                                //47 SBA
                                 bool hasSBAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3103,7 +3140,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //41 SW
+                                //48 SW
                                 bool hasSWData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3118,7 +3155,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //42 INTAX
+                                //49 INTAX
                                 bool hasINTAXData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3133,7 +3170,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //43 OS
+                                //50 OS
                                 bool hasOSData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3148,7 +3185,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //44 Total Income
+                                //51 Total Income
                                 bool hasTTinData = false;
                                 foreach (cls_TRPaytran TRPaytran in list_paytran)
                                 {
@@ -3163,7 +3200,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //45 Tax 
+                                //52 Tax 
                                 bool hasTaxData = false;
                                 foreach (cls_TRPaytran TRPaytran in list_paytran)
                                 {
@@ -3179,7 +3216,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //46 SSO
+                                //53 SSO
                                 bool hasSSOData = false;
                                 foreach (cls_TRPaytran TRPaytran in list_paytran)
                                 {
@@ -3194,7 +3231,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //47 PF
+                                //54 PF
                                 bool hasPFData = false;
                                 foreach (cls_TRPaytran TRPaytran in list_paytran)
                                 {
@@ -3209,7 +3246,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //48 AB
+                                //55 AB
                                 bool hasAB01Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3224,7 +3261,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //49 CH
+                                //56 CH
                                 bool hasCHData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3239,7 +3276,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //50 HD
+                                //57 HD
                                 bool hasHDData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3254,7 +3291,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //51 HA2
+                                //58 HA2
                                 bool hasHA2Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3269,7 +3306,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //52 LV01
+                                //59 LV01
                                 bool hasLV01Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3284,7 +3321,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //53 LT01
+                                //60 LT01
                                 bool hasLT01Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3299,7 +3336,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //54 AV2
+                                //61 AV2
                                 bool hasAV2Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3314,7 +3351,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //55 SLF2
+                                //62 SLF2
                                 bool hasSLF2Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3329,7 +3366,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //56 SLF1
+                                //63 SLF1
                                 bool hasSLF1Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3344,7 +3381,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //57 OD2
+                                //64 OD2
                                 bool hasOD2Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3359,7 +3396,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //58 OC2
+                                //65 OC2
                                 bool hasOC2Data = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
@@ -3374,7 +3411,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //59 Total Deduct
+                                //66 Total Deduct
                                 bool hasTTdeData = false;
                                 foreach (cls_TRPaytran TRPaytran in list_paytran)
                                 {
@@ -3389,7 +3426,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //60-62 netpay
+                                //67-69 netpay
                                 bool hasNetCData = false;
                                 foreach (cls_TRPaytran TRPaytran in list_paytran)
                                 {
@@ -3406,6 +3443,36 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 {
                                     bkData += "0|";
                                     bkData += "0|";
+                                    bkData += "0|";
+                                }
+
+                                //70 SSO Com
+                                bool hasSSOComData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_ssocom + "|";
+                                        hasSSOComData = true;
+                                    }
+                                }
+                                if (!hasSSOComData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //71 PF Com
+                                bool hasPFComData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_pfcom + "|";
+                                        hasPFComData = true;
+                                    }
+                                }
+                                if (!hasPFComData)
+                                {
                                     bkData += "0|";
                                 }
 
@@ -3431,20 +3498,20 @@ namespace ClassLibrary_BPC.hrfocus.service
                         string[] data = str.Split(']');
 
                         DataTable dataTable = ds.Tables.Add();
-                        dataTable.Columns.AddRange(new DataColumn[63] { new DataColumn("Emp ID"), new DataColumn("First Name"), new DataColumn("Last Name"), new DataColumn("Level 01"), new DataColumn("Level 02"),
-                                                                        new DataColumn("Level 03"),new DataColumn("Position Code"),new DataColumn("Position Title"),new DataColumn("Salary"),new DataColumn("Position"),
-                                                                        new DataColumn("House"),new DataColumn("Commuting"),new DataColumn("EN"),new DataColumn("JPN"),new DataColumn("Meal"),new DataColumn("OT1"),
-                                                                        new DataColumn("OT1.5"),new DataColumn("OT2"),new DataColumn("OT3"),new DataColumn("Transportation"),new DataColumn("Up Country"),new DataColumn("Over Night"),
-                                                                        new DataColumn("Mobile"),new DataColumn("Other Income"),new DataColumn("Bonus"),new DataColumn("Annual Leave"),new DataColumn("Allowance CTAX"),
+                        dataTable.Columns.AddRange(new DataColumn[72] { new DataColumn("Emp ID"), new DataColumn("First Name"), new DataColumn("Last Name"),new DataColumn("Level 01 Code"), new DataColumn("Level 01"), new DataColumn("Level 02 Code"),new DataColumn("Level 02"),
+                                                                        new DataColumn("Level 03 Code"),new DataColumn("Level 03"),new DataColumn("Position Code"),new DataColumn("Position Title"),new DataColumn("Salary"),new DataColumn("Position"),
+                                                                        new DataColumn("House"),new DataColumn("Commuting"),new DataColumn("EN"),new DataColumn("JPN"),new DataColumn("Meal"),new DataColumn("OT1 Hrs"),new DataColumn("OT1"),
+                                                                        new DataColumn("OT1.5 Hrs"),new DataColumn("OT1.5"),new DataColumn("OT2 Hrs"),new DataColumn("OT2"),new DataColumn("OT3 Hrs"),new DataColumn("OT3"),new DataColumn("Transportation"),
+                                                                        new DataColumn("Up Country"),new DataColumn("Over Night"),new DataColumn("Mobile"),new DataColumn("Other Income"),new DataColumn("Bonus"),new DataColumn("Annual Leave"),new DataColumn("Allowance CTAX"),
                                                                         new DataColumn("Advance CTAX_income"),new DataColumn("House CTAX_income"),new DataColumn("Other CTAX_income"),new DataColumn("SSSF"),new DataColumn("Fix Allowance"),
                                                                         new DataColumn("Commuting Expat"),new DataColumn("Accommodation Allowance"),new DataColumn("Cold Allowance"),new DataColumn("Compensation Allowance"),
                                                                         new DataColumn("Emergency"),new DataColumn("Income brought forward for tax calculation"),new DataColumn("Phone Allowance"),new DataColumn("Standby"),
-                                                                        new DataColumn("Stagged Work"),new DataColumn("INTAX"),new DataColumn("Others"),new DataColumn("Total Income"),new DataColumn("Tax"),new DataColumn("SSO"),
-                                                                        new DataColumn("PF"),new DataColumn("Absent Deduct"),new DataColumn("Child Education_deduct"),new DataColumn("House DETAX"),
+                                                                        new DataColumn("Stagged Work"),new DataColumn("INTAX"),new DataColumn("Others"),new DataColumn("Total Income"),new DataColumn("Tax"),new DataColumn("SSO Emp"),
+                                                                        new DataColumn("PF Emp"),new DataColumn("Absent Deduct"),new DataColumn("Child Education_deduct"),new DataColumn("House DETAX"),
                                                                         new DataColumn("House CTAX_Deduct"),new DataColumn("Leave"),new DataColumn("Late"),new DataColumn("Advance CTAX_deduct"),
                                                                         new DataColumn("Court Payment"),new DataColumn("Student Loan"),new DataColumn("Other DETAX"),
                                                                         new DataColumn("Other CTAX_deduct"),new DataColumn("Totoal Deduct"),new DataColumn("Netpay Cash"),
-                                                                        new DataColumn("Netpay Bank"),new DataColumn("Netpay")
+                                                                        new DataColumn("Netpay Bank"),new DataColumn("Netpay"),new DataColumn("SSO Com"),new DataColumn("PF Com")
                                                                         , new DataColumn(" ")
                         });
 
