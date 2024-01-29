@@ -297,6 +297,37 @@ namespace HRFocusWCFSystem
         public string modified_date { get; set; }
     }
 
+    [DataContract]
+    public class InputTRPayOT
+    {
+        [DataMember]
+        public string company_code { get; set; }
+        [DataMember]
+        public string worker_code { get; set; }
+        [DataMember]
+        public string payot_date { get; set; }
+        [DataMember]
+        public int payot_ot1_min { get; set; }
+        [DataMember]
+        public int payot_ot15_min { get; set; }
+        [DataMember]
+        public int payot_ot2_min { get; set; }
+        [DataMember]
+        public int payot_ot3_min { get; set; }
+        [DataMember]
+        public double payot_ot1_amount { get; set; }
+        [DataMember]
+        public double payot_ot15_amount { get; set; }
+        [DataMember]
+        public double payot_ot2_amount { get; set; }
+        [DataMember]
+        public double payot_ot3_amount { get; set; }
+        [DataMember]
+        public string modified_by { get; set; }
+        [DataMember]
+        public string modified_date { get; set; }
+    }
+
     public class InputTRPaypolbonus
     {
         [DataMember]

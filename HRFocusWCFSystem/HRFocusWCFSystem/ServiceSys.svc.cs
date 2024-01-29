@@ -10532,6 +10532,72 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
+
+        public string doManageTRPayOT(InputTRPayOT input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctTRPayOT objPayOT = new cls_ctTRPayOT();
+                cls_TRPayOT model = new cls_TRPayOT();
+
+                model.company_code = input.company_code;
+                model.worker_code = input.worker_code;
+                model.payot_date = Convert.ToDateTime(input.payot_date);
+                model.payot_ot1_min = input.payot_ot1_min;
+                model.payot_ot15_min = input.payot_ot15_min;
+                model.payot_ot2_min = input.payot_ot2_min;
+                model.payot_ot3_min = input.payot_ot3_min;
+
+                model.payot_ot1_amount = input.payot_ot1_amount;
+                model.payot_ot15_amount = input.payot_ot15_amount;
+                model.payot_ot2_amount = input.payot_ot2_amount;
+                model.payot_ot3_amount = input.payot_ot3_amount;
+
+                model.modified_by = input.modified_by;
+                model.flag = model.flag;
+
+                bool blnResult = objPayOT.insert(model);
+
+                if (blnResult)
+                {
+                    cls_ctTRPayitem objItem = new cls_ctTRPayitem();
+                    cls_TRPayitem modelItem = new cls_TRPayitem();
+
+                    modelItem.company_code = input.company_code;
+                    modelItem.worker_code = input.worker_code;
+                    modelItem.item_code = objPayOT.getitemOT(input.company_code, input.worker_code);
+                    modelItem.payitem_date = Convert.ToDateTime(input.payot_date);
+                    modelItem.payitem_amount = input.payot_ot1_amount + input.payot_ot15_amount + input.payot_ot2_amount + input.payot_ot3_amount;
+                    modelItem.payitem_quantity = ((input.payot_ot1_min + input.payot_ot15_min + input.payot_ot2_min + input.payot_ot3_min)/60);
+                    modelItem.payitem_paytype = "B";
+                    modelItem.payitem_note = "";
+                    modelItem.modified_by = input.modified_by;
+                    modelItem.flag = model.flag;
+
+                    bool blnResultItem = objItem.insert(modelItem);
+
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objPayOT.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
         #endregion
 
         #region Batch policy bonus
