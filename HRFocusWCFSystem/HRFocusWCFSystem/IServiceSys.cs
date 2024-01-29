@@ -969,6 +969,10 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getTRPayOTList(string com, string emp, string paydate);
 
+        [OperationContract(Name = "doManageTRPayOT")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRPayOT(InputTRPayOT input);
+
         #endregion
 
         //-- ********************

@@ -322,5 +322,33 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return blnResult;
         }
+
+        public string getitemOT(string com ,string emp)
+        {
+            string strResult = "";
+
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT TOP 1 ISNULL(EMPATTITEM_OT, '') ");
+                obj_str.Append(" FROM HRM_TR_EMPATTITEM");
+                obj_str.Append(" WHERE COMPANY_CODE='" + com + "' ");
+                obj_str.Append(" AND WORKER_CODE='" + emp + "' ");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    strResult = Convert.ToString(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(PayOT.getpolicyOT)" + ex.ToString();
+            }
+
+            return strResult;
+        }
     }
 }
