@@ -3216,7 +3216,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //53 SSO
+                                //53 SSO Emp
                                 bool hasSSOData = false;
                                 foreach (cls_TRPaytran TRPaytran in list_paytran)
                                 {
@@ -3231,7 +3231,22 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //54 PF
+                                //70 SSO Com
+                                bool hasSSOComData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_ssocom + "|";
+                                        hasSSOComData = true;
+                                    }
+                                }
+                                if (!hasSSOComData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //54 PF Emp
                                 bool hasPFData = false;
                                 foreach (cls_TRPaytran TRPaytran in list_paytran)
                                 {
@@ -3242,6 +3257,21 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     }
                                 }
                                 if (!hasPFData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //71 PF Com
+                                bool hasPFComData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_pfcom + "|";
+                                        hasPFComData = true;
+                                    }
+                                }
+                                if (!hasPFComData)
                                 {
                                     bkData += "0|";
                                 }
@@ -3446,35 +3476,6 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //70 SSO Com
-                                bool hasSSOComData = false;
-                                foreach (cls_TRPaytran TRPaytran in list_paytran)
-                                {
-                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
-                                    {
-                                        bkData += TRPaytran.paytran_ssocom + "|";
-                                        hasSSOComData = true;
-                                    }
-                                }
-                                if (!hasSSOComData)
-                                {
-                                    bkData += "0|";
-                                }
-
-                                //71 PF Com
-                                bool hasPFComData = false;
-                                foreach (cls_TRPaytran TRPaytran in list_paytran)
-                                {
-                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
-                                    {
-                                        bkData += TRPaytran.paytran_pfcom + "|";
-                                        hasPFComData = true;
-                                    }
-                                }
-                                if (!hasPFComData)
-                                {
-                                    bkData += "0|";
-                                }
 
                                 tmpData += bkData + '\r' + '\n';
                             }
@@ -3506,12 +3507,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                                                         new DataColumn("Advance CTAX_income"),new DataColumn("House CTAX_income"),new DataColumn("Other CTAX_income"),new DataColumn("SSSF"),new DataColumn("Fix Allowance"),
                                                                         new DataColumn("Commuting Expat"),new DataColumn("Accommodation Allowance"),new DataColumn("Cold Allowance"),new DataColumn("Compensation Allowance"),
                                                                         new DataColumn("Emergency"),new DataColumn("Income brought forward for tax calculation"),new DataColumn("Phone Allowance"),new DataColumn("Standby"),
-                                                                        new DataColumn("Stagged Work"),new DataColumn("INTAX"),new DataColumn("Others"),new DataColumn("Total Income"),new DataColumn("Tax"),new DataColumn("SSO Emp"),
-                                                                        new DataColumn("PF Emp"),new DataColumn("Absent Deduct"),new DataColumn("Child Education_deduct"),new DataColumn("House DETAX"),
+                                                                        new DataColumn("Stagged Work"),new DataColumn("INTAX"),new DataColumn("Others"),new DataColumn("Total Income"),new DataColumn("Tax"),new DataColumn("SSO Emp"),new DataColumn("SSO Com"),
+                                                                        new DataColumn("PF Emp"),new DataColumn("PF Com"),new DataColumn("Absent Deduct"),new DataColumn("Child Education_deduct"),new DataColumn("House DETAX"),
                                                                         new DataColumn("House CTAX_Deduct"),new DataColumn("Leave"),new DataColumn("Late"),new DataColumn("Advance CTAX_deduct"),
                                                                         new DataColumn("Court Payment"),new DataColumn("Student Loan"),new DataColumn("Other DETAX"),
                                                                         new DataColumn("Other CTAX_deduct"),new DataColumn("Totoal Deduct"),new DataColumn("Netpay Cash"),
-                                                                        new DataColumn("Netpay Bank"),new DataColumn("Netpay"),new DataColumn("SSO Com"),new DataColumn("PF Com")
+                                                                        new DataColumn("Netpay Bank"),new DataColumn("Netpay")
                                                                         , new DataColumn(" ")
                         });
 
