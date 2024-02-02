@@ -550,6 +550,11 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod, string searchemp);
+        //
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getMTWorkerStatusList(string com, string id, string code, string searchemp, string fromdate, string todate);  
+        //
 
         [OperationContract(Name = "getMTWorkerFillterList")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
@@ -1702,6 +1707,7 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteTRTimeleave(InputTRTimeleaveself input);
         #endregion
+
 
         #region TRTimeot
         [OperationContract(Name = "timeot_list")]

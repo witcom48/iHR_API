@@ -5979,6 +5979,85 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
 
         }
+
+        //
+        public string getMTWorkerStatusList(string com, string id, string code, string searchemp, string fromdate, string todate)
+        {
+            JObject output = new JObject();
+
+            //DateTime datefrom = Convert.ToDateTime(fromdate);
+            //DateTime dateto = Convert.ToDateTime(todate);
+
+            cls_ctMTWorker objWorker = new cls_ctMTWorker();
+            List<cls_MTWorker> listWorker = objWorker.getDataStatusByFillter(com, id, code, "", fromdate, todate);
+
+            JArray array = new JArray();
+
+            if (listWorker.Count > 0)
+            {
+
+
+                int index = 1;
+
+                foreach (cls_MTWorker model in listWorker)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("company_code", model.company_code);
+                    json.Add("worker_id", model.worker_id);
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("worker_card", model.worker_card);
+                    json.Add("worker_initial", model.worker_initial);
+
+                    json.Add("worker_fname_th", model.worker_fname_th);
+                    json.Add("worker_lname_th", model.worker_lname_th);
+                    json.Add("worker_fname_en", model.worker_fname_en);
+                    json.Add("worker_lname_en", model.worker_lname_en);
+
+                    json.Add("worker_emptype", model.worker_emptype);
+                    json.Add("worker_gender", model.worker_gender);
+                    json.Add("worker_birthdate", model.worker_birthdate);
+                    json.Add("worker_hiredate", model.worker_hiredate);
+
+                    json.Add("worker_resigndate", model.worker_resigndate);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
+                    json.Add("worker_resignreason", model.worker_resignreason);
+
+                    json.Add("worker_probationdate", model.worker_probationdate);
+                    json.Add("worker_probationenddate", model.worker_probationenddate);
+
+                    json.Add("worker_taxmethod", model.worker_taxmethod);
+
+                    json.Add("hrs_perday", model.hrs_perday);
+
+                    json.Add("modified_by", model.modified_by);
+                    json.Add("modified_date", model.modified_date);
+
+                    json.Add("self_admin", model.self_admin);
+
+                    json.Add("flag", model.flag);
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        //
         #endregion
 
         #region TRComcard
@@ -14596,7 +14675,7 @@ namespace HRFocusWCFSystem
 
         }
         #endregion
-
+        //29/01/24
         #region TRTimeot
         public string getTRTimeotList(string language, string com, string emp, string fromdate, string todate)
         {
