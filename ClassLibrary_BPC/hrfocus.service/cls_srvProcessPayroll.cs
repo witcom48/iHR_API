@@ -2661,7 +2661,9 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 bool hasSAData = false;
                                 foreach (cls_TRPayitem TRPayitem in list_payitem)
                                 {
-                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && (TRPayitem.item_code.Equals("SA1") || TRPayitem.item_code.Equals("SA2") || TRPayitem.item_code.Equals("SA03")))
+                                    //if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && (TRPayitem.item_code.Equals("SA1") || TRPayitem.item_code.Equals("SA2") || TRPayitem.item_code.Equals("SA03")))
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.StartsWith("SA"))
+                                    
                                     {
                                         // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
                                         bkData += TRPayitem.payitem_amount + "|";
@@ -3155,20 +3157,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
-                                //49 INTAX
-                                bool hasINTAXData = false;
-                                foreach (cls_TRPayitem TRPayitem in list_payitem)
-                                {
-                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("INTAX"))
-                                    {
-                                        bkData += TRPayitem.payitem_amount + "|";
-                                        hasINTAXData = true;
-                                    }
-                                }
-                                if (!hasINTAXData)
-                                {
-                                    bkData += "0|";
-                                }
+                                
 
                                 //50 OS
                                 bool hasOSData = false;
@@ -3212,6 +3201,21 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     }
                                 }
                                 if (!hasTaxData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //49 INTAX
+                                bool hasINTAXData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("INTAX"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasINTAXData = true;
+                                    }
+                                }
+                                if (!hasINTAXData)
                                 {
                                     bkData += "0|";
                                 }
@@ -3507,7 +3511,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                                                         new DataColumn("Advance CTAX_income"),new DataColumn("House CTAX_income"),new DataColumn("Other CTAX_income"),new DataColumn("SSSF"),new DataColumn("Fix Allowance"),
                                                                         new DataColumn("Commuting Expat"),new DataColumn("Accommodation Allowance"),new DataColumn("Cold Allowance"),new DataColumn("Compensation Allowance"),
                                                                         new DataColumn("Emergency"),new DataColumn("Income brought forward for tax calculation"),new DataColumn("Phone Allowance"),new DataColumn("Standby"),
-                                                                        new DataColumn("Stagged Work"),new DataColumn("INTAX"),new DataColumn("Others"),new DataColumn("Total Income"),new DataColumn("Tax"),new DataColumn("SSO Emp"),new DataColumn("SSO Com"),
+                                                                        new DataColumn("Stagged Work"),new DataColumn("Others"),new DataColumn("Total Income"),new DataColumn("Tax"),new DataColumn("INTAX"),new DataColumn("SSO Emp"),new DataColumn("SSO Com"),
                                                                         new DataColumn("PF Emp"),new DataColumn("PF Com"),new DataColumn("Absent Deduct"),new DataColumn("Child Education_deduct"),new DataColumn("House DETAX"),
                                                                         new DataColumn("House CTAX_Deduct"),new DataColumn("Leave"),new DataColumn("Late"),new DataColumn("Advance CTAX_deduct"),
                                                                         new DataColumn("Court Payment"),new DataColumn("Student Loan"),new DataColumn("Other DETAX"),
