@@ -3174,13 +3174,24 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     bkData += "0|";
                                 }
 
+                                double intax = 0;
+                                bool hasINTAXData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("INTAX"))
+                                    {
+                                        intax= TRPayitem.payitem_amount;
+                                        hasINTAXData = true;
+                                    }
+                                }
+
                                 //51 Total Income
                                 bool hasTTinData = false;
                                 foreach (cls_TRPaytran TRPaytran in list_paytran)
                                 {
                                     if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
                                     {
-                                        bkData += TRPaytran.paytran_income_total + "|";
+                                        bkData += TRPaytran.paytran_income_total - intax + "|";
                                         hasTTinData = true;
                                     }
                                 }
@@ -3206,16 +3217,20 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 }
 
                                 //49 INTAX
-                                bool hasINTAXData = false;
-                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                //bool hasINTAXData = false;
+                                //foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                //{
+                                //    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("INTAX"))
+                                //    {
+                                //        bkData += TRPayitem.payitem_amount + "|";
+                                //        hasINTAXData = true;
+                                //    }
+                                //}
+                                if (hasINTAXData)
                                 {
-                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("INTAX"))
-                                    {
-                                        bkData += TRPayitem.payitem_amount + "|";
-                                        hasINTAXData = true;
-                                    }
+                                    bkData += intax + "|";
                                 }
-                                if (!hasINTAXData)
+                                else
                                 {
                                     bkData += "0|";
                                 }
