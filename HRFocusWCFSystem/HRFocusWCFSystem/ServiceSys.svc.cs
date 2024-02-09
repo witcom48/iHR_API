@@ -5689,23 +5689,9 @@ namespace HRFocusWCFSystem
 
             DateTime date_fill = Convert.ToDateTime(input.date_fill);
             
-            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(input.company_code
-                , input.worker_id
-                , input.worker_code
-                , input.worker_fname_th
-                , input.worker_lname_th
-                , input.worker_fname_en
-                , input.worker_lname_en
-                , input.worker_emptype
-                , input.level_code
-                , input.dep_code
-                , input.position_code
-                , input.group_code
-                , input.include_resign
-
-                , input.location_code
-                , date_fill
-                , input.searchemp
+            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(input.company_code, input.worker_id, input.worker_code, input.worker_fname_th
+                , input.worker_lname_th, input.worker_emptype, input.worker_fname_en, input.worker_lname_en
+                , input.level_code, input.dep_code, input.position_code, input.group_code, input.include_resign, input.location_code, date_fill, input.searchemp
                 );
 
             JArray array = new JArray();
@@ -5981,7 +5967,7 @@ namespace HRFocusWCFSystem
         }
 
         //
-        public string getMTWorkerStatusList(string com, string id, string code, string searchemp, string fromdate, string todate)
+        public string getMTWorkerStatusList(string com, string id, string code, string searchemp, string emptype, string fromdate, string todate)
         {
             JObject output = new JObject();
 
@@ -5989,7 +5975,7 @@ namespace HRFocusWCFSystem
             //DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctMTWorker objWorker = new cls_ctMTWorker();
-            List<cls_MTWorker> listWorker = objWorker.getDataStatusByFillter(com, id, code, "", fromdate, todate);
+            List<cls_MTWorker> listWorker = objWorker.getDataStatusByFillter(com, id, code, "", emptype, fromdate, todate);
 
             JArray array = new JArray();
 
