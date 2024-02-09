@@ -36,20 +36,27 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("SELECT ");
 
-                obj_str.Append("COUNT(WORKER_CODE)as WORKER_CODE");
+                obj_str.Append("COUNT(HRM_TR_EMPPOSITION.WORKER_CODE)as WORKER_CODE");
                 obj_str.Append(", EMPPOSITION_POSITION");
                 obj_str.Append(", HRM_MT_POSITION.POSITION_NAME_TH");
                 obj_str.Append(", HRM_MT_POSITION.POSITION_NAME_EN");
+
+                obj_str.Append(", HRM_MT_WORKER.WORKER_RESIGNSTATUS");
+
                 obj_str.Append(" FROM HRM_TR_EMPPOSITION");
                 obj_str.Append(" INNER JOIN HRM_MT_POSITION ON HRM_TR_EMPPOSITION.COMPANY_CODE=HRM_MT_POSITION.COMPANY_CODE");
                 obj_str.Append(" AND HRM_TR_EMPPOSITION.EMPPOSITION_POSITION=HRM_MT_POSITION.POSITION_CODE");
+
+
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_TR_EMPPOSITION.COMPANY_CODE=HRM_MT_WORKER.COMPANY_CODE");
+                obj_str.Append(" AND HRM_TR_EMPPOSITION.WORKER_CODE=HRM_MT_WORKER.WORKER_CODE");
 
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append(" GROUP BY EMPPOSITION_POSITION, HRM_MT_POSITION.POSITION_NAME_TH, HRM_MT_POSITION.POSITION_NAME_EN");
+                obj_str.Append(" GROUP BY EMPPOSITION_POSITION, HRM_MT_POSITION.POSITION_NAME_TH, HRM_MT_POSITION.POSITION_NAME_EN, HRM_MT_WORKER.WORKER_RESIGNSTATUS");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -62,7 +69,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.empposition_position = dr["EMPPOSITION_POSITION"].ToString();
                     model.position_name_en = dr["POSITION_NAME_EN"].ToString();
                     model.position_name_th = dr["POSITION_NAME_TH"].ToString();
-                    
+                    model.worker_resignstatus = dr["WORKER_RESIGNSTATUS"].ToString();
+
 
                     list_model.Add(model);
                 }
@@ -76,11 +84,20 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_TREmpPositionDash> getDataByFillter(string fromdate, string todate)
+        public List<cls_TREmpPositionDash> getDataByFillter(string com, string fromdate, string todate, string status)
         {
             string strCondition = "";
 
+            if (!com.Equals(""))
+
+                strCondition += " AND HRM_MT_WORKER.COMPANY_CODE='" + com + "'";
+
             strCondition += " AND (EMPPOSITION_DATE BETWEEN '" + fromdate + "' AND '" + todate+ "' )";
+
+            if (!status.Equals(""))
+
+                strCondition += " AND HRM_MT_WORKER.WORKER_RESIGNSTATUS='" + status + "'";
+
 
             return this.getData(strCondition);
         }

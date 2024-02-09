@@ -5607,12 +5607,12 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region MTWorker
-        public string getMTWorkerList(string com, string id, string code, string fname, string lname, string level, string depcod)
+        public string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod,string searchemp)
         {
             JObject output = new JObject();
 
             cls_ctMTWorker objWorker = new cls_ctMTWorker();
-            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(com, id, code, fname, lname, "", "", "", level, depcod, "", "", false, "", DateTime.Now.Date);
+            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(com, id, code, fname, lname, emptype, "", "", level, depcod, "", "", false, "", DateTime.Now.Date, "");
 
             JArray array = new JArray();
 
@@ -5705,6 +5705,7 @@ namespace HRFocusWCFSystem
 
                 , input.location_code
                 , date_fill
+                , input.searchemp
                 );
 
             JArray array = new JArray();
@@ -5978,6 +5979,85 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
 
         }
+
+        //
+        public string getMTWorkerStatusList(string com, string id, string code, string searchemp, string fromdate, string todate)
+        {
+            JObject output = new JObject();
+
+            //DateTime datefrom = Convert.ToDateTime(fromdate);
+            //DateTime dateto = Convert.ToDateTime(todate);
+
+            cls_ctMTWorker objWorker = new cls_ctMTWorker();
+            List<cls_MTWorker> listWorker = objWorker.getDataStatusByFillter(com, id, code, "", fromdate, todate);
+
+            JArray array = new JArray();
+
+            if (listWorker.Count > 0)
+            {
+
+
+                int index = 1;
+
+                foreach (cls_MTWorker model in listWorker)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("company_code", model.company_code);
+                    json.Add("worker_id", model.worker_id);
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("worker_card", model.worker_card);
+                    json.Add("worker_initial", model.worker_initial);
+
+                    json.Add("worker_fname_th", model.worker_fname_th);
+                    json.Add("worker_lname_th", model.worker_lname_th);
+                    json.Add("worker_fname_en", model.worker_fname_en);
+                    json.Add("worker_lname_en", model.worker_lname_en);
+
+                    json.Add("worker_emptype", model.worker_emptype);
+                    json.Add("worker_gender", model.worker_gender);
+                    json.Add("worker_birthdate", model.worker_birthdate);
+                    json.Add("worker_hiredate", model.worker_hiredate);
+
+                    json.Add("worker_resigndate", model.worker_resigndate);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
+                    json.Add("worker_resignreason", model.worker_resignreason);
+
+                    json.Add("worker_probationdate", model.worker_probationdate);
+                    json.Add("worker_probationenddate", model.worker_probationenddate);
+
+                    json.Add("worker_taxmethod", model.worker_taxmethod);
+
+                    json.Add("hrs_perday", model.hrs_perday);
+
+                    json.Add("modified_by", model.modified_by);
+                    json.Add("modified_date", model.modified_date);
+
+                    json.Add("self_admin", model.self_admin);
+
+                    json.Add("flag", model.flag);
+
+                    json.Add("index", index);
+
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        //
         #endregion
 
         #region TRComcard
@@ -14613,15 +14693,32 @@ namespace HRFocusWCFSystem
             try
             {
                 cls_ctTRTimeleave objTRTime = new cls_ctTRTimeleave();
+                cls_ctTRTimeleaveself objTRTimeself = new cls_ctTRTimeleaveself();
 
                 cls_TRTimeleave model = objTRTime.getDataByID(input.timeleave_id.ToString());
-                
+                cls_TRTimeleaveself modelself = objTRTimeself.getDataByDOC(model.timeleave_doc);
                 bool blnResult = objTRTime.delete(input.timeleave_id.ToString());
+                bool blnResultself = objTRTimeself.delete(model.timeleave_doc);
 
                 if (blnResult)
                 {
                     cls_srvProcessTime srv_time = new cls_srvProcessTime();
                     srv_time.doCalleaveacc(model.timeleave_fromdate.Year.ToString(), model.company_code, model.worker_code, model.modified_by);
+                    if (modelself != null)
+                    {
+                        cls_ctMTJobtable MTJob = new cls_ctMTJobtable();
+                        MTJob.delete(modelself.company_code, 0, modelself.timeleave_id.ToString(), "LEA");
+                        cls_ctMTReqdocument MTReqdoc = new cls_ctMTReqdocument();
+                        List<cls_MTReqdocument> filelist = MTReqdoc.getDataByFillter(modelself.company_code, 0, modelself.timeleave_id.ToString(), "LEA");
+                        if (filelist.Count > 0)
+                        {
+                            foreach (cls_MTReqdocument filedata in filelist)
+                            {
+                                File.Delete(filedata.document_path);
+                            }
+                        }
+                        MTReqdoc.delete(modelself.company_code, 0, modelself.timeleave_id.ToString(), "LEA");
+                    }
 
                     output["result"] = "1";
                     output["result_text"] = "0";
@@ -14644,7 +14741,7 @@ namespace HRFocusWCFSystem
 
         }
         #endregion
-
+        //29/01/24
         #region TRTimeot
         public string getTRTimeotList(string language, string com, string emp, string fromdate, string todate)
         {
@@ -16232,7 +16329,7 @@ namespace HRFocusWCFSystem
             JObject output = new JObject();
 
             cls_ctTADashboard objDash = new cls_ctTADashboard();
-            List<cls_TADashboard> listDash = objDash.getDataLeaveByFillter(com);
+            List<cls_TADashboard> listDash = objDash.getDataLeaveByFillter(com,"0");
 
             JArray array = new JArray();
 
@@ -16276,7 +16373,7 @@ namespace HRFocusWCFSystem
             
 
             cls_ctTADashboard objDash = new cls_ctTADashboard();
-            List<cls_TADashboard> listDash = objDash.getDataLateByFillter(com);
+            List<cls_TADashboard> listDash = objDash.getDataLateByFillter(com,"0");
 
             JArray array = new JArray();
 
@@ -16316,7 +16413,7 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Emp
-        public string getEmpPositionDash(string fromdate, string todate)
+        public string getEmpPositionDash(string com, string fromdate, string todate)
         {
             JObject output = new JObject();
 
@@ -16325,7 +16422,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctMTEmpPositionDash objPoDash = new cls_ctMTEmpPositionDash();
-            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(fromdate, todate);
+            List<cls_TREmpPositionDash> listShift = objPoDash.getDataByFillter(com,fromdate, todate,"0");
 
             JArray array = new JArray();
 
@@ -16340,7 +16437,7 @@ namespace HRFocusWCFSystem
                     json.Add("worker_code", model.worker_code);
                     json.Add("position_name_en", model.position_name_en);
                     json.Add("position_name_th", model.position_name_th);
-                    json.Add("position_name_en", model.position_name_en);
+                    json.Add("empposition_position", model.empposition_position);
 
                     json.Add("index", index);
 
@@ -16363,12 +16460,12 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
         }
 
-        public string getDashGenderList(string com)
+        public string getDashGenderList(string com, string fromdate, string todate)
         {
             JObject output = new JObject();
 
             cls_ctMTDashboard objDash = new cls_ctMTDashboard();
-            List<cls_MTDashboard> listDash = objDash.getDataGenderByFillter(com);
+            List<cls_MTDashboard> listDash = objDash.getDataGenderByFillter(com, fromdate, todate, "0");
 
             JArray array = new JArray();
 
@@ -16383,6 +16480,7 @@ namespace HRFocusWCFSystem
                     json.Add("worker_code", model.worker_code);
                     json.Add("worker_gender_en", model.worker_gender_en);
                     json.Add("worker_gender_th", model.worker_gender_th);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
 
                     json.Add("index", index);
@@ -16410,7 +16508,7 @@ namespace HRFocusWCFSystem
             JObject output = new JObject();
 
             cls_ctMTDashboard objDash = new cls_ctMTDashboard();
-            List<cls_MTDashboard > listDash = objDash.getDataEmpDepByFillter(com);
+            List<cls_MTDashboard > listDash = objDash.getDataEmpDepByFillter(com,"0");
 
             JArray array = new JArray();
 
@@ -16425,6 +16523,7 @@ namespace HRFocusWCFSystem
                     json.Add("worker_code", model.worker_code);
                     json.Add("dep_name_th", model.dep_name_th);
                     json.Add("dep_name_en", model.dep_name_en);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
 
                     json.Add("index", index);
@@ -16452,7 +16551,7 @@ namespace HRFocusWCFSystem
             JObject output = new JObject();
 
             cls_ctMTDashboard objDash = new cls_ctMTDashboard();
-            List<cls_MTDashboard> listDash = objDash.getDataEmpAgeByFillter(com);
+            List<cls_MTDashboard> listDash = objDash.getDataEmpAgeByFillter(com,"0");
 
             JArray array = new JArray();
 
@@ -16466,6 +16565,7 @@ namespace HRFocusWCFSystem
 
                     json.Add("worker_code", model.worker_code);
                     json.Add("age", model.age);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
                     json.Add("index", index);
 
@@ -16538,7 +16638,7 @@ namespace HRFocusWCFSystem
             JObject output = new JObject();
 
             cls_ctTRDashboard objDash = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDash = objDash.getDataItemINByFillter(com);
+            List<cls_TRDashboard> listDash = objDash.getDataItemINByFillter(com,"0");
 
             JArray array = new JArray();
 
@@ -16554,6 +16654,7 @@ namespace HRFocusWCFSystem
                     json.Add("ITEM_NAME_EN", model.item_name_en);
                     json.Add("ITEM_NAME_TH", model.item_name_th);
                     json.Add("ITEM_CODE", model.item_code);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
 
                     json.Add("index", index);
@@ -16584,7 +16685,7 @@ namespace HRFocusWCFSystem
             
 
             cls_ctTRDashboard objDash = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDash = objDash.getDataItemDEByFillte(com);
+            List<cls_TRDashboard> listDash = objDash.getDataItemDEByFillte(com,"0");
 
             JArray array = new JArray();
 
@@ -16600,6 +16701,7 @@ namespace HRFocusWCFSystem
                     json.Add("item_name_th", model.item_name_th);
                     json.Add("item_name_en", model.item_name_en);
                     json.Add("item_code", model.item_code);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
 
                     json.Add("index", index);
@@ -16622,7 +16724,7 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
-
+        //จำนวนการทำโอทีตามสังกัด
         public string getDashItemOTDepList(string fromdate, string todate)
         {
             JObject output = new JObject();
@@ -16631,7 +16733,7 @@ namespace HRFocusWCFSystem
             DateTime dateto = Convert.ToDateTime(todate);
 
             cls_ctTRDashboard objDash = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDash = objDash.getDataOTDepByFillter(datefrom, dateto);
+            List<cls_TRDashboard> listDash = objDash.getDataOTDepByFillter(datefrom, dateto,"0");
 
             JArray array = new JArray();
 
@@ -16646,9 +16748,10 @@ namespace HRFocusWCFSystem
                     //json.Add("before_min", model.before_min);
                     json.Add("dep_name_th", model.dep_name_th);
                     json.Add("dep_name_en", model.dep_name_en);
-
-
-                    json.Add("index", index);
+                    json.Add("overtime_min", model.overtime_min);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
+                    
+                    json.Add("index", index); 
 
                     index++;
 
@@ -16668,16 +16771,19 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
-
+        //จำนวนการทำโอที
         public string getDashItemOTPoList(string fromdate, string todate)
         {
             JObject output = new JObject();
 
-            DateTime datefrom = Convert.ToDateTime(fromdate);
-            DateTime dateto = Convert.ToDateTime(todate);
-
+            //DateTime datefrom = Convert.ToDateTime(fromdate);
+            //DateTime dateto = Convert.ToDateTime(todate);
+            //DateTime datefrom = Convert.ToDateTime(fromdate);
+            //DateTime dateto = Convert.ToDateTime(todate);
             cls_ctTRDashboard objDashh = new cls_ctTRDashboard();
-            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom.ToString("yyyy-MM-dd"), dateto.ToString("yyyy-MM-dd"));
+            List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter( fromdate, todate,"0");
+
+            //List<cls_TRDashboard> listDashh = objDashh.getDataOTPoByFillter(datefrom.ToString("yyyy-MM-dd"), dateto.ToString("yyyy-MM-dd"));
 
             JArray array = new JArray();
 
@@ -16694,6 +16800,8 @@ namespace HRFocusWCFSystem
                     json.Add("empposition_position", model.empposition_position);
                     json.Add("position_name_th", model.position_name_th);
                     json.Add("position_name_en", model.position_name_en);
+                    json.Add("overtime_min", model.overtime_min);
+                    json.Add("worker_resignstatus", model.worker_resignstatus);
 
 
                     json.Add("index", index);
@@ -18360,6 +18468,35 @@ namespace HRFocusWCFSystem
                         {
                             json.Add("worker_data", arrayTRAccount);
                         }
+                        cls_ctTRAccountapprove objTRAccountapp = new cls_ctTRAccountapprove();
+                        List<cls_TRAccountapprove> listTRAccountapp = objTRAccountapp.getDataByFillter(model.company_code, model.account_user, "", "","");
+                        JArray arrayTRAccounappt = new JArray();
+                        if (listTRAccountapp.Count > 0)
+                        {
+                            int indexTRAccountapp = 1;
+
+                            foreach (cls_TRAccountapprove modelTRAccountapp in listTRAccountapp)
+                            {
+                                JObject jsonTRapp = new JObject();
+                                jsonTRapp.Add("company_code", modelTRAccountapp.company_code);
+                                jsonTRapp.Add("account_user", modelTRAccountapp.account_user);
+                                jsonTRapp.Add("worker_code", modelTRAccountapp.worker_code);
+                                jsonTRapp.Add("step", modelTRAccountapp.step);
+                                jsonTRapp.Add("job_type", modelTRAccountapp.job_type);
+
+                                jsonTRapp.Add("index", indexTRAccountapp);
+
+
+                                indexTRAccountapp++;
+
+                                arrayTRAccounappt.Add(jsonTRapp);
+                            }
+                            json.Add("approve_data", arrayTRAccounappt);
+                        }
+                        else
+                        {
+                            json.Add("approve_data", arrayTRAccounappt);
+                        }
 
                         json.Add("index", index);
 
@@ -18424,6 +18561,7 @@ namespace HRFocusWCFSystem
                     {
                         cls_ctTRAccountpos objTRAccoutpos = new cls_ctTRAccountpos();
                         cls_ctTRAccountdep objTRAccoutdep = new cls_ctTRAccountdep();
+                        cls_ctTRAccountapprove objTRAccoutapp = new cls_ctTRAccountapprove();
                         cls_ctTRAccount objTRAccout = new cls_ctTRAccount();
                         //objTRLineapp.delete(input.company_code, input.workflow_type,input.workflow_code,"");
                         if (input.positonn_data.Count > 0)
@@ -18449,6 +18587,14 @@ namespace HRFocusWCFSystem
                         else
                         {
                             objTRAccout.delete(input.company_code, input.account_user, input.account_type, "");
+                        }
+                        if (input.approve_data.Count > 0)
+                        {
+                            objTRAccoutapp.insert(input.approve_data);
+                        }
+                        else
+                        {
+                            objTRAccoutapp.delete(input.company_code, input.account_user,"","","");
                         }
 
                     }
@@ -18498,9 +18644,11 @@ namespace HRFocusWCFSystem
                         cls_ctTRAccountpos objTRpos = new cls_ctTRAccountpos();
                         cls_ctTRAccountdep objTRdep = new cls_ctTRAccountdep();
                         cls_ctTRAccount objTRAcount = new cls_ctTRAccount();
+                        cls_ctTRAccountapprove objTRAcountapp = new cls_ctTRAccountapprove();
                         objTRpos.delete(input.company_code, input.account_user, input.account_type);
                         objTRdep.delete(input.company_code, input.account_user, input.account_type, "", "");
                         objTRAcount.delete(input.company_code, input.account_user, input.account_type, "");
+                        objTRAcountapp.delete(input.company_code, input.account_user,"","","");
                     }
                     catch (Exception ex)
                     {
@@ -19600,6 +19748,7 @@ namespace HRFocusWCFSystem
                                 timedata.worker_code = data.worker_code;
                                 timedata.timeot_doc = data.timeot_doc;
                                 timedata.timeot_workdate = data.timeot_workdate;
+                                timedata.timeot_worktodate = data.timeot_workdate;
                                 timedata.timeot_beforemin = data.timeot_beforemin;
                                 timedata.timeot_normalmin = data.timeot_normalmin;
                                 timedata.timeot_break = data.timeot_breakmin;

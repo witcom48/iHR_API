@@ -37,7 +37,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("SELECT");
 
-                obj_str.Append(" COUNT(WORKER_CODE)as WORKER_CODE");
+                obj_str.Append(" COUNT(HRM_TR_PAYITEM.WORKER_CODE)as WORKER_CODE");
                 obj_str.Append(", SUM(HRM_TR_PAYITEM.PAYITEM_AMOUNT) as AMOUNT");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_TH");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_EN");
@@ -45,13 +45,19 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" FROM HRM_TR_PAYITEM");
                 obj_str.Append(" INNER JOIN HRM_MT_ITEM on HRM_TR_PAYITEM.ITEM_CODE = HRM_MT_ITEM.ITEM_CODE");
 
+
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_TR_PAYITEM.COMPANY_CODE=HRM_MT_WORKER.COMPANY_CODE");
+                obj_str.Append(" AND HRM_TR_PAYITEM.WORKER_CODE=HRM_MT_WORKER.WORKER_CODE");
+
+
+
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
                 obj_str.Append(" AND HRM_MT_ITEM.ITEM_TYPE = 'IN'");
-                obj_str.Append(" GROUP BY HRM_MT_ITEM.ITEM_NAME_TH,HRM_MT_ITEM.ITEM_NAME_EN,HRM_TR_PAYITEM.ITEM_CODE");
+                obj_str.Append(" GROUP BY HRM_MT_ITEM.ITEM_NAME_TH,HRM_MT_ITEM.ITEM_NAME_EN,HRM_TR_PAYITEM.ITEM_CODE, HRM_MT_WORKER.WORKER_RESIGNSTATUS");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -64,7 +70,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.item_name_en = dr["ITEM_NAME_EN"].ToString();
                     model.item_name_th = dr["ITEM_NAME_TH"].ToString();
                     model.item_code = dr["ITEM_CODE"].ToString();
+                    //model.worker_resignstatus = dr["WORKER_RESIGNSTATUS"].ToString();
 
+ 
                     list_model.Add(model);
                 }
 
@@ -77,7 +85,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
         //test
-        public List<cls_TRDashboard> getDataItemINByFillter(string com)
+        public List<cls_TRDashboard> getDataItemINByFillter(string com, string status)
         {
 
             {
@@ -87,6 +95,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 if (!com.Equals(""))
                     strCondition += " AND HRM_TR_PAYITEM.COMPANY_CODE ='" + com + "'";
+                if (!status.Equals(""))
+
+                    strCondition += " AND WORKER_RESIGNSTATUS='" + status + "'";
 
                 return this.getDataItemIN(strCondition);
             }
@@ -122,14 +133,17 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
                 obj_str.Append("SELECT");
-                obj_str.Append(" COUNT(WORKER_CODE)as WORKER_CODE");
+                obj_str.Append(" COUNT(HRM_TR_PAYITEM.WORKER_CODE)as WORKER_CODE");
 
                 //obj_str.Append(", SUM(HRM_TR_PAYITEM.PAYITEM_AMOUNT) as AMOUNT");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_TH");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_EN");
                 obj_str.Append(", HRM_TR_PAYITEM.ITEM_CODE");
                 obj_str.Append(" FROM HRM_TR_PAYITEM");
+
                 obj_str.Append(" INNER JOIN HRM_MT_ITEM on HRM_TR_PAYITEM.ITEM_CODE = HRM_MT_ITEM.ITEM_CODE");
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_TR_PAYITEM.COMPANY_CODE=HRM_MT_WORKER.COMPANY_CODE");
+                obj_str.Append(" AND HRM_TR_PAYITEM.WORKER_CODE=HRM_MT_WORKER.WORKER_CODE");
 
                 obj_str.Append(" WHERE 1=1");
 
@@ -137,7 +151,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     obj_str.Append(" " + condition);
 
                 obj_str.Append(" AND HRM_MT_ITEM.ITEM_TYPE = 'DE'");
-                obj_str.Append(" GROUP BY HRM_MT_ITEM.ITEM_NAME_TH,HRM_MT_ITEM.ITEM_NAME_EN,HRM_TR_PAYITEM.ITEM_CODE ");
+                obj_str.Append(" GROUP BY HRM_MT_ITEM.ITEM_NAME_TH,HRM_MT_ITEM.ITEM_NAME_EN,HRM_TR_PAYITEM.ITEM_CODE, HRM_MT_WORKER.WORKER_RESIGNSTATUS");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -149,6 +163,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.item_name_en = dr["ITEM_NAME_EN"].ToString();
                     model.item_name_th = dr["ITEM_NAME_TH"].ToString();
                     model.item_code = dr["ITEM_CODE"].ToString();
+                    //model.worker_resignstatus = dr["WORKER_RESIGNSTATUS"].ToString();
 
                     list_model.Add(model);
                 }
@@ -162,8 +177,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-       
-        public List<cls_TRDashboard> getDataItemDEByFillte(string com)
+
+        public List<cls_TRDashboard> getDataItemDEByFillte(string com, string status)
         {
             string strCondition = "";
 
@@ -171,10 +186,12 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             if (!com.Equals(""))
                 strCondition += " AND HRM_TR_PAYITEM.COMPANY_CODE ='" + com + "'";
+            if (!status.Equals(""))
 
+                strCondition += " AND HRM_MT_WORKER.WORKER_RESIGNSTATUS='" + status + "'";
             return this.getDataItemDE(strCondition);
         }
-
+        //จำนวนการทำโอทีตามสังกัด
         private List<cls_TRDashboard> getDataOTDep(string condition)
         {
             List<cls_TRDashboard> list_model = new List<cls_TRDashboard>();
@@ -184,23 +201,34 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
                 obj_str.Append("SELECT");
-                obj_str.Append(" COUNT(HRM_TR_TIMECARD.WORKER_CODE) as WORKER_CODE");
+                obj_str.Append(" COUNT(HRM_TR_TIMECARD.WORKER_CODE) AS WORKER_CODE");
 
                 obj_str.Append(", SUM(HRM_TR_TIMECARD.TIMECARD_BEFORE_MIN) as BEFORE_MIN");
-                obj_str.Append(", SUM(CASE WHEN (HRM_TR_TIMECARD.TIMECARD_DAYTYPE) = 'O' THEN HRM_TR_TIMECARD.TIMECARD_WORK1_MIN else null END) AS NORMAL_MIN");
-                obj_str.Append(", SUM(HRM_TR_TIMECARD.TIMECARD_AFTER_MIN) as AFTER_MIN");
+                //obj_str.Append(", SUM(CASE WHEN (HRM_TR_TIMECARD.TIMECARD_DAYTYPE) = 'O' THEN HRM_TR_TIMECARD.TIMECARD_WORK1_MIN else null END) AS NORMAL_MINOT");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_TIMECARD.TIMECARD_DAYTYPE = 'O' THEN HRM_TR_TIMECARD.TIMECARD_WORK1_MIN ELSE 0 END) AS OVERTIME_MIN");
+
+                obj_str.Append(", SUM(HRM_TR_TIMECARD.TIMECARD_AFTER_MIN) AS AFTER_MIN");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_EN");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_TH");
+
+  
+                obj_str.Append(", HRM_MT_WORKER.WORKER_RESIGNSTATUS");
+
                 obj_str.Append(" from HRM_TR_TIMECARD");
                 obj_str.Append(" INNER JOIN HRM_TR_EMPDEP on HRM_TR_TIMECARD.WORKER_CODE = HRM_TR_EMPDEP.WORKER_CODE");
                 obj_str.Append(" INNER JOIN HRM_MT_DEP on HRM_TR_EMPDEP.EMPDEP_LEVEL01 = HRM_MT_DEP.DEP_CODE");
+
+
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_TR_TIMECARD.COMPANY_CODE=HRM_MT_WORKER.COMPANY_CODE");
+                obj_str.Append(" AND HRM_TR_TIMECARD.WORKER_CODE=HRM_MT_WORKER.WORKER_CODE");
+
 
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append("GROUP BY HRM_MT_DEP.DEP_NAME_EN,HRM_MT_DEP.DEP_NAME_TH ");
+                obj_str.Append("GROUP BY HRM_MT_DEP.DEP_NAME_EN,HRM_MT_DEP.DEP_NAME_TH , HRM_MT_WORKER.WORKER_RESIGNSTATUS");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -211,6 +239,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                    
                     model.dep_name_en = dr["DEP_NAME_EN"].ToString();
                     model.dep_name_th = dr["DEP_NAME_TH"].ToString();
+                    model.worker_resignstatus = dr["WORKER_RESIGNSTATUS"].ToString();
+
+                    model.overtime_min = dr["OVERTIME_MIN"].ToString();
 
                     list_model.Add(model);
                 }
@@ -223,14 +254,16 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return list_model;
         }
-        public List<cls_TRDashboard> getDataOTDepByFillter(DateTime fromdate, DateTime todate)
+        public List<cls_TRDashboard> getDataOTDepByFillter(DateTime fromdate, DateTime todate, string status)
         {
             string strCondition = "";
 
             //strCondition += " AND (EMPPOSITION_DATE BETWEEN '" + fromdate.ToString(this.FormatDateDB) + "' AND '" + todate.ToString(this.FormatDateDB) + "' )";
             strCondition += " AND (HRM_TR_TIMECARD.TIMECARD_WORKDATE BETWEEN '" + fromdate.ToString(this.FormatDateDB) + "' AND '" + todate.ToString(this.FormatDateDB) + "')";
             //strCondition += " AND HRM_TR_TIMECARD.TIMECARD_WORKDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "'";
+            if (!status.Equals(""))
 
+                strCondition += " AND WORKER_RESIGNSTATUS='" + status + "'";
             return this.getDataOTDep(strCondition);
            
 
@@ -246,7 +279,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             //return this.getDataOTDep(strCondition);
         }
-
+       // จำนวนการทำโอที
         private List<cls_TRDashboard> getDataOTPo(string condition)
         {
             List<cls_TRDashboard> list_model = new List<cls_TRDashboard>();
@@ -260,21 +293,30 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" COUNT(HRM_TR_TIMECARD.WORKER_CODE) as WORKER_CODE");
 
                 obj_str.Append(", SUM(HRM_TR_TIMECARD.TIMECARD_BEFORE_MIN) as BEFORE_MIN");
-                obj_str.Append(", SUM(CASE WHEN (HRM_TR_TIMECARD.TIMECARD_DAYTYPE) = 'O' THEN HRM_TR_TIMECARD.TIMECARD_WORK1_MIN else null END) AS NORMAL_MIN");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_TIMECARD.TIMECARD_DAYTYPE = 'O' THEN HRM_TR_TIMECARD.TIMECARD_WORK1_MIN ELSE 0 END) AS OVERTIME_MIN");
                 obj_str.Append(", SUM(HRM_TR_TIMECARD.TIMECARD_AFTER_MIN) as AFTER_MIN");
                 obj_str.Append(", HRM_TR_EMPPOSITION.EMPPOSITION_POSITION");
                 obj_str.Append(", HRM_MT_POSITION.POSITION_NAME_TH");
                 obj_str.Append(", HRM_MT_POSITION.POSITION_NAME_EN");
+
+                obj_str.Append(", HRM_MT_POSITION.POSITION_NAME_TH");
+                obj_str.Append(", HRM_MT_POSITION.POSITION_NAME_EN");
+                obj_str.Append(", HRM_MT_WORKER.WORKER_RESIGNSTATUS");
+
                 obj_str.Append(" FROM HRM_TR_TIMECARD");
                 obj_str.Append(" INNER JOIN HRM_TR_EMPPOSITION ON HRM_TR_TIMECARD.WORKER_CODE = HRM_TR_EMPPOSITION.WORKER_CODE");
                 obj_str.Append(" INNER JOIN HRM_MT_POSITION ON HRM_TR_EMPPOSITION.EMPPOSITION_POSITION=HRM_MT_POSITION.POSITION_CODE");
+
+
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_TR_EMPPOSITION.COMPANY_CODE=HRM_MT_WORKER.COMPANY_CODE");
+                obj_str.Append(" AND HRM_TR_EMPPOSITION.WORKER_CODE=HRM_MT_WORKER.WORKER_CODE");
 
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append("GROUP BY EMPPOSITION_POSITION, HRM_MT_POSITION.POSITION_NAME_TH, HRM_MT_POSITION.POSITION_NAME_EN");
+                obj_str.Append("GROUP BY EMPPOSITION_POSITION, HRM_MT_POSITION.POSITION_NAME_TH, HRM_MT_POSITION.POSITION_NAME_EN, HRM_MT_POSITION.POSITION_NAME_TH, HRM_MT_POSITION.POSITION_NAME_EN, HRM_MT_WORKER.WORKER_RESIGNSTATUS");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -289,7 +331,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     //model.empposition_position = Convert.ToInt32(dr["EMPPOSITION_POSITION"]).ToString();
                     model.position_name_en = dr["POSITION_NAME_EN"].ToString();
                     model.position_name_th = dr["POSITION_NAME_TH"].ToString();
+                    model.overtime_min = dr["OVERTIME_MIN"].ToString();
 
+                    
                     list_model.Add(model);
                 }
 
@@ -301,12 +345,14 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return list_model;
         }
-        public List<cls_TRDashboard> getDataOTPoByFillter(string fromdate, string todate)
+        public List<cls_TRDashboard> getDataOTPoByFillter(string fromdate, string todate, string status)
         {
             string strCondition = "";
 
             strCondition += " AND (HRM_TR_TIMECARD.TIMECARD_WORKDATE BETWEEN '" + fromdate+ "' AND '" + todate + "' )";
+            if (!status.Equals(""))
 
+                strCondition += " AND HRM_MT_WORKER.WORKER_RESIGNSTATUS='" + status + "'";
             return this.getDataOTPo(strCondition);
 
             //string strCondition = "";

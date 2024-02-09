@@ -195,6 +195,21 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
         }
 
+        public cls_TRTimeleaveself getDataByDOC(string doc)
+        {
+
+            string strCondition = " AND SELF_TR_TIMELEAVE.TIMELEAVE_DOC='" + doc + "'";
+
+            List<cls_TRTimeleaveself> list_model = this.getData(strCondition);
+
+            if (list_model.Count > 0)
+                return list_model[0];
+            else
+                return null;
+
+        }
+
+
         public bool checkDataOld(string com, string emp, DateTime datefrom, DateTime dateto, string leave_type, string leave_code)
         {
             bool blnResult = false;
@@ -295,6 +310,29 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" DELETE FROM SELF_TR_TIMELEAVE");
                 obj_str.Append(" WHERE 1=1 ");
                 obj_str.Append(" AND TIMELEAVE_ID='" + id + "'");
+
+                blnResult = obj_conn.doExecuteSQL(obj_str.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                blnResult = false;
+                Message = "ERROR::(Timeleave.delete)" + ex.ToString();
+            }
+
+            return blnResult;
+        }
+        public bool delete(string doc)
+        {
+            bool blnResult = true;
+            try
+            {
+                cls_ctConnection obj_conn = new cls_ctConnection();
+
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append(" DELETE FROM SELF_TR_TIMELEAVE");
+                obj_str.Append(" WHERE TIMELEAVE_DOC='" + doc + "'");
 
                 blnResult = obj_conn.doExecuteSQL(obj_str.ToString());
 
