@@ -2663,6 +2663,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 {
                                     //if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && (TRPayitem.item_code.Equals("SA1") || TRPayitem.item_code.Equals("SA2") || TRPayitem.item_code.Equals("SA03")))
                                     if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.StartsWith("SA"))
+                                    
                                     {
                                         // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
                                         bkData += TRPayitem.payitem_amount + "|";
@@ -3157,6 +3158,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 }
 
 
+                                
 
                                 //50 OS
                                 bool hasOSData = false;
