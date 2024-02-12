@@ -144,8 +144,24 @@ namespace ClassLibrary_BPC.hrfocus.controller
             if (!com.Equals(""))
                 strCondition += " AND COMPANY_CODE='" + com + "'";
 
-            if (!emptype.Equals(""))
-                strCondition += " AND WORKER_EMPTYPE='" + emptype + "'";
+            //if (!emptype.Equals(""))
+            //    strCondition += " AND WORKER_EMPTYPE='" + emptype + "'";
+
+            if (!string.IsNullOrEmpty(emptype))
+            {
+                if (emptype.Equals("all"))
+                {
+                    strCondition += " AND (WORKER_EMPTYPE='M' OR WORKER_EMPTYPE='D')";
+                }
+                else
+                {
+                    strCondition += " AND WORKER_EMPTYPE='" + emptype + "'";
+                }
+            }
+
+
+
+
 
             if (!id.Equals(""))
                 strCondition += " AND WORKER_ID='" + id + "'";
