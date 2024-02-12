@@ -188,7 +188,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData( strCondition);
         }
         //
-        public List<cls_MTWorker> getDataStatusByFillter(string com, string id, string worker_code , string searchemp, string fromdate, string todate)
+        public List<cls_MTWorker> getDataStatusByFillter(string com, string id, string worker_code,  string searchemp, string emptype,string fromdate, string todate)
         {
             string strCondition = "";
 
@@ -199,7 +199,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             if (!worker_code.Equals(""))
                 strCondition += " AND WORKER_CODE='" + worker_code + "'";
-
+            if (!emptype.Equals(""))
+                strCondition += " AND WORKER_EMPTYPE='" + emptype + "'";
 
             //searchemp
             if (!string.IsNullOrEmpty(searchemp))
