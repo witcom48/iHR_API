@@ -137,7 +137,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_MTWorker> getDataByFillter(string com, string id, string worker_code, string worker_fname_th, string worker_lname_th, string emptype, string worker_fname_en, string worker_lname_en, string level_code, string depcod_code, string position_code, string group_code, bool include_resign, string location_code, DateTime date_fill, string searchemp)
+        public List<cls_MTWorker> getDataByFillter(string com, string id, string worker_code, string worker_fname_th, string worker_lname_th, string emptype, string worker_fname_en, string worker_lname_en, string level_code, string depcod_code, string position_code, string group_code, bool include_resign, string location_code, DateTime date_fill, string searchemp, bool periodresign, string fromdate, string todate)
         {
             string strCondition = "";
 
@@ -185,6 +185,16 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 }
             }
 
+            if (periodresign)
+            {
+                strCondition += " AND (WORKER_RESIGNSTATUS='0' OR (WORKER_RESIGNSTATUS='1'";
+                strCondition += " AND WORKER_RESIGNDATE BETWEEN '" + fromdate + "' AND '" + todate + "'";
+                strCondition += " OR WORKER_RESIGNDATE = '" + todate + "'";
+                strCondition += "))";
+
+                //strCondition += " AND WORKER_RESIGNDATE BETWEEN '" + fromdate + "' AND '" + todate + "' ";
+            }
+
             return this.getData( strCondition);
         }
         //
@@ -214,7 +224,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             //RESIGNSTATUSdรณีลาออกแต่วันที่ลาออกอยู่ระหว่างงวด ให้แสดงรายชื่อ
             strCondition += " AND (WORKER_RESIGNSTATUS='0' OR (WORKER_RESIGNSTATUS='1'";
             strCondition += " AND WORKER_RESIGNDATE BETWEEN '" + fromdate + "' AND '" + todate + "'";
-            strCondition += " OR WORKER_RESIGNDATE > '" + todate + "'";
+            strCondition += " OR WORKER_RESIGNDATE = '" + todate + "'";
             strCondition += "))";
 
 

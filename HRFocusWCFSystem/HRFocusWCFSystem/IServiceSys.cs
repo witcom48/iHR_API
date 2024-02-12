@@ -549,7 +549,7 @@ namespace HRFocusWCFSystem
         //-- Worker
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod, string searchemp);
+        string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod, string searchemp, bool periodresign, string fromdate, string todate);  
         //
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]

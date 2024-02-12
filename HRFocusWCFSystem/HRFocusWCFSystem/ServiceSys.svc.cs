@@ -5607,12 +5607,12 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region MTWorker
-        public string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod,string searchemp)
+        public string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod, string searchemp, bool periodresign, string fromdate, string todate)
         {
             JObject output = new JObject();
 
             cls_ctMTWorker objWorker = new cls_ctMTWorker();
-            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(com, id, code, fname, lname, emptype, "", "", level, depcod, "", "", false, "", DateTime.Now.Date, "");
+            List<cls_MTWorker> listWorker = objWorker.getDataByFillter(com, id, code, fname, lname, emptype, "", "", level, depcod, "", "", false, "", DateTime.Now.Date, "", periodresign, fromdate, todate);
 
             JArray array = new JArray();
 
@@ -5692,7 +5692,7 @@ namespace HRFocusWCFSystem
             List<cls_MTWorker> listWorker = objWorker.getDataByFillter(input.company_code, input.worker_id, input.worker_code, input.worker_fname_th
                 , input.worker_lname_th, input.worker_emptype, input.worker_fname_en, input.worker_lname_en
                 , input.level_code, input.dep_code, input.position_code, input.group_code, input.include_resign, input.location_code, date_fill, input.searchemp
-                );
+               , input.periodresign, input.fromdate, input.todate);
 
             JArray array = new JArray();
 
@@ -5737,6 +5737,12 @@ namespace HRFocusWCFSystem
 
                     json.Add("worker_empstatus", model.worker_empstatus);
                     json.Add("worker_empstatus_name", model.worker_empstatus_name);
+
+                    json.Add("periodresign", model.periodresign);
+                    //json.Add("fromdate", model.fromdate);
+                    //json.Add("todate", model.todate);
+
+ 
 
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);
