@@ -97,6 +97,81 @@ namespace ClassLibrary_BPC.hrfocus.controller
             }
             return totalDoc;
         }
+        public int getCountDocStatusApprove(string com, string worker, string job_type, string doc)
+        {
+            int totalDoc = 0;
+            SqlCommand cmd = new SqlCommand();
+            Obj_conn.doConnect();
+            cmd.Connection = Obj_conn.getConnection();
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandText = "[dbo].[SELF_MT_DOCGETSTATUSAPPROVE]";
+            //Passing the parameters
+            cmd.Parameters.AddWithValue("@CompID", com);
+            cmd.Parameters.AddWithValue("@worker", worker);
+            cmd.Parameters.AddWithValue("@doctype", job_type);
+            if (doc == null) {
+                cmd.Parameters.AddWithValue("@doc", ' ');
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@doc", doc);
+            }
+            /*The output parameters*/
+            cmd.Parameters.Add("@doccount", SqlDbType.Int);
+            cmd.Parameters["@doccount"].Direction = ParameterDirection.Output;
+            /*End*/
+            try
+            {
+
+                int i = cmd.ExecuteNonQuery();
+                totalDoc = Convert.ToInt32(cmd.Parameters["@doccount"].Value);
+            }
+            catch (Exception ex)
+            {
+                this.Message = ex.ToString();
+            }
+            finally
+            {
+                Obj_conn.doClose();
+            }
+            return totalDoc;
+        }
+        public JArray docstatus_approve(string com, string worker, string job_type, string doc)
+        {
+            JArray result = new JArray();
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+                obj_str.Append("DECLARE @doccount INT ");
+                obj_str.Append("EXEC [dbo].[SELF_MT_DOCGETSTATUSAPPROVE] ");
+                obj_str.Append("@CompID = '" + com + "'");
+                obj_str.Append(", @worker = '" + worker + "'");
+                obj_str.Append(", @doctype = '" + job_type + "'");
+                if(doc == null){
+                         obj_str.Append(", @doc = ' '");
+                }else{
+                         obj_str.Append(", @doc = '" + doc + "'");
+                }
+                obj_str.Append(", @doccount = @doccount OUTPUT");
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+                int index = 1;
+                foreach (DataRow dr in dt.Rows)
+                {
+                    JObject json = new JObject();
+                    json.Add("worker_code", dr["WORKER_CODE"].ToString());
+                    json.Add("name_th", dr["WORKER_FNAME_TH"].ToString() + " " + dr["WORKER_LNAME_TH"].ToString());
+                    json.Add("name_en", dr["WORKER_FNAME_EN"].ToString() + " " + dr["WORKER_LNAME_EN"].ToString());
+                    json.Add("index", index);
+                    result.Add(json);
+                    index++;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Message = ex.ToString();
+            }
+            return result;
+        }
         public JArray ApproveJob_get(string com, string job_type, string username, int status, string fromdate, string todate)
         {
             JArray result = new JArray();

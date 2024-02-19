@@ -1727,6 +1727,9 @@ namespace HRFocusWCFSystem
         #endregion
 
         #region Approvedoc
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string ApprovegetdocStatus(string com, string worker, string jobtype, string doc);
         [OperationContract(Name = "approve_list")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string Approvegetdoc(InputApprovedoc input);

@@ -19418,7 +19418,31 @@ namespace HRFocusWCFSystem
 
         }
         #endregion
+        public string ApprovegetdocStatus(string com,string worker,string jobtype,string doc)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ApproveJob controller = new cls_ApproveJob();
+                JArray countdoc = new JArray();
+                JArray list = controller.docstatus_approve(com,worker,jobtype,doc);
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = list;
+                output["doccount"] = controller.getCountDocStatusApprove(com, worker, jobtype, doc);
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
 
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
         public string Approvegetdoc(InputApprovedoc input)
         {
             JObject output = new JObject();
