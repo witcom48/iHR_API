@@ -549,7 +549,12 @@ namespace HRFocusWCFSystem
         //-- Worker
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getMTWorkerList(string com, string id, string code, string fname, string lname, string level, string depcod);
+        string getMTWorkerList(string com, string id, string code, string fname, string lname, string emptype, string level, string depcod, string searchemp, bool periodresign, string fromdate, string todate);  
+        //
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getMTWorkerStatusList(string com, string id, string code, string searchemp, string emptype, string fromdate, string todate);  
+        //
 
         [OperationContract(Name = "getMTWorkerFillterList")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
@@ -963,6 +968,15 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "doDeleteTRPaypolbonus")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteTRPaypolbonus(InputTRPaypolbonus input);
+
+        //PayOT
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTRPayOTList(string com, string emp, string paydate);
+
+        [OperationContract(Name = "doManageTRPayOT")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageTRPayOT(InputTRPayOT input);
 
         #endregion
 
@@ -1389,7 +1403,7 @@ namespace HRFocusWCFSystem
         #region Emp
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getDashGenderList(string com);
+        string getDashGenderList(string com, string fromdate, string todate);
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
@@ -1405,7 +1419,7 @@ namespace HRFocusWCFSystem
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getEmpPositionDash(string fromdate, string todate);
+        string getEmpPositionDash(string com,string fromdate, string todate);
         #endregion
 
         #region Pay
@@ -1697,6 +1711,7 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteTRTimeleave(InputTRTimeleaveself input);
         #endregion
+
 
         #region TRTimeot
         [OperationContract(Name = "timeot_list")]

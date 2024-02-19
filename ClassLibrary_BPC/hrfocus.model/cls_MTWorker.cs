@@ -62,10 +62,17 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         public string worker_empstatus { get; set; }
         public string worker_empstatus_name  { get; set; }
+
+        public string periodresign { get; set; }
+
  
         //-- show only
         public string initial_name_th { get; set; }
         public string initial_name_en { get; set; }
 
+        public string empstatus_code { get; set; }
+        public string worker_age { get; set; }
+
+        
     }
 }

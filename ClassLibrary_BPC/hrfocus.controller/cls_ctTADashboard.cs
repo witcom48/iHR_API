@@ -37,16 +37,25 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" COUNT(HRM_TR_TIMELEAVE.TIMELEAVE_ACTUALDAY) as WORKER_CODE");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_EN");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_TH");
-                obj_str.Append(" from HRM_TR_TIMELEAVE");
-                obj_str.Append(" inner join HRM_TR_EMPDEP on HRM_TR_TIMELEAVE.WORKER_CODE = HRM_TR_EMPDEP.WORKER_CODE");
-                obj_str.Append(" inner join HRM_MT_DEP on HRM_TR_EMPDEP.EMPDEP_LEVEL01 = HRM_MT_DEP.DEP_CODE");
+
+                obj_str.Append(", HRM_MT_WORKER.WORKER_FNAME_TH");
+                obj_str.Append(", HRM_MT_WORKER.WORKER_FNAME_EN");
+                obj_str.Append(", HRM_MT_WORKER.WORKER_RESIGNSTATUS");
+
+                obj_str.Append(" FROM HRM_TR_TIMELEAVE");
+
+                obj_str.Append(" INNER JOIN HRM_TR_EMPDEP on HRM_TR_TIMELEAVE.WORKER_CODE = HRM_TR_EMPDEP.WORKER_CODE");
+                obj_str.Append(" INNER JOIN HRM_MT_DEP on HRM_TR_EMPDEP.EMPDEP_LEVEL01 = HRM_MT_DEP.DEP_CODE");
+
+                obj_str.Append("  INNER JOIN HRM_MT_WORKER ON HRM_TR_TIMELEAVE.COMPANY_CODE=HRM_MT_WORKER.COMPANY_CODE");
+                obj_str.Append("  AND HRM_TR_TIMELEAVE.WORKER_CODE=HRM_MT_WORKER.WORKER_CODE");
 
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append(" GROUP BY HRM_MT_DEP.DEP_NAME_EN,HRM_MT_DEP.DEP_NAME_TH ");
+                obj_str.Append("GROUP BY HRM_MT_DEP.DEP_NAME_EN,HRM_MT_DEP.DEP_NAME_TH ,  HRM_MT_WORKER.WORKER_FNAME_TH, HRM_MT_WORKER.WORKER_FNAME_EN, HRM_MT_WORKER.WORKER_RESIGNSTATUS");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -71,15 +80,20 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_TADashboard> getDataLeaveByFillter(string com)
+        public List<cls_TADashboard> getDataLeaveByFillter(string com, string status)
         {
-            
-
                 string strCondition = "";
 
 
                 if (!com.Equals(""))
                     strCondition += " AND HRM_TR_TIMELEAVE.COMPANY_CODE ='" + com + "'";
+
+                if (!status.Equals(""))
+
+                    strCondition += " AND HRM_MT_WORKER.WORKER_RESIGNSTATUS='" + status + "'";
+
+
+
                     return this.getDashLeaveList(strCondition);
         }
 
@@ -96,15 +110,26 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" COUNT(HRM_TR_TIMECARD.TIMECARD_LATE_MIN) as WORKER_CODE");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_EN");
                 obj_str.Append(", HRM_MT_DEP.DEP_NAME_TH");
+
+                obj_str.Append(", HRM_MT_WORKER.WORKER_FNAME_TH");
+                obj_str.Append(", HRM_MT_WORKER.WORKER_FNAME_EN");
+                obj_str.Append(", HRM_MT_WORKER.WORKER_RESIGNSTATUS");
+
+
                 obj_str.Append(" from HRM_TR_TIMECARD");
                 obj_str.Append(" INNER JOIN HRM_TR_EMPDEP on HRM_TR_TIMECARD.WORKER_CODE = HRM_TR_EMPDEP.WORKER_CODE");
                 obj_str.Append(" INNER JOIN HRM_MT_DEP on HRM_TR_EMPDEP.EMPDEP_LEVEL01 = HRM_MT_DEP.DEP_CODE");
+
+
+                obj_str.Append("  INNER JOIN HRM_MT_WORKER ON HRM_TR_TIMECARD.COMPANY_CODE=HRM_MT_WORKER.COMPANY_CODE");
+                obj_str.Append("  AND HRM_TR_TIMECARD.WORKER_CODE=HRM_MT_WORKER.WORKER_CODE");
+
 
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
-                obj_str.Append(" GROUP BY HRM_MT_DEP.DEP_NAME_EN,HRM_MT_DEP.DEP_NAME_TH ");
+                obj_str.Append(" GROUP BY HRM_MT_DEP.DEP_NAME_EN,HRM_MT_DEP.DEP_NAME_TH,HRM_MT_WORKER.WORKER_FNAME_TH,  HRM_MT_WORKER.WORKER_FNAME_EN, HRM_MT_WORKER.WORKER_RESIGNSTATUS");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -128,11 +153,14 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_TADashboard> getDataLateByFillter(string com)
+        public List<cls_TADashboard> getDataLateByFillter(string com, string status)
         {
             string strCondition = "";
 
             strCondition += " AND HRM_TR_TIMECARD.COMPANY_CODE ='" + com + "' " + "  AND HRM_TR_TIMECARD.TIMECARD_LATE_MIN !='" + 0 + "'" +" AND HRM_TR_TIMECARD.TIMECARD_LATE_MIN_APP !='" + 0 + "'";
+            if (!status.Equals(""))
+
+                strCondition += " AND HRM_MT_WORKER.WORKER_RESIGNSTATUS='" + status + "'";
 
    
 

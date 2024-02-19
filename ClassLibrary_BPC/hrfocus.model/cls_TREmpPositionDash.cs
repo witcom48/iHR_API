@@ -14,5 +14,8 @@ namespace ClassLibrary_BPC.hrfocus.model
         public string empposition_position { get; set; }
         public string position_name_th { get; set; }
         public string position_name_en { get; set; }
+        public string worker_resignstatus { get; set; }
+
+        
     }
 }

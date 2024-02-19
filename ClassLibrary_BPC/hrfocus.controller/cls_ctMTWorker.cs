@@ -137,15 +137,31 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_MTWorker> getDataByFillter(string com, string id, string worker_code, string worker_fname_th, string worker_lname_th, string worker_fname_en, string worker_lname_en, string emptype, string level_code, string depcod_code, string position_code, string group_code, bool include_resign, string location_code, DateTime date_fill)
+        public List<cls_MTWorker> getDataByFillter(string com, string id, string worker_code, string worker_fname_th, string worker_lname_th, string emptype, string worker_fname_en, string worker_lname_en, string level_code, string depcod_code, string position_code, string group_code, bool include_resign, string location_code, DateTime date_fill, string searchemp, bool periodresign, string fromdate, string todate)
         {
             string strCondition = "";
 
             if (!com.Equals(""))
                 strCondition += " AND COMPANY_CODE='" + com + "'";
 
-            if (!emptype.Equals(""))
-                strCondition += " AND WORKER_EMPTYPE='" + emptype + "'";
+            //if (!emptype.Equals(""))
+            //    strCondition += " AND WORKER_EMPTYPE='" + emptype + "'";
+
+            if (!string.IsNullOrEmpty(emptype))
+            {
+                if (emptype.Equals("all"))
+                {
+                    strCondition += " AND (WORKER_EMPTYPE='M' OR WORKER_EMPTYPE='D')";
+                }
+                else
+                {
+                    strCondition += " AND WORKER_EMPTYPE='" + emptype + "'";
+                }
+            }
+
+
+
+
 
             if (!id.Equals(""))
                 strCondition += " AND WORKER_ID='" + id + "'";
@@ -175,9 +191,66 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 strCondition += " AND (WORKER_RESIGNSTATUS='0' OR WORKER_RESIGNSTATUS IS NULL) ";
             }
 
+            //searchemp
+            if (!string.IsNullOrEmpty(searchemp))
+            {
+                string[] keywords = searchemp.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string keyword in keywords)
+                {
+                    strCondition += " AND (WORKER_CODE LIKE '%" + keyword + "%' OR WORKER_FNAME_TH LIKE '%" + keyword + "%' OR WORKER_LNAME_TH LIKE '%" + keyword + "%' OR WORKER_FNAME_EN LIKE '%" + keyword + "%' OR WORKER_LNAME_EN LIKE '%" + keyword + "%')";
+                }
+            }
+
+            if (periodresign)
+            {
+                strCondition += " AND (WORKER_RESIGNSTATUS='0' OR (WORKER_RESIGNSTATUS='1'";
+                strCondition += " AND WORKER_RESIGNDATE BETWEEN '" + fromdate + "' AND '" + todate + "'";
+                strCondition += " OR WORKER_RESIGNDATE = '" + todate + "'";
+                strCondition += "))";
+
+                //strCondition += " AND WORKER_RESIGNDATE BETWEEN '" + fromdate + "' AND '" + todate + "' ";
+            }
 
             return this.getData( strCondition);
         }
+        //
+        public List<cls_MTWorker> getDataStatusByFillter(string com, string id, string worker_code,  string searchemp, string emptype,string fromdate, string todate)
+        {
+            string strCondition = "";
+
+            if (!com.Equals(""))
+                strCondition += " AND COMPANY_CODE='" + com + "'";
+            if (!id.Equals(""))
+                strCondition += " AND WORKER_ID='" + id + "'";
+
+            if (!worker_code.Equals(""))
+                strCondition += " AND WORKER_CODE='" + worker_code + "'";
+            if (!emptype.Equals(""))
+                strCondition += " AND WORKER_EMPTYPE='" + emptype + "'";
+
+            //searchemp
+            if (!string.IsNullOrEmpty(searchemp))
+            {
+                string[] keywords = searchemp.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string keyword in keywords)
+                {
+                    strCondition += " AND (WORKER_CODE LIKE '%" + keyword + "%' OR WORKER_FNAME_TH LIKE '%" + keyword + "%' OR WORKER_LNAME_TH LIKE '%" + keyword + "%' OR WORKER_FNAME_EN LIKE '%" + keyword + "%' OR WORKER_LNAME_EN LIKE '%" + keyword + "%')";
+                }
+            }
+            //RESIGNSTATUSdรณีลาออกแต่วันที่ลาออกอยู่ระหว่างงวด ให้แสดงรายชื่อ
+            strCondition += " AND (WORKER_RESIGNSTATUS='0' OR (WORKER_RESIGNSTATUS='1'";
+            strCondition += " AND WORKER_RESIGNDATE BETWEEN '" + fromdate + "' AND '" + todate + "'";
+            strCondition += " OR WORKER_RESIGNDATE = '" + todate + "'";
+            strCondition += "))";
+
+
+
+ 
+
+
+            return this.getData(strCondition);
+        }
+        //
 
         public List<cls_MTWorker> getDataByWorkerCode(string com, string worker_code)
         {

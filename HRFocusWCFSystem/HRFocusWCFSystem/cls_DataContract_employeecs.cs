@@ -580,7 +580,7 @@ namespace HRFocusWCFSystem
 
         [DataMember]
         public double empbank_bankname { get; set; }
-
+       
     }
 
 
@@ -624,9 +624,21 @@ namespace HRFocusWCFSystem
         public string location_code { get; set; }
 
         [DataMember]
-        public string date_fill { get; set; }      
-        
-    }
+        public string date_fill { get; set; }
+        [DataMember]
+        public string searchemp { get; set; }  
+        [DataMember]
+        public string status { get; set; }  
+        [DataMember]
+        public string fromdate { get; set; } 
+        [DataMember]
+        public string todate { get; set; }  
+        [DataMember]
+
+        public bool periodresign { get; set; }
+    
+    }         
+
 
 
     [DataContract]

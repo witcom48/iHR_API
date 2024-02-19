@@ -2408,5 +2408,1163 @@ namespace ClassLibrary_BPC.hrfocus.service
             return strResult;
         }
 
+        //Export Payroll
+        public string doExportPR1(string com, string taskid)
+        {
+            string error = "";
+            string strResult = "";
+            cls_ctMTTask objMTTask = new cls_ctMTTask();
+            List<cls_MTTask> listMTTask = objMTTask.getDataByFillter(com, taskid, "TRN_INDE", "");
+            List<string> listError = new List<string>();
+            if (listMTTask.Count > 0)
+            {
+                try
+                {
+                    cls_MTTask task = listMTTask[0];
+
+                    task.task_start = DateTime.Now;
+
+                    cls_ctMTTask objTaskDetail = new cls_ctMTTask();
+                    cls_TRTaskdetail task_detail = objTaskDetail.getTaskDetail(task.task_id.ToString());
+
+                    cls_ctMTTask objTaskWhose = new cls_ctMTTask();
+                    List<cls_TRTaskwhose> listWhose = objTaskWhose.getTaskWhose(task.task_id.ToString());
+
+                    DateTime datePay = task_detail.taskdetail_paydate;
+                    DateTime dateFrom = task_detail.taskdetail_fromdate;
+                    DateTime dateTo = task_detail.taskdetail_todate;
+
+                    StringBuilder objStr = new StringBuilder();
+                    foreach (cls_TRTaskwhose whose in listWhose)
+                    {
+                        objStr.Append("'" + whose.worker_code + "',");
+                    }
+
+                    string strEmp = objStr.ToString().Substring(0, objStr.ToString().Length - 1);
+
+                    //-- Get worker
+                    cls_ctMTWorker objWorker = new cls_ctMTWorker();
+                    List<cls_MTWorker> list_worker = objWorker.getDataMultipleEmp(com, strEmp);
+
+                    //-- Get dep
+                    cls_ctTREmpdep objDep = new cls_ctTREmpdep();
+                    List<cls_TREmpdep> list_TRdep = objDep.getDataTaxMultipleEmp(com, strEmp, dateTo);
+
+                    //-- Get worker position
+                    cls_ctTREmpposition objPos = new cls_ctTREmpposition();
+                    List<cls_TREmpposition> list_TRpos = objPos.getDataMultipleEmp(com, strEmp, dateTo);
+
+                    //-- Get MTPosition
+                    cls_ctMTPosition objMTPosition = new cls_ctMTPosition();
+                    List<cls_MTPosition> list_MTPosition = objMTPosition.getDataByFillter(com, "", "");
+
+                    //-- Get MTDep 
+                    cls_ctMTDep objTDep = new cls_ctMTDep();
+                    List<cls_MTDep> list_TDep = objTDep.getDataByFillter(com, "", "", "", "");
+
+                    //-- Get Paytran
+                    cls_ctTRPaytran objPay = new cls_ctTRPaytran();
+                    List<cls_TRPaytran> list_paytran = objPay.getDataMultipleEmp("TH", com, datePay, datePay, strEmp);
+
+                    //-- Get Payitem
+                    cls_ctTRPayitem objTPItem = new cls_ctTRPayitem();
+                    List<cls_TRPayitem> list_payitem = objTPItem.getDataitemMultipleEmp("TH", com, strEmp, datePay, "", "");
+
+                    //-- Get PayOT
+                    cls_ctTRPayOT objot = new cls_ctTRPayOT();
+                    List<cls_TRPayOT> list_payot = objot.getDataitemMultipleEmp("TH", com, strEmp, datePay);
+
+                    string tmpData = "";
+                    if (list_worker.Count > 0)
+                    {
+                        string bkData;
+
+                        foreach (cls_MTWorker MTWorkers in list_worker)
+                        {
+                            error = MTWorkers.worker_code;
+                            string empname = "";
+                            cls_MTWorker obj_worker = new cls_MTWorker();
+                            cls_TREmpdep obj_workerdep = new cls_TREmpdep();
+                            cls_TREmpdep obj_workerdep1 = new cls_TREmpdep();
+                            cls_TREmpdep obj_workerdep2 = new cls_TREmpdep();
+                            cls_TREmpdep obj_workerdep3 = new cls_TREmpdep();
+                            cls_TREmpposition obj_workerpos = new cls_TREmpposition();
+                            cls_MTPosition obj_MTPosition = new cls_MTPosition();
+                            cls_TRPaytran obj_TRPaytran = new cls_TRPaytran();
+
+                            foreach (cls_MTWorker worker in list_worker)
+                            {
+                                if (MTWorkers.worker_code.Equals(worker.worker_code))
+                                {
+                                    empname = worker.initial_name_en + " " + worker.worker_fname_en + " " + worker.worker_lname_en;
+                                    obj_worker = worker;
+                                    break;
+                                }
+                            }
+
+                            foreach (cls_TREmpdep dep in list_TRdep)
+                            {
+                                if (MTWorkers.worker_code.Equals(dep.worker_code))
+                                {
+                                    obj_workerdep = dep;
+                                    break;
+                                }
+                            }
+
+                            foreach (cls_TREmpposition pos in list_TRpos)
+                            {
+                                if (MTWorkers.worker_code.Equals(pos.worker_code))
+                                {
+                                    obj_workerpos = pos;
+                                    break;
+                                }
+                            }
+
+                            foreach (cls_TRPaytran tran in list_paytran)
+                            {
+                                if (MTWorkers.worker_code.Equals(tran.worker_code))
+                                {
+                                    obj_TRPaytran = tran;
+                                    break;
+                                }
+                            }
+
+                            if (empname.Equals(""))
+                                continue;
+
+                            if (list_worker.Count > 0)
+                            {
+                                //1 รหัสพนักงาน
+                                bkData = obj_worker.worker_code + "|";
+
+                                //2 ชื่อ(อังกฤษ)
+                                bkData += obj_worker.worker_fname_en + "|";
+
+                                //3 นามสกุล(อังกฤษ)
+                                bkData += obj_worker.worker_lname_en + "|";
+
+                                //4&5 ระดับ01
+                                cls_MTDep bj_MTDep1 = null;
+                                bool foundDep1 = false;
+                                foreach (cls_TREmpdep dep1 in list_TRdep)
+                                {
+                                    if (MTWorkers.worker_code.Equals(dep1.worker_code))
+                                    {
+                                        foreach (cls_MTDep MTDep1 in list_TDep)
+                                        {
+                                            if (dep1.empdep_level01 != null && dep1.empdep_level01.Equals(MTDep1.dep_code))
+                                            {
+                                                bj_MTDep1 = MTDep1;
+                                                bkData += bj_MTDep1.dep_code + "|";
+                                                bkData += bj_MTDep1.dep_name_th + "|";
+                                                foundDep1 = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!foundDep1)
+                                {
+                                    bkData += " " + "|";
+                                    bkData += " " + "|";
+
+                                }
+
+                                //6&7 ระดับ02
+                                cls_MTDep bj_MTDep2 = null;
+                                bool foundDep2 = false;
+                                foreach (cls_TREmpdep dep2 in list_TRdep)
+                                {
+                                    if (MTWorkers.worker_code.Equals(dep2.worker_code))
+                                    {
+                                        foreach (cls_MTDep MTDep2 in list_TDep)
+                                        {
+                                            if (dep2.empdep_level02 != null && dep2.empdep_level02.Equals(MTDep2.dep_code))
+                                            {
+                                                bj_MTDep2 = MTDep2;
+                                                bkData += MTDep2.dep_code + "|";
+                                                bkData += bj_MTDep2.dep_name_th + "|";
+                                                foundDep2 = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!foundDep2)
+                                {
+                                    bkData += " " + "|";
+                                    bkData += " " + "|";
+
+                                }
+
+                                //8&9 ระดับ03
+                                //
+                                cls_MTDep bj_MTDep3 = null;
+                                bool foundDep3 = false;
+
+                                foreach (cls_TREmpdep dep3 in list_TRdep)
+                                {
+                                    if (MTWorkers.worker_code.Equals(dep3.worker_code))
+                                    {
+                                        foreach (cls_MTDep MTDep3 in list_TDep)
+                                        {
+                                            if (dep3.empdep_level03 != null && dep3.empdep_level03.Equals(MTDep3.dep_code))
+                                            {
+                                                bj_MTDep3 = MTDep3;
+                                                bkData += MTDep3.dep_code + "|";
+                                                bkData += bj_MTDep3.dep_name_th + "|";
+                                                foundDep3 = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!foundDep3)
+                                {
+                                    bkData += " " + "|";
+                                    bkData += " " + "|";
+
+                                }
+
+                                //10&11 ตำแหน่งปัจจุบัน Position
+                                cls_MTPosition bj_Position1 = null;
+                                bool foundPosition = false;
+
+                                foreach (cls_TREmpposition emppos in list_TRpos)
+                                {
+                                    if (MTWorkers.worker_code.Equals(emppos.worker_code))
+                                    {
+                                        foreach (cls_MTPosition pos1 in list_MTPosition)
+                                        {
+                                            if (emppos.empposition_position != null && emppos.empposition_position.Equals(pos1.position_code))
+                                            {
+                                                bj_Position1 = pos1;
+                                                bkData += bj_Position1.position_code + "|";
+                                                bkData += bj_Position1.position_name_en + "|";
+                                                foundPosition = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!foundPosition)
+                                {
+                                    bkData += " " + "|";
+                                    bkData += " " + "|";
+                                }
+
+                                //12 Salary
+                                bool hasSAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    //if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && (TRPayitem.item_code.Equals("SA1") || TRPayitem.item_code.Equals("SA2") || TRPayitem.item_code.Equals("SA03")))
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.StartsWith("SA"))
+                                    
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasSAData = true;
+                                    }
+                                }
+                                if (!hasSAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //13 Position
+                                bool hasPAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("PA"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasPAData = true;
+                                    }
+                                }
+                                if (!hasPAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //14 House
+                                bool hasHAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("HA"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasHAData = true;
+                                    }
+                                }
+                                if (!hasHAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //15 Commuting
+                                bool hasCAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("CA"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasCAData = true;
+                                    }
+                                }
+                                if (!hasCAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //16 EN
+                                bool hasEAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("EA"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasEAData = true;
+                                    }
+                                }
+                                if (!hasEAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //17 JA
+                                bool hasJAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("JA"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasJAData = true;
+                                    }
+                                }
+                                if (!hasJAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //18 Meal
+                                bool hasMAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("MA"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasMAData = true;
+                                    }
+                                }
+                                if (!hasMAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //19-26 OT
+                                bool hasOTData = false;
+                                foreach (cls_TRPayOT TRPayot in list_payot)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayot.worker_code))
+                                    {
+                                        //OT 1
+                                        int hrs = (TRPayot.payot_ot1_min) / 60;
+                                        int min = (TRPayot.payot_ot1_min) - (hrs * 60);
+                                        bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
+                                        bkData += TRPayot.payot_ot1_amount + "|";
+
+                                        //OT 1.5
+                                        hrs = (TRPayot.payot_ot15_min) / 60;
+                                        min = (TRPayot.payot_ot15_min) - (hrs * 60);
+                                        bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
+                                        bkData += TRPayot.payot_ot15_amount + "|";
+
+                                        //OT 2
+                                        hrs = (TRPayot.payot_ot2_min) / 60;
+                                        min = (TRPayot.payot_ot2_min) - (hrs * 60);
+                                        bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
+                                        bkData += TRPayot.payot_ot2_amount + "|";
+
+                                        //OT3
+                                        hrs = (TRPayot.payot_ot3_min) / 60;
+                                        min = (TRPayot.payot_ot3_min) - (hrs * 60);
+                                        bkData += hrs.ToString().PadLeft(2, '0') + ":" + min.ToString().PadLeft(2, '0') + "|";
+                                        bkData += TRPayot.payot_ot3_amount + "|";
+
+                                        hasOTData = true;
+                                    }
+                                }
+                                if (!hasOTData)
+                                {
+                                    //OT 1
+                                    bkData += "0|";
+                                    bkData += "0|";
+                                    //OT1.5
+                                    bkData += "0|";
+                                    bkData += "0|";
+                                    //OT2
+                                    bkData += "0|";
+                                    bkData += "0|";
+                                    //OT3
+                                    bkData += "0|";
+                                    bkData += "0|";
+
+                                }
+
+                                //27 Transportation
+                                bool hasTAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("TA"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasTAData = true;
+                                    }
+                                }
+                                if (!hasTAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //28 Up country
+                                bool hasUAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("UA"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasUAData = true;
+                                    }
+                                }
+                                if (!hasUAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //29 Overnight
+                                bool hasOAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("OA"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasOAData = true;
+                                    }
+                                }
+                                if (!hasOAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //30 Mobile
+                                bool hasJPNData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("JPN"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasJPNData = true;
+                                    }
+                                }
+                                if (!hasJPNData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //31 Other income
+                                bool hasOIData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("OI"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasOIData = true;
+                                    }
+                                }
+                                if (!hasOIData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //32 Bonus
+                                bool hasBOData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("BO"))
+                                    {
+                                        // เพิ่มข้อมูลที่มีหัวข้อ EA ลงใน bkData
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasBOData = true;
+                                    }
+                                }
+                                if (!hasBOData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //33 Annual Leave
+                                bool hasALData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("AL"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasALData = true;
+                                    }
+                                }
+                                if (!hasALData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //34 AC1
+                                bool hasAC1Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("AC1"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasAC1Data = true;
+                                    }
+                                }
+                                if (!hasAC1Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //35 AV1
+                                bool hasAV1Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("AV1"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasAV1Data = true;
+                                    }
+                                }
+                                if (!hasAV1Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //36 HA1
+                                bool hasHA1Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("HA1"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasHA1Data = true;
+                                    }
+                                }
+                                if (!hasHA1Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //37 OC1
+                                bool hasOC1Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("OC1"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasOC1Data = true;
+                                    }
+                                }
+                                if (!hasOC1Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //38 SS1
+                                bool hasSS1Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("SS1"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasSS1Data = true;
+                                    }
+                                }
+                                if (!hasSS1Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //39 FA
+                                bool hasFAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("FA"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasFAData = true;
+                                    }
+                                }
+                                if (!hasFAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //40 CommutingExpat
+                                bool hasCommutingExpatData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("CommutingExpat"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasCommutingExpatData = true;
+                                    }
+                                }
+                                if (!hasCommutingExpatData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //41 ACC
+                                bool hasACCData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("ACC"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasACCData = true;
+                                    }
+                                }
+                                if (!hasACCData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //42 Cold
+                                bool hasColdData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("Cold"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasColdData = true;
+                                    }
+                                }
+                                if (!hasColdData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //43 COM
+                                bool hasCOMData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("COM"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasCOMData = true;
+                                    }
+                                }
+                                if (!hasCOMData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //44 Emergency
+                                bool hasEmergencyData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("Emergency"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasEmergencyData = true;
+                                    }
+                                }
+                                if (!hasEmergencyData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //45 INCOME_ACC
+                                bool hasINCOME_ACCData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("INCOME_ACC"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasINCOME_ACCData = true;
+                                    }
+                                }
+                                if (!hasINCOME_ACCData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //46 PHA
+                                bool hasPHAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("PHA"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasPHAData = true;
+                                    }
+                                }
+                                if (!hasPHAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //47 SBA
+                                bool hasSBAData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("SBA"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasSBAData = true;
+                                    }
+                                }
+                                if (!hasSBAData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //48 SW
+                                bool hasSWData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("SW"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasSWData = true;
+                                    }
+                                }
+                                if (!hasSWData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                
+
+                                //50 OS
+                                bool hasOSData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("OS"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasOSData = true;
+                                    }
+                                }
+                                if (!hasOSData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                double intax = 0;
+                                bool hasINTAXData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("INTAX"))
+                                    {
+                                        intax= TRPayitem.payitem_amount;
+                                        hasINTAXData = true;
+                                    }
+                                }
+                                if (hasINTAXData)
+                                {
+                                    bkData += intax + "|";
+                                }
+                                else
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //51 Total Income
+                                bool hasTTinData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_income_total - intax + "|";
+                                        hasTTinData = true;
+                                    }
+                                }
+                                if (!hasTTinData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //52 Tax 
+                                bool hasTaxData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        double tax = TRPaytran.paytran_tax_401 + TRPaytran.paytran_tax_4012 + TRPaytran.paytran_tax_4013 + TRPaytran.paytran_tax_402I + TRPaytran.paytran_tax_402O;
+                                        bkData += tax + "|";
+                                        hasTaxData = true;
+                                    }
+                                }
+                                if (!hasTaxData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //49 INTAX
+                                //bool hasINTAXData = false;
+                                //foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                //{
+                                //    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("INTAX"))
+                                //    {
+                                //        bkData += TRPayitem.payitem_amount + "|";
+                                //        hasINTAXData = true;
+                                //    }
+                                //}
+                                
+
+                                //53 SSO Emp
+                                bool hasSSOData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_ssoemp + "|";
+                                        hasSSOData = true;
+                                    }
+                                }
+                                if (!hasSSOData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //70 SSO Com
+                                bool hasSSOComData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_ssocom + "|";
+                                        hasSSOComData = true;
+                                    }
+                                }
+                                if (!hasSSOComData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //54 PF Emp
+                                bool hasPFData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_pfemp + "|";
+                                        hasPFData = true;
+                                    }
+                                }
+                                if (!hasPFData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //71 PF Com
+                                bool hasPFComData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_pfcom + "|";
+                                        hasPFComData = true;
+                                    }
+                                }
+                                if (!hasPFComData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //55 AB
+                                bool hasAB01Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("AB01"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasAB01Data = true;
+                                    }
+                                }
+                                if (!hasAB01Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //56 CH
+                                bool hasCHData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("CH"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasCHData = true;
+                                    }
+                                }
+                                if (!hasCHData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //57 HD
+                                bool hasHDData = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("HD"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasHDData = true;
+                                    }
+                                }
+                                if (!hasHDData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //58 HA2
+                                bool hasHA2Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("HA2"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasHA2Data = true;
+                                    }
+                                }
+                                if (!hasHA2Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //59 LV01
+                                bool hasLV01Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("LV01"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasLV01Data = true;
+                                    }
+                                }
+                                if (!hasLV01Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //60 LT01
+                                bool hasLT01Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("LT01"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasLT01Data = true;
+                                    }
+                                }
+                                if (!hasLT01Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //61 AV2
+                                bool hasAV2Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("AV2"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasAV2Data = true;
+                                    }
+                                }
+                                if (!hasAV2Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //62 SLF2
+                                bool hasSLF2Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("SLF2"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasSLF2Data = true;
+                                    }
+                                }
+                                if (!hasSLF2Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //63 SLF1
+                                bool hasSLF1Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("SLF1"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasSLF1Data = true;
+                                    }
+                                }
+                                if (!hasSLF1Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //64 OD2
+                                bool hasOD2Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("OD2"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasOD2Data = true;
+                                    }
+                                }
+                                if (!hasOD2Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //65 OC2
+                                bool hasOC2Data = false;
+                                foreach (cls_TRPayitem TRPayitem in list_payitem)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPayitem.worker_code) && TRPayitem.item_code.Equals("OC2"))
+                                    {
+                                        bkData += TRPayitem.payitem_amount + "|";
+                                        hasOC2Data = true;
+                                    }
+                                }
+                                if (!hasOC2Data)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //66 Total Deduct
+                                bool hasTTdeData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_deduct_total + "|";
+                                        hasTTdeData = true;
+                                    }
+                                }
+                                if (!hasTTdeData)
+                                {
+                                    bkData += "0|";
+                                }
+
+                                //67-69 netpay
+                                bool hasNetCData = false;
+                                foreach (cls_TRPaytran TRPaytran in list_paytran)
+                                {
+                                    if (MTWorkers.worker_code.Equals(TRPaytran.worker_code))
+                                    {
+                                        bkData += TRPaytran.paytran_netpay_c + "|";
+                                        bkData += TRPaytran.paytran_netpay_b + "|";
+                                        double net = TRPaytran.paytran_netpay_c + TRPaytran.paytran_netpay_b;
+                                        bkData += net + "|";
+                                        hasNetCData = true;
+                                    }
+                                }
+                                if (!hasNetCData)
+                                {
+                                    bkData += "0|";
+                                    bkData += "0|";
+                                    bkData += "0|";
+                                }
+
+
+                                tmpData += bkData + '\r' + '\n';
+                            }
+
+                        }
+
+                        int record = list_worker.Count;
+
+                        //-- Step 1 create file
+                        string filename = "TRN_INDE" + DateTime.Now.ToString("yyMMddHHmm") + "." + "xls";
+                        string filepath = Path.Combine
+                       (ClassLibrary_BPC.Config.PathFileExport, filename);
+
+                        // Check if file already exists. If yes, delete it.     
+                        if (File.Exists(filepath))
+                        {
+                            File.Delete(filepath);
+                        }
+                        DataSet ds = new DataSet();
+                        string str = tmpData.Replace("\r\n", "]");
+                        string[] data = str.Split(']');
+
+                        DataTable dataTable = ds.Tables.Add();
+                        dataTable.Columns.AddRange(new DataColumn[72] { new DataColumn("Emp ID"), new DataColumn("First Name"), new DataColumn("Last Name"),new DataColumn("Level 01 Code"), new DataColumn("Level 01"), new DataColumn("Level 02 Code"),new DataColumn("Level 02"),
+                                                                        new DataColumn("Level 03 Code"),new DataColumn("Level 03"),new DataColumn("Position Code"),new DataColumn("Position Title"),new DataColumn("Salary"),new DataColumn("Position"),
+                                                                        new DataColumn("House"),new DataColumn("Commuting"),new DataColumn("EN"),new DataColumn("JPN"),new DataColumn("Meal"),new DataColumn("OT1 Hrs"),new DataColumn("OT1"),
+                                                                        new DataColumn("OT1.5 Hrs"),new DataColumn("OT1.5"),new DataColumn("OT2 Hrs"),new DataColumn("OT2"),new DataColumn("OT3 Hrs"),new DataColumn("OT3"),new DataColumn("Transportation"),
+                                                                        new DataColumn("Up Country"),new DataColumn("Over Night"),new DataColumn("Mobile"),new DataColumn("Other Income"),new DataColumn("Bonus"),new DataColumn("Annual Leave"),new DataColumn("Allowance CTAX"),
+                                                                        new DataColumn("Advance CTAX_income"),new DataColumn("House CTAX_income"),new DataColumn("Other CTAX_income"),new DataColumn("SSSF"),new DataColumn("Fix Allowance"),
+                                                                        new DataColumn("Commuting Expat"),new DataColumn("Accommodation Allowance"),new DataColumn("Cold Allowance"),new DataColumn("Compensation Allowance"),
+                                                                        new DataColumn("Emergency"),new DataColumn("Income brought forward for tax calculation"),new DataColumn("Phone Allowance"),new DataColumn("Standby"),
+                                                                        new DataColumn("Stagged Work"),new DataColumn("Others"),new DataColumn("INTAX"),new DataColumn("Total Income"),new DataColumn("Tax"),new DataColumn("SSO Emp"),new DataColumn("SSO Com"),
+                                                                        new DataColumn("PF Emp"),new DataColumn("PF Com"),new DataColumn("Absent Deduct"),new DataColumn("Child Education_deduct"),new DataColumn("House DETAX"),
+                                                                        new DataColumn("House CTAX_Deduct"),new DataColumn("Leave"),new DataColumn("Late"),new DataColumn("Advance CTAX_deduct"),
+                                                                        new DataColumn("Court Payment"),new DataColumn("Student Loan"),new DataColumn("Other DETAX"),
+                                                                        new DataColumn("Other CTAX_deduct"),new DataColumn("Totoal Deduct"),new DataColumn("Netpay Cash"),
+                                                                        new DataColumn("Netpay Bank"),new DataColumn("Netpay")
+                                                                        , new DataColumn(" ")
+                        });
+
+                        string[] rows = str.Split(']');
+                        foreach (var row in rows)
+                        {
+                            if (string.IsNullOrEmpty(row))
+                                continue;
+                            string[] rowData = row.Split('|');
+                            dataTable.Rows.Add(rowData);
+                        }
+                        ExcelLibrary.DataSetHelper.CreateWorkbook(filepath, ds);
+                        strResult = filename;
+                    }
+                    task.task_end = DateTime.Now;
+                    task.task_status = "F";
+                    task.task_note = strResult;
+                    objMTTask.updateStatus(task);
+                }
+                catch (Exception ex)
+                {
+                    strResult = ex.ToString() + error;
+                }
+
+            }
+            else
+            {
+
+            }
+
+            return strResult;
+        }
+
     }
 }
