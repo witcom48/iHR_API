@@ -107,7 +107,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             string strCondition = "";
 
             strCondition += " AND HRM_TR_SHIFTFLEXIBLE.COMPANY_CODE='" + com + "'";
-            strCondition += " AND PLANSHIFTFLEXIBLE_CODE IN (SELECT FROM HRM_TR_EMPPOLATT WHERE COMPANY_CODE='" + com + "' AND EMPPOLATT_POLICY_TYPE='FX' AND WORKER_CODE='" + worker + "')";
+            strCondition += " AND PLANSHIFTFLEXIBLE_CODE IN (SELECT EMPPOLATT_POLICY_CODE FROM HRM_TR_EMPPOLATT WHERE COMPANY_CODE='" + com + "' AND EMPPOLATT_POLICY_TYPE='FX' AND WORKER_CODE='" + worker + "')";
 
             if (!timein.Equals(""))
                 strCondition += " AND HRM_MT_SHIFT.SHIFT_CH3 >= '" + timein + "' ";
