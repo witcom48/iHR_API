@@ -580,7 +580,7 @@ namespace HRFocusWCFSystem
 
         [DataMember]
         public double empbank_bankname { get; set; }
-
+       
     }
 
 
@@ -633,7 +633,10 @@ namespace HRFocusWCFSystem
         public string fromdate { get; set; } 
         [DataMember]
         public string todate { get; set; }  
+        [DataMember]
 
+        public bool periodresign { get; set; }
+    
     }         
 
 
