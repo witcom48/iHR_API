@@ -18728,6 +18728,29 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
+
+        public string getCountTypeAccount(string com, string worker)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTAccount controller = new cls_ctMTAccount();
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = controller.getCountTypeAccount(com,worker);
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
         #endregion
 
         #region TRAccountpos

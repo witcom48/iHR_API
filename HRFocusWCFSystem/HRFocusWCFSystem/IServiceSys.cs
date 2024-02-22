@@ -1608,6 +1608,10 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "account_workflow")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string getMTAccountworkflowList(InputMTAccount input);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getCountTypeAccount(string com, string worker);
         #endregion
 
         #region TRAccountpos

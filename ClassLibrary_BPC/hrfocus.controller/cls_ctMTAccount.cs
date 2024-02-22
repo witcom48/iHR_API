@@ -212,6 +212,35 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return blnResult;
         }
+        public int getCountTypeAccount(string com,string worker)
+        {
+            int intResult = 0;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append("SELECT COUNT(SELF_MT_ACCOUNT.ACCOUNT_TYPE) ");
+                obj_str.Append(" FROM SELF_TR_ACCOUNT");
+                obj_str.Append(" JOIN SELF_MT_ACCOUNT ON SELF_MT_ACCOUNT.COMPANY_CODE = SELF_TR_ACCOUNT.COMPANY_CODE");
+                obj_str.Append(" AND SELF_MT_ACCOUNT.ACCOUNT_USER = SELF_TR_ACCOUNT.ACCOUNT_USER");
+                obj_str.Append(" WHERE WORKER_CODE = '" + worker + "'");
+                obj_str.Append(" AND SELF_TR_ACCOUNT.ACCOUNT_TYPE = 'Emp'");
+                obj_str.Append(" AND SELF_TR_ACCOUNT.COMPANY_CODE = '"+com+"'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                if (dt.Rows.Count > 0)
+                {
+                    intResult = Convert.ToInt32(dt.Rows[0][0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Account.getCountTypeAccount)" + ex.ToString();
+            }
+
+            return intResult;
+        }
         public int getNextID()
         {
             int intResult = 1;
