@@ -280,5 +280,10 @@ namespace ClassLibrary_BPC
         }
 
 
+
+        internal bool doExecuteSQL_transaction(SqlCommand deleteCommand)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -51,6 +51,7 @@ D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\b
 D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.dll
 D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\HRFocusWCFSystem.pdb
 D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ClassLibrary_BPC.dll
+D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ExcelLibrary.dll
 D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Google.Authenticator.dll
 D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\Newtonsoft.Json.dll
 D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ClassLibrary_BPC.pdb
@@ -59,4 +60,3 @@ D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\b
 D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.csprojResolveAssemblyReference.cache
 D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.dll
 D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\obj\Debug\HRFocusWCFSystem.pdb
-D:\ใช้ตัวนี้ihrapi\iHR_API\HRFocusWCFSystem\HRFocusWCFSystem\bin\ExcelLibrary.dll

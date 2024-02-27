@@ -9449,6 +9449,7 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
+  
         public string doManageTRPayitemList(InputTRList input)
         {
             JObject output = new JObject();
@@ -9584,6 +9585,66 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
 
+        }
+
+        ///
+        public string getTRPayitemVerifyList(string language, string com, string emp, string paydate, string itemtype, string itemcode )
+        {
+            JObject output = new JObject();
+
+            cls_ctTRPayitem objPayitem = new cls_ctTRPayitem();
+            List<cls_TRPayitem> listPayitem = objPayitem.getDataByVerifyFillter(language, com, emp, Convert.ToDateTime(paydate), itemtype, itemcode );
+            JArray array = new JArray();
+
+            if (listPayitem.Count > 0)
+            {
+                int index = 1;
+
+                foreach (cls_TRPayitem model in listPayitem)
+                {
+                    JObject json = new JObject();
+
+                    json.Add("company_code", model.company_code);
+                    json.Add("worker_code", model.worker_code);
+                    json.Add("item_code", model.item_code);
+                    json.Add("payitem_date", model.payitem_date);
+                    json.Add("payitem_amount", model.payitem_amount);
+                    json.Add("payitem_quantity", model.payitem_quantity);
+                    json.Add("payitem_paytype", model.payitem_paytype);
+                    json.Add("payitem_note", model.payitem_note);
+
+                    json.Add("item_detail", model.item_detail);
+                    json.Add("item_type", model.item_type);
+                    json.Add("worker_detail", model.worker_detail);
+                    json.Add("amount1", model.amount1);
+                    json.Add("amount2", model.amount2);
+                    json.Add("status", model.status);
+
+                    json.Add("create_by", model.create_by);
+                    json.Add("create_date", model.create_date);
+
+                    json.Add("modified_by", model.modified_by);
+                    json.Add("modified_date", model.modified_date);
+                    json.Add("flag", model.flag);
+
+                    json.Add("index", index);
+                    index++;
+
+                    array.Add(json);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
         }
         #endregion
 
@@ -20580,6 +20641,502 @@ namespace HRFocusWCFSystem
             }
 
 
+
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
+
+
+
+        #region  FNTCompareamount
+        public string getFNTCompareamount(InputFNTCompareamount input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRPayitem objPayitem = new cls_ctTRPayitem();
+                List<cls_TRPayitem> listPayitem = objPayitem.getDataByFillterVerify2(input.language, input.company_code, input.worker_code, input.item_code);
+
+                //List<cls_TRPayitem> listPayitem = objPayitem.getDataByVerifyFillter(input.language, input.company_code, input.worker_code, Convert.ToDateTime(input.payitem_date), "", input.item_code);
+             
+                JArray array = new JArray();
+
+                if (listPayitem.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_TRPayitem model in listPayitem)
+                    {
+                        JObject json = new JObject();
+
+                        json.Add("company_code", model.company_code);
+                        json.Add("worker_code", model.worker_code);
+                        json.Add("item_code", model.item_code);
+                        json.Add("payitem_date", model.payitem_date);
+                        json.Add("payitem_amount", model.payitem_amount);
+                        json.Add("payitem_quantity", model.payitem_quantity);
+                        json.Add("payitem_paytype", model.payitem_paytype);
+                        json.Add("payitem_note", model.payitem_note);
+
+                        json.Add("item_detail", model.item_detail);
+                        json.Add("item_type", model.item_type);
+                        json.Add("worker_detail", model.worker_detail);
+
+                        json.Add("amount1", model.amount1);
+                        json.Add("amount2", model.amount2);
+
+                        json.Add("worker_hiredate", model.worker_hiredate);
+                        json.Add("worker_resigndate", model.worker_resigndate);
+
+                        json.Add("modified_by", model.modified_by);
+                        json.Add("modified_date", model.modified_date);
+                        json.Add("flag", model.flag);
+
+                        //json.Add("index", index);
+                        //index++;
+ 
+                        cls_ctTRVerify objTRVerify = new cls_ctTRVerify();
+                        List<cls_TRVerify> listTRVerify = objTRVerify.getDataByFillter(input.company_code, "", "",  "");
+                        JArray arrayTRAccountpos = new JArray();
+                        if (listTRVerify.Count > 0)
+                        {
+                            int indexTRVerify= 1;
+                            //-- เก็บสถานะการตรวจสอบว่า ตรวจสอบแล้ว, ยอดไม่ตรง (1 งวดการจ่ายต่อ 1 เงินได้เงินหัก)
+                            foreach (cls_TRVerify modelTRVerify in listTRVerify)
+                            {
+                                JObject jsonTRPlan = new JObject();
+                                jsonTRPlan.Add("company_code", modelTRVerify.company_code);
+                                jsonTRPlan.Add("item_code", modelTRVerify.item_code);
+                                jsonTRPlan.Add("emptype_id", modelTRVerify.emptype_id);
+                                jsonTRPlan.Add("payitem_date", modelTRVerify.payitem_date);
+                                jsonTRPlan.Add("verify_status", modelTRVerify.verify_status);//1=ตรวจสอบแล้ว | 2=ยอดไม่ตรง
+                                jsonTRPlan.Add("index", indexTRVerify);
+
+
+                                indexTRVerify++;
+
+                                arrayTRAccountpos.Add(jsonTRPlan);
+                            }
+                            json.Add("payitem_date_accountpos", arrayTRAccountpos);
+                        }
+                        else
+                        {
+                            json.Add("payitem_date_accountpos ", arrayTRAccountpos);
+                        }
+                        cls_ctTRVerifylogs objTRVerifylogs = new cls_ctTRVerifylogs();
+                        List<cls_TRVerifylogs> listTRVerifylogs = objTRVerifylogs.getDataByFillter(input.company_code, input.item_code);
+                        JArray arrayTRVerifylog = new JArray();
+                        if (listTRVerifylogs.Count > 0)
+                        {
+                            int indexTRVerifylog = 1;
+                            //-- เก็บ Log ทุกครั้งที่กดตรวจสอบ แล้วกดบันทึก 
+                            foreach (cls_TRVerifylogs modelTRVerifylog in listTRVerifylogs)
+                            {
+                                JObject jsonTRVerifylogs = new JObject();
+
+
+                                jsonTRVerifylogs.Add("company_code", modelTRVerifylog.company_code);
+                                jsonTRVerifylogs.Add("item_code", modelTRVerifylog.item_code);
+                                jsonTRVerifylogs.Add("emptype_id", modelTRVerifylog.emptype_id);
+                                jsonTRVerifylogs.Add("payitem_date", modelTRVerifylog.payitem_date);
+                                jsonTRVerifylogs.Add("verify_quantity", modelTRVerifylog.verify_quantity);
+                                jsonTRVerifylogs.Add("verify_amount", modelTRVerifylog.verify_amount);
+                                jsonTRVerifylogs.Add("verify_note", modelTRVerifylog.verify_note);
+                                jsonTRVerifylogs.Add("create_by", modelTRVerifylog.create_by);
+                                jsonTRVerifylogs.Add("create_date", modelTRVerifylog.create_date);
+                                jsonTRVerifylogs.Add("index", indexTRVerifylog);
+
+                                  
+
+                                indexTRVerifylog++;
+
+                                arrayTRVerifylog.Add(jsonTRVerifylogs);
+                            }
+                            json.Add("payitem_date_verifylog", arrayTRVerifylog);
+                        }
+                        else
+                        {
+                            json.Add("payitem_date_verifylog", arrayTRVerifylog);
+                        }
+
+ 
+
+                        cls_ctFNTCompareamount objFNTCompareamount = new cls_ctFNTCompareamount();
+                        List<cls_FNTCompareamount> listFNTCompareamount = objFNTCompareamount.getDataByFillter(input.EmpID, input.worker_code);
+
+                        //List<cls_TRVerify> listFNTCompareamount = objFNTCompareamount.getDataByFillter(input.company_code, "", "", input.verify_status);
+                        JArray arrayFNTCompareamount = new JArray();
+                        if (listFNTCompareamount.Count > 0)
+                        {
+                            int indexFNTCompareamount = 1;
+
+                            foreach (cls_FNTCompareamount modelCompareamount in listFNTCompareamount)
+                            {
+                                JObject jsonCompareamount = new JObject();
+
+
+                                jsonCompareamount.Add("EmpID", modelCompareamount.EmpID);
+                                jsonCompareamount.Add("EmpName", modelCompareamount.EmpName);
+                                jsonCompareamount.Add("Amount", modelCompareamount.Amount);
+                                jsonCompareamount.Add("AmountOld", modelCompareamount.AmountOld);
+                                jsonCompareamount.Add("Filldate", modelCompareamount.Filldate);
+                                jsonCompareamount.Add("Resigndate", modelCompareamount.Resigndate);
+                                jsonCompareamount.Add("index", indexFNTCompareamount);
+
+
+
+                                indexFNTCompareamount++;
+
+                                arrayFNTCompareamount.Add(jsonCompareamount);
+                            }
+                            json.Add("worker_dataFNTCompareamount", arrayFNTCompareamount);
+                        }
+                        else
+                        {
+                            json.Add("worker_dataFNTCompareamount", arrayFNTCompareamount);
+                        }
+
+                        json.Add("index", index);
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string getFNTCompareclosed(string language, string com, string emp, string itemcode, string verify_status)
+        {
+            JObject output = new JObject();
+
+            cls_ctTRVerify objTRVerify = new cls_ctTRVerify();
+            List<cls_TRVerify> listTRVerify = objTRVerify.getDataByFillter(com, itemcode, "", verify_status);
+            JArray array = new JArray();
+
+            if (listTRVerify.Count > 0)
+            {
+                int index = 1;
+                foreach (cls_TRVerify modelTRVerify in listTRVerify)
+                {
+                    JObject jsonTRPlan = new JObject();
+                    jsonTRPlan.Add("company_code", modelTRVerify.company_code);
+                    jsonTRPlan.Add("item_code", modelTRVerify.item_code);
+                    jsonTRPlan.Add("emptype_id", modelTRVerify.emptype_id);
+                    jsonTRPlan.Add("payitem_date", modelTRVerify.payitem_date);
+                    jsonTRPlan.Add("verify_status", modelTRVerify.verify_status);//1=ตรวจสอบแล้ว | 2=ยอดไม่ตรง
+                    jsonTRPlan.Add("index", index);
+
+                     index++;
+
+                    array.Add(jsonTRPlan);
+                }
+
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = array;
+            }
+            else
+            {
+                output["result"] = "0";
+                output["result_text"] = "Data not Found";
+                output["data"] = array;
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+
+        //public string getFNTCompareclosed(string language, string com, string emp, string itemcode, string verify_status)
+        // {
+        //    JObject output = new JObject();
+        //    try
+        //    {
+        //        cls_ctTRPayitem objPayitem = new cls_ctTRPayitem();
+        //        List<cls_TRPayitem> listPayitem = objPayitem.getDataByFillterVerify2(language, com, emp,  itemcode);
+        //        JArray array = new JArray();
+        //        if (listPayitem.Count > 0)
+        //        {
+        //            int index = 1;
+        //            foreach (cls_TRPayitem model in listPayitem)
+        //            {
+        //                JObject json = new JObject();
+
+        //                json.Add("company_code", model.company_code);
+        //                json.Add("worker_code", model.worker_code);
+        //                json.Add("item_code", model.item_code);
+        //                json.Add("payitem_date", model.payitem_date);
+        //                json.Add("payitem_amount", model.payitem_amount);
+        //                json.Add("payitem_quantity", model.payitem_quantity);
+        //                json.Add("payitem_paytype", model.payitem_paytype);
+        //                json.Add("payitem_note", model.payitem_note);
+
+        //                json.Add("item_detail", model.item_detail);
+        //                json.Add("item_type", model.item_type);
+        //                json.Add("worker_detail", model.worker_detail);
+
+        //                json.Add("amount1", model.amount1);
+        //                json.Add("amount2", model.amount2);
+
+        //                json.Add("worker_hiredate", model.worker_hiredate);
+        //                json.Add("worker_resigndate", model.worker_resigndate);
+
+        //                json.Add("modified_by", model.modified_by);
+        //                json.Add("modified_date", model.modified_date);
+        //                json.Add("flag", model.flag);
+ 
+        //                cls_ctTRVerify objTRVerify = new cls_ctTRVerify();
+        //                List<cls_TRVerify> listTRVerify = objTRVerify.getDataByFillter(com, itemcode, "", verify_status);
+        //                JArray arrayTRAccountpos = new JArray();
+        //                if (listTRVerify.Count > 0)
+        //                {
+        //                    int indexTRVerify = 1;
+        //                    //-- เก็บสถานะการตรวจสอบว่า ตรวจสอบแล้ว, ยอดไม่ตรง (1 งวดการจ่ายต่อ 1 เงินได้เงินหัก)
+        //                    foreach (cls_TRVerify modelTRVerify in listTRVerify)
+        //                    {
+        //                        JObject jsonTRPlan = new JObject();
+        //                        jsonTRPlan.Add("company_code", modelTRVerify.company_code);
+        //                        jsonTRPlan.Add("item_code", modelTRVerify.item_code);
+        //                        jsonTRPlan.Add("emptype_id", modelTRVerify.emptype_id);
+        //                        jsonTRPlan.Add("payitem_date", modelTRVerify.payitem_date);
+        //                        jsonTRPlan.Add("verify_status", modelTRVerify.verify_status);//1=ตรวจสอบแล้ว | 2=ยอดไม่ตรง
+        //                        jsonTRPlan.Add("index", indexTRVerify);
+
+
+        //                        indexTRVerify++;
+
+        //                        arrayTRAccountpos.Add(jsonTRPlan);
+        //                    }
+        //                    json.Add("payitem_date_accountpos", arrayTRAccountpos);
+        //                }
+        //                else
+        //                {
+        //                    json.Add("payitem_date_accountpos ", arrayTRAccountpos);
+        //                }
+                        
+        //                json.Add("index", index);
+        //                index++;
+
+        //                array.Add(json);
+        //            }
+
+        //            output["result"] = "1";
+        //            output["result_text"] = "1";
+        //            output["data"] = array;
+
+        //        }
+        //        else
+        //        {
+        //            output["result"] = "0";
+        //            output["result_text"] = "Data not Found";
+        //            output["data"] = array;
+
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        output["result"] = "0";
+        //        output["result_text"] = ex.ToString();
+
+        //    }
+        //    finally
+        //    {
+
+        //    }
+
+        //    return output.ToString(Formatting.None);
+        //}
+
+
+
+        public string doManageCompareamount(InputFNTCompareamount input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                // 1. เพิ่มข้อมูลใน HRM_TR_PAYITEM
+                cls_ctFNTCompareamount objPayitem = new cls_ctFNTCompareamount();
+                cls_FNTCompareamount list_model = new cls_FNTCompareamount();
+
+                list_model.EmpID = input.EmpID;
+                list_model.EmpName = input.EmpName;
+                list_model.Amount = input.Amount;
+                list_model.AmountOld = input.AmountOld;
+                list_model.Filldate = Convert.ToDateTime(input.payitem_date);
+                list_model.Resigndate = Convert.ToDateTime(input.payitem_date);
+                List<cls_FNTCompareamount> compareAmountList = new List<cls_FNTCompareamount> { list_model };
+                bool blnResult = objPayitem.insert2( compareAmountList);
+              
+                // 2. ถ้าการเพิ่มข้อมูลใน HRM_TR_PAYITEM สำเร็จ
+                if (blnResult)
+                {
+                    // 2.1 เพิ่มข้อมูลใน HRM_TR_VERIFY
+                    string verify_date = input.verify_date;
+
+                    try
+                    {
+
+                        JObject jsonObject = new JObject();
+                        var jsonArrayVerify = JsonConvert.DeserializeObject<List<cls_TRVerify>>(verify_date);
+                        List<cls_TRVerify> listVerify = new List<cls_TRVerify>();
+ 
+                        foreach (cls_TRVerify verifyModel in jsonArrayVerify)
+                        {
+                            // กำหนดค่าใน verifyModel จาก input และ model
+                            verifyModel.item_code = input.item_code;
+                            verifyModel.company_code = input.company_code;
+
+                            verifyModel.verify_status = verifyModel.verify_status;
+                            verifyModel.payitem_date = Convert.ToDateTime(input.payitem_date); 
+
+                            listVerify.Add(verifyModel);
+                        }
+
+                        cls_ctTRVerify objTRVerify = new cls_ctTRVerify();
+                        objTRVerify.delete(input.company_code, input.item_code, "", ""); // ลบข้อมูลเดิม (ถ้ามี)
+                        objTRVerify.inserts(listVerify, ""); // เพิ่มข้อมูลใหม่
+                    }
+                    catch (Exception ex)
+                    {
+                        string errorMessage = ex.ToString();
+                    }
+
+                    // 2.2 เพิ่มข้อมูลใน HRM_TR_VERIFYLOGS
+                    string verifylogs_data = input.verifylogs_data;
+
+                    try
+                    {
+                        var jsonArrayVerifylogs = JsonConvert.DeserializeObject<List<cls_TRVerifylogs>>(verifylogs_data);
+                        List<cls_TRVerifylogs> listVerifylogs = new List<cls_TRVerifylogs>();
+
+                        foreach (cls_TRVerifylogs TRVerifylogsModel in jsonArrayVerifylogs)
+                        {
+                            // กำหนดค่าใน TRVerifylogsModel จาก input และ model
+                            TRVerifylogsModel.company_code = input.company_code;
+                            //TRVerifylogsModel.emptype_id = input.emptype_id;
+                            TRVerifylogsModel.item_code = input.item_code;
+                            TRVerifylogsModel.verify_amount = TRVerifylogsModel.verify_amount;
+                            TRVerifylogsModel.verify_quantity = TRVerifylogsModel.verify_quantity;
+                             TRVerifylogsModel.payitem_date = Convert.ToDateTime(input.payitem_date);
+
+                             TRVerifylogsModel.verify_note = TRVerifylogsModel.verify_note;
+
+                            listVerifylogs.Add(TRVerifylogsModel);
+                        }
+
+                        cls_ctTRVerifylogs objVerifylogs = new cls_ctTRVerifylogs();
+                        objVerifylogs.delete(input.company_code, input.item_code, ""); // ลบข้อมูลเดิม (ถ้ามี)
+                        objVerifylogs.insert2(listVerifylogs, input.modified_by);
+                    }
+                    catch (Exception ex)
+                    {
+                        string errorMessage = ex.ToString();
+                    }
+
+                    // 2.3 เพิ่มข้อมูลใน HRM_FNT_COMPARE_AMOUNT
+                    //string fntcompareamount_data = input.fntcompareamount_data;
+
+                    //try
+                    //{
+                    //    var jsonArrayCompareamount = JsonConvert.DeserializeObject<List<cls_FNTCompareamount>>(fntcompareamount_data);
+                    //    List<cls_FNTCompareamount> listCompareamount = new List<cls_FNTCompareamount>();
+
+                    //    foreach (cls_FNTCompareamount compareamountModel in jsonArrayCompareamount)
+                    //    {
+                    //        // กำหนดค่าใน compareamountModel จาก input และ model
+                    //        //compareamountModel.EmpID = input.EmpID;
+                    //        compareamountModel.EmpName = model.worker_code;
+                    //        compareamountModel.Amount = compareamountModel.Amount;
+                    //        compareamountModel.AmountOld = compareamountModel.AmountOld;
+                    //        compareamountModel.Filldate = Convert.ToDateTime(model.worker_hiredate);
+                    //        compareamountModel.Resigndate = Convert.ToDateTime(model.worker_resigndate);
+
+                    //        listCompareamount.Add(compareamountModel);
+                    //    }
+
+                    //    cls_ctFNTCompareamount objFNTCompareamount = new cls_ctFNTCompareamount();
+                    //    objFNTCompareamount.delete(input.EmpID); // ลบข้อมูลเดิม (ถ้ามี)
+                    //    objFNTCompareamount.insert2(input.EmpID.ToString(), listCompareamount);
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    string errorMessage = ex.ToString();
+                    //}
+
+                    output["result"] = "1";
+                    output["result_text"] = "Success";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objPayitem.getMessage();
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+
+
+
+        public string doDeleteFNTCompareamount(InputFNTCompareamount input)
+        {
+            JObject output = new JObject();
+
+            try
+            {
+                cls_ctFNTCompareamount objPayitem = new cls_ctFNTCompareamount();
+
+                bool blnResult = objPayitem.delete(input.EmpID );
+
+                if (blnResult)
+                {
+                    output["result"] = "1";
+                    output["result_text"] = "0";
+                }
+                else
+                {
+                    output["result"] = "2";
+                    output["result_text"] = objPayitem.getMessage();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
 
             return output.ToString(Formatting.None);
 

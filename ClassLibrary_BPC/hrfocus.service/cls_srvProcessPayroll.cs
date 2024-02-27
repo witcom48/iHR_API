@@ -1511,6 +1511,12 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 DateTime dateEff = task_detail.taskdetail_fromdate;
                 DateTime datePay = task_detail.taskdetail_paydate;
+                 string[] task_bank = task_detail.taskdetail_process.Split('|');
+                //string[] task_bank = task_detail.taskdetail_process.Split('|');
+                string[] task_details = task_detail.taskdetail_process.Split('|');
+                //string[] task_bank = task_details;
+                string[] task_pf_detail = task_details;
+
 
                 StringBuilder objStr = new StringBuilder();
                 foreach (cls_TRTaskwhose whose in listWhose)
@@ -1519,6 +1525,9 @@ namespace ClassLibrary_BPC.hrfocus.service
                 }
 
                 string strEmp = objStr.ToString().Substring(0, objStr.ToString().Length - 1);
+                //ตัวเช็คธนาคาร
+
+                string bankCode = new String(task_detail.taskdetail_process.Where(Char.IsDigit).ToArray());
 
 
 
@@ -1559,6 +1568,16 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
 
+
+                //-- Get Emp bankacc
+                cls_ctTREmpbank objEmpbank = new cls_ctTREmpbank();
+                List<cls_TREmpbank> list_empbank = objEmpbank.getDataMultipleEmp(com, strEmp);
+                cls_TREmpbank bank = list_empbank[0];
+
+                //-- Get bank
+                cls_ctMTBank objbank = new cls_ctMTBank();
+                List<cls_MTBank> list_bank = objbank.getDataByFillter("", "");
+
                 cls_MTPeriod period = new cls_MTPeriod();
 
                 foreach (cls_MTPeriod tmp in list_period)
@@ -1574,7 +1593,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                 string tmpData = "";
 
                 //-- this.taskDetail.taskdetail_process = "PF" + "|" + this.CompanyCode + "|" + this.PFCode + "|" + this.PatternCode;
-                string[] task_pf_detail = task_detail.taskdetail_process.Split('|');
+                //string[] task_pf_detail = task_detail.taskdetail_process.Split('|');
 
 
                 if (list_pf.Count > 0)
@@ -1592,7 +1611,9 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                     foreach (cls_TRPaypf pf in list_pf)
                     {
-
+                        string empnameen = "";
+                        string empnameth = "";
+                        string Header = "";
                         string empname = "";
 
                         cls_MTWorker obj_worker = new cls_MTWorker();                                            
@@ -1604,7 +1625,17 @@ namespace ClassLibrary_BPC.hrfocus.service
                         {
                             if (pf.worker_code.Equals(worker.worker_code))
                             {
-                                empname = worker.initial_name_en + " " + worker.worker_fname_en + " " + worker.worker_lname_en;
+                                empnameen = worker.initial_name_en + " " + worker.worker_fname_en + " " + worker.worker_lname_en;
+                                obj_worker = worker;
+                                break;
+                            }
+                        }
+
+                        foreach (cls_MTWorker worker in list_worker)
+                        {
+                            if (pf.worker_code.Equals(worker.worker_code))
+                            {
+                                empnameth = worker.initial_name_th + " " + worker.worker_fname_th + " " + worker.worker_lname_th;
                                 obj_worker = worker;
                                 break;
                             }
@@ -1638,174 +1669,417 @@ namespace ClassLibrary_BPC.hrfocus.service
                             }
                         }
 
+                        //
+                         double TotalAmount = TotalAmountEmp + TotalAmountComp;
+
+                        //
+                         if (task_bank.Length > 0 || task_pf_detail.Length > 0)
+                         {
+
+                             switch (bankCode)
+                            //switch (task_detail.taskdetail_process )
+                            {
+                                case "014" :
+                                case "001"://scb
+                                    {
+                                        // Header 
+
+                                       
+                                        // 1. รหัสกองทัน Fund Code
+                                        Header += task_pf_detail[2] + "|";
+
+                                        // 2. รหัสบริษัท Company Code
+                                        Header += task_pf_detail[1] + "|";
 
 
-                        if (empname.Equals("") || obj_taxcard.empcard_code.Equals("") || obj_pfcard.empcard_code.Equals(""))
-                            continue;
+                                        // 3. MEM_FUND (Employee Code)
+                                        bkData += obj_worker.worker_code + "|";
 
-                        bkData = bkData + '\r' + '\n';
+                                        // 4. NAME_THAI (Name th) 
+                                        bkData += empnameth + "|";
 
-                        // 1, 2. Record Type, Member ID-Type
-                        bkData += "D,EM,";
+                                        // 5.  NAME_ENG (Name en) 
+                                        bkData += empnameen + "|";
 
-                        // 3. Member ID
-                        bkData += obj_pfcard.empcard_code + ",";
+                                        // 6. M_AMT(เงินสะสม (EMP CONT.))  
+                                        Amount = pf.paypf_emp_amount;
+                                        bkData += Amount.ToString("0.00").Trim() + "|";
+                                        TotalAmountEmp += Amount;
 
-                        // 4. Title Name
-                        bkData += obj_worker.initial_name_th + ",";
+                                        // 7. เงินสมทบ (COMP CONT.)  
+                                        Amount = pf.paypf_com_amount;
+                                        bkData += Amount.ToString("0.00").Trim() + "|";
+                                        TotalAmountComp += Amount;
 
-                        // 5. First Name
-                        bkData += obj_worker.worker_fname_th + ",";
+                                        tmpData += Header;
+                                        tmpData += bkData;
+                                    }
+                                    break;
 
-                        // 6. Last Name
-                        bkData += obj_worker.worker_lname_th + ",";
+                                case "004": // กสิกรไทย (10 หลัก)
 
-                        // 7. Position Code
-                        bkData += ",";
+                                    {
+                                        // Header 
+                                        // 1. A
+                                        Header += "A" + "|";
 
-                        // 8. Location Code
-                        bkData += "0" + ",";
+                                        // 2. D
+                                        Header += "D" + "|";
 
-                        // 9. Department Code
-                        bkData += obj_empdep.empdep_level01 + ",";
+                                        // 3. รหัสกองทัน Fund Code
+                                        Header += task_pf_detail[1] + "|";
 
-                        // 10. Division Code
-                        bkData += obj_empdep.empdep_level02 + ",";
+                                        // 4. วันที่
+                                        string datePart1 = datePay.ToString("ddMMyy", DateTimeFormatInfo.CurrentInfo);
+                                        Header += datePart1 + "|";
+                                        // 5. วันที่
+                                        string datePart2 = datePay.ToString("ddMMyy", DateTimeFormatInfo.CurrentInfo);
+                                        Header += datePart2 + "|";
 
-                        // 11. Section Code
-                        bkData += obj_empdep.empdep_level03 + ",";
-
-                        // 12. Citizen ID
-                        bkData += obj_taxcard.empcard_code + ",";
-
-                        // 13. Tax ID
-                        bkData += obj_taxcard.empcard_code + ",";
-
-                        // 14. รหัสรูปแบบลงทุน
-                        //-- F edit 16/03/2014
-                        bkData += "01,";
-                        //Detail += txtPatternCode.Text + ",";
-
-                        // 15. รหัสกองทุนย่อย 1
-                        //-- F edit 16/03/2014
-                        bkData += "SINSA1,";
-                        //Detail += txtPFCodeSub.Text + ",";
-
-                        // 16. %เงินลงทุน 1
-                        bkData += "100.00,";
-
-                        // 17. เงินสะสม 1 (บาท)
-                        Amount = pf.paypf_emp_amount;
-                        bkData += Amount.ToString("0.00").Trim() + ",";
-                        TotalAmountEmp += Amount;
-
-                        // 17. เงินสมทบ 1 (บาท)
-                        Amount = pf.paypf_com_amount;
-                        bkData += Amount.ToString("0.00").Trim();
-                        TotalAmountComp += Amount;
-
-                        TotalRecord++;
-                        index++;
-                    }
-
-                    
-
-                    double TotalAmount = TotalAmountEmp + TotalAmountComp;
-
-                    // Header 
-
-                    // 1. Record Type, 2. Batch Reference, 3. Verify Status, 4. Transaction Code
-                    string Header = "H3,,,CB,";
-
-                    // 5. Fund Code
-                    //Header += txtPFCode.Text.TrimEnd() + ",";
-                    Header += task_pf_detail[2] + ",";
-
-                    // 6. Company Code
-                    //Header += txtCompCode.Text.TrimEnd() + ",";
-                    Header += task_pf_detail[1] + ",";
-
-                    // 7. Total Records
-                    Header += TotalRecord.ToString() + ",";
-
-                    // 8. Generate Date
-                    Header += DateTime.Now.ToString("dd/MM/yyyy") + ",";
-
-                    // 9. Total Amount
-                    Header += TotalAmount.ToString("0.00") + ",";
-
-                    // 10. Fund Manager Code
-                    Header += "BBLAM,";
-
-                    // 11. Contribution Group
-                    //Header += txtCBGroup.Text.TrimEnd() + ",";
-                    Header += "" + ",";
-
-                    // 12. Payment Month
-                    //if (PeriodMonthly != string.Empty)
-                    //    Header += PeriodMonthly + "/" + Year.Year.ToString() + ",";
-                    //else
-                    //    Header += PeriodDaily + "/" + Year.Year.ToString() + ",";
-                    Header += period.period_no + "/" + datePay.Year.ToString() + ",";
+                                        // 6. รหัสบริษัท Company Code
+                                        Header += task_pf_detail[2] + "|";
 
 
-                    // 13. Payment Term
-                    Header += "1,";
+                                        ////
+                                        string initial = "";
+                                        string fname = "";
+                                        string lname = "";
 
-                    // 14. Payment Date, 15-18
-                    Header += datePay.ToString("dd/MM/yyyy") + ",,,,,";
+                                        foreach (cls_MTWorker worker in list_worker)
+                                        {
+                                            if (pf.worker_code.Equals(worker.worker_code))
+                                            {
+                                                initial = worker.initial_name_th;
+                                                fname = worker.worker_fname_th;
+                                                lname = worker.worker_lname_th;
 
-                    // 19. Transaction Flag
-                    Header += "New";
+                                                
+                                                
+                                                
+                                                obj_worker = worker;
+                                                break;
+                                            }
+                                        }
 
-                    //int record = list_paytran.Count;
 
-                    tmpData += Header + bkData;
+                                        ///
+                                        // 7.  
+                                        bkData += "B" + "|";
 
-                    try
-                    {
-                        //-- Step 1 create file
-                        string filename = "TRN_PF_" + DateTime.Now.ToString("yyMMddHHmm") + "." + "txt";
-                        string filepath = Path.Combine
-                       (ClassLibrary_BPC.Config.PathFileExport, filename);
+                                        // 8. 
+                                        bkData += "A" + "|";
 
-                        // Check if file already exists. If yes, delete it.     
-                        if (File.Exists(filepath))
-                        {
-                            File.Delete(filepath);
+                                        // 9. MEM_FUND (Employee Code)
+                                        bkData += obj_worker.worker_code + "|";
+
+
+                                        // 10. MEM_FUND (Employee Code)
+                                        bkData += initial + "|";
+
+                                        // 11. NAME_THAI (Name th) 
+                                        bkData += fname + "|";
+                                        
+
+                                        // 12.  NAME_ENG (Name en) 
+                                        bkData += lname + "|";
+
+                                        //13. M_AMT(เงินสะสม (EMP CONT.))  
+                                        Amount = pf.paypf_emp_amount;
+                                        bkData += Amount.ToString("0.00").Trim() + "|";
+                                        TotalAmountEmp += Amount;
+
+                                        // 14. เงินสมทบ (COMP CONT.)  
+                                        Amount = pf.paypf_com_amount;
+                                        bkData += Amount.ToString("0.00").Trim() + "|";
+                                        TotalAmountComp += Amount;
+
+                                        // 15. เงินสมทบ (COMP CONT.)  
+                                        bkData += "" + "|";
+
+                                        // 16. เงินสมทบ (COMP CONT.)  
+                                        bkData += "" + "|";
+
+                                        // 17. เงินสมทบ (COMP CONT.)  
+                                        bkData += "" + "|";
+
+                                        // 18. รหัสบัตรประชาชนcomcard.comcard_code
+                                        if (comcard.comcard_code.Length == 13)
+                                            bkData += comcard.comcard_code + "|";
+                                        else
+                                            bkData += "0000000000000" + "|";
+
+
+                                      
+
+                                        tmpData += Header + '\r' + '\n'+ bkData;
+                                    }
+                                    break;
+
+
+                                default:
+                                    break;
+                            }
                         }
-
-                        // Create a new file     
-                        using (FileStream fs = File.Create(filepath))
+                        try
                         {
-                            // Add some text to file    
-                            Byte[] title = new UTF8Encoding(true).GetBytes(tmpData);
-                            fs.Write(title, 0, title.Length);
+                            //-- Step 1 create file
+ 
+                            string filename = "TRN_PF" + DateTime.Now.ToString("yyMMddHHmm") + "." + "xls";
+                            string filepath = Path.Combine
+                           (ClassLibrary_BPC.Config.PathFileExport, filename);
+
+                            // Check if file already exists. If yes, delete it.     
+                            if (File.Exists(filepath))
+                            {
+                                File.Delete(filepath);
+                            }
+                            DataSet ds = new DataSet();
+                            string str = tmpData.Replace("\r\n", "]");
+                            string[] data = str.Split(']');
+                            DataTable dataTable = ds.Tables.Add();
+
+                            bool bank_code014 = (bankCode == "014" || bankCode == "001"); // scb
+
+                            //bool bank_code  = (bank.bank_code == ""); // SCB-MasterFund
+                            bool bank_code004 = (bankCode == "004"); // กสิกรไทย
+
+
+                            //int columnsCount = Math.Min(dataTable.Columns.Count, 6);
+
+                            if (bank_code014)
+                            {
+                                dataTable.Columns.AddRange(new DataColumn[7] { new DataColumn("FUND_CODE"), new DataColumn("COMP_CODE"), new DataColumn("MEM_FUND"), new DataColumn("NAME_THAI"), new DataColumn("NAME_ENG"), new DataColumn("M_AMT"), new DataColumn("F_AMT") });
+                            }
+                            else if (bank_code004)
+                            {
+                                // เพิ่ม DataColumn 6 คอลัมน์แรก
+                                dataTable.Columns.AddRange(new DataColumn[18] { new DataColumn("A"), new DataColumn("B"), new DataColumn("C"), new DataColumn("D"), new DataColumn("E"), new DataColumn("F") ,new DataColumn("A1"), new DataColumn("B1"), new DataColumn("C1"), new DataColumn("D1"), new DataColumn("E1"), new DataColumn("F1"), new DataColumn("G1"), new DataColumn("H1"), new DataColumn("I1"), new DataColumn("J1"), new DataColumn("K1"),  new DataColumn("L1") });
+                            }
+                            //else if (bank_code002)
+                            //{
+                            //    dataTable.Columns.AddRange(new DataColumn[37] { new DataColumn("No."), new DataColumn("Company Code"), new DataColumn("Company Name"), new DataColumn("Department Code"), new DataColumn("Employee Code"), new DataColumn("Title Name"), new DataColumn("First Name"), new DataColumn("Last Name"), new DataColumn("เงินสะสม (Emp Cont.)"), new DataColumn("เงินสมทบ (Com Cont.)"), new DataColumn("ID. No"), new DataColumn("MENU"), new DataColumn("PVDMPFMM"), new DataColumn("PVDMPFFI"), new DataColumn("PVDMPFEQ"), new DataColumn("PVDMGLDH"), new DataColumn("SF-5"), new DataColumn("SF-6"), new DataColumn("SF-7"), new DataColumn("SF-8"), new DataColumn("SF-9"), new DataColumn("SF-10"), new DataColumn("SF-11"), new DataColumn("SF-12"), new DataColumn("SF-13"), new DataColumn("SF-14"), new DataColumn("SF-15"), new DataColumn("SF-16"), new DataColumn("SF-17"), new DataColumn("SF-18"), new DataColumn("SF-19"), new DataColumn("SF-20"), new DataColumn("Total %"), new DataColumn("เบอร์โทรศัพท์"), new DataColumn("เบอร์โทรศัพท์มือถือ"), new DataColumn("อีเมล"), new DataColumn("ต้องการให้ระบบ  Gen Password ผ่านทางอีเมล") });
+                            // }
+ 
+                            foreach (var i in data)
+                            {
+                                if (!string.IsNullOrEmpty(i))
+                                {
+                                    string[] array = i.Split('|');
+
+                                    if (bank_code014)
+                                    {
+                                        dataTable.Rows.Add(array[0], array[1], array[2], array[3], array[4], array[5], array[6]);
+                                    }
+                                    else if (bank_code004)
+                                    {
+                                        
+                                        dataTable.Rows.Add(array[0], array[1], array[2], array[3], array[4], array[5] , array[6], array[7], array[8], array[9], array[10], array[11], array[12] ,  array[13], array[14], array[15], array[16], array[17] );
+
+                                    }
+                                    //else if (bank_code)
+                                    //{
+                                    //    dataTable.Rows.Add(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10], array[11], array[12], array[13], array[14], array[15], array[16], array[17], array[18], array[19], array[20], array[21], array[22], array[23], array[24], array[25], array[26], array[27], array[28], array[29], array[30], array[31], array[32], array[33], array[34], array[35], array[36], array[37]);
+
+                                    //}
+                                }
+                            }
+
+
+
+
+                            ExcelLibrary.DataSetHelper.CreateWorkbook(filepath, ds);
+
+                            strResult = filename;
+
                         }
-
-                        strResult = filename;
-
+                        catch (Exception ex)
+                        {
+                            strResult = ex.ToString();
+                        }
                     }
-                    catch
-                    {
-                        strResult = "";
-                    }
+
+                
+                    task.task_end = DateTime.Now;
+                    task.task_status = "F";
+                    task.task_note = strResult;
+                    objMTTask.updateStatus(task);
+
+                }}
+                else
+                {
 
                 }
 
-                task.task_end = DateTime.Now;
-                task.task_status = "F";
-                task.task_note = strResult;
-                objMTTask.updateStatus(task);
-
+                return strResult;
             }
-            else
-            {
+                        //
 
-            }
+        //                if (empname.Equals("") || obj_taxcard.empcard_code.Equals("") || obj_pfcard.empcard_code.Equals(""))
+        //                    continue;
 
-            return strResult;
-        }
+        //                bkData = bkData + '\r' + '\n';
+
+        //                // 1, 2. Record Type, Member ID-Type
+        //                bkData += "D,EM,";
+
+        //                // 3. Member ID
+        //                bkData += obj_pfcard.empcard_code + ",";
+
+        //                // 4. Title Name
+        //                bkData += obj_worker.initial_name_th + ",";
+
+        //                // 5. First Name
+        //                bkData += obj_worker.worker_fname_th + ",";
+
+        //                // 6. Last Name
+        //                bkData += obj_worker.worker_lname_th + ",";
+
+        //                // 7. Position Code
+        //                bkData += ",";
+
+        //                // 8. Location Code
+        //                bkData += "0" + ",";
+
+        //                // 9. Department Code
+        //                bkData += obj_empdep.empdep_level01 + ",";
+
+        //                // 10. Division Code
+        //                bkData += obj_empdep.empdep_level02 + ",";
+
+        //                // 11. Section Code
+        //                bkData += obj_empdep.empdep_level03 + ",";
+
+        //                // 12. Citizen ID
+        //                bkData += obj_taxcard.empcard_code + ",";
+
+        //                // 13. Tax ID
+        //                bkData += obj_taxcard.empcard_code + ",";
+
+        //                // 14. รหัสรูปแบบลงทุน
+        //                //-- F edit 16/03/2014
+        //                bkData += "01,";
+        //                //Detail += txtPatternCode.Text + ",";
+
+        //                // 15. รหัสกองทุนย่อย 1
+        //                //-- F edit 16/03/2014
+        //                bkData += "SINSA1,";
+        //                //Detail += txtPFCodeSub.Text + ",";
+
+        //                // 16. %เงินลงทุน 1
+        //                bkData += "100.00,";
+
+        //                // 17. เงินสะสม 1 (บาท)
+        //                Amount = pf.paypf_emp_amount;
+        //                bkData += Amount.ToString("0.00").Trim() + ",";
+        //                TotalAmountEmp += Amount;
+
+        //                // 17. เงินสมทบ 1 (บาท)
+        //                Amount = pf.paypf_com_amount;
+        //                bkData += Amount.ToString("0.00").Trim();
+        //                TotalAmountComp += Amount;
+
+        //                TotalRecord++;
+        //                index++;
+        //            }
+
+                    
+
+        //            double TotalAmount = TotalAmountEmp + TotalAmountComp;
+
+        //            // Header 
+
+        //            // 1. Record Type, 2. Batch Reference, 3. Verify Status, 4. Transaction Code
+        //            string Header = "H3,,,CB,";
+
+        //            // 5. Fund Code
+        //            //Header += txtPFCode.Text.TrimEnd() + ",";
+        //            Header += task_pf_detail[2] + ",";
+
+        //            // 6. Company Code
+        //            //Header += txtCompCode.Text.TrimEnd() + ",";
+        //            Header += task_pf_detail[1] + ",";
+
+        //            // 7. Total Records
+        //            Header += TotalRecord.ToString() + ",";
+
+        //            // 8. Generate Date
+        //            Header += DateTime.Now.ToString("dd/MM/yyyy") + ",";
+
+        //            // 9. Total Amount
+        //            Header += TotalAmount.ToString("0.00") + ",";
+
+        //            // 10. Fund Manager Code
+        //            Header += "BBLAM,";
+
+        //            // 11. Contribution Group
+        //            //Header += txtCBGroup.Text.TrimEnd() + ",";
+        //            Header += "" + ",";
+
+        //            // 12. Payment Month
+        //            //if (PeriodMonthly != string.Empty)
+        //            //    Header += PeriodMonthly + "/" + Year.Year.ToString() + ",";
+        //            //else
+        //            //    Header += PeriodDaily + "/" + Year.Year.ToString() + ",";
+        //            Header += period.period_no + "/" + datePay.Year.ToString() + ",";
+
+
+        //            // 13. Payment Term
+        //            Header += "1,";
+
+        //            // 14. Payment Date, 15-18
+        //            Header += datePay.ToString("dd/MM/yyyy") + ",,,,,";
+
+        //            // 19. Transaction Flag
+        //            Header += "New";
+
+        //            //int record = list_paytran.Count;
+
+        //            tmpData += Header + bkData;
+
+        //            try
+        //            {
+        //                //-- Step 1 create file
+        //                string filename = "TRN_PF_" + DateTime.Now.ToString("yyMMddHHmm") + "." + "txt";
+        //                string filepath = Path.Combine
+        //               (ClassLibrary_BPC.Config.PathFileExport, filename);
+
+        //                // Check if file already exists. If yes, delete it.     
+        //                if (File.Exists(filepath))
+        //                {
+        //                    File.Delete(filepath);
+        //                }
+
+        //                // Create a new file     
+        //                using (FileStream fs = File.Create(filepath))
+        //                {
+        //                    // Add some text to file    
+        //                    Byte[] title = new UTF8Encoding(true).GetBytes(tmpData);
+        //                    fs.Write(title, 0, title.Length);
+        //                }
+
+        //                strResult = filename;
+
+        //            }
+        //            catch
+        //            {
+        //                strResult = "";
+        //            }
+
+        //        }
+
+        //        task.task_end = DateTime.Now;
+        //        task.task_status = "F";
+        //        task.task_note = strResult;
+        //        objMTTask.updateStatus(task);
+
+        //    }
+        //    else
+        //    {
+
+        //    }
+
+        //    return strResult;
+        //}
         //TRN_SSF เริ่ม
 
 

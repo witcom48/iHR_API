@@ -37,7 +37,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append("SELECT ");
 
                 obj_str.Append("COUNT(WORKER_CODE)as WORKER_CODE");
-                obj_str.Append("SUM(HRM_TR_PAYITEM.PAYITEM_AMOUNT) as AMOUNT");
+                obj_str.Append(", SUM(HRM_TR_PAYITEM.PAYITEM_AMOUNT) as AMOUNT");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_TH");
                 obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_EN");
                 obj_str.Append(", HRM_TR_PAYITEM.ITEM_CODE");

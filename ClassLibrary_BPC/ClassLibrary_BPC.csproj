@@ -62,6 +62,8 @@
     <Compile Include="Config.cs" />
     <Compile Include="hrfocus.controller\cls_ApproveJob.cs" />
     <Compile Include="hrfocus.controller\cls_ctApprovegetmail.cs" />
+    <Compile Include="hrfocus.controller\cls_ctFNTCompareamount.cs" />
+    <Compile Include="hrfocus.controller\cls_ctFNTComparefixamount.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTAccount.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTEmpStatus.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTJobtable.cs" />
@@ -125,6 +127,8 @@
     <Compile Include="hrfocus.controller\cls_ctTRTimeonsiteself.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRTimeotself.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRTimeshiftself.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRVerify.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRVerifylogs.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRWageday.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRCombranch.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTPeriod.cs" />
@@ -210,6 +214,9 @@
     <Compile Include="hrfocus.controller\cls_ctMTPlanshift.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRPlanschedule.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRTimecard.cs" />
+    <Compile Include="hrfocus.model\cls_FNTCompareamount.cs" />
+    <Compile Include="hrfocus.model\cls_FNTComparefixamount.cs" />
+    <Compile Include="hrfocus.model\cls_TRVerify.cs" />
     <Compile Include="hrfocus.model\cls_MTAccount.cs" />
     <Compile Include="hrfocus.model\cls_MTBdashboard.cs" />
     <Compile Include="hrfocus.model\cls_MTEmpStatus.cs" />
@@ -264,6 +271,7 @@
     <Compile Include="hrfocus.model\cls_TRTimeonsiteself.cs" />
     <Compile Include="hrfocus.model\cls_TRTimeotself.cs" />
     <Compile Include="hrfocus.model\cls_TRTimeshiftself.cs" />
+    <Compile Include="hrfocus.model\cls_TRVerifylogs.cs" />
     <Compile Include="hrfocus.model\cls_TRWageday.cs" />
     <Compile Include="hrfocus.model\cls_TREmpleaveacc.cs" />
     <Compile Include="hrfocus.model\cls_TREmpkt20.cs" />
