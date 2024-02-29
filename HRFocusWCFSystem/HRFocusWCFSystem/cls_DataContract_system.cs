@@ -1424,24 +1424,7 @@ namespace HRFocusWCFSystem
         public string payitem_date { get; set; }
         [DataMember]
         public string language { get; set; }
-        [DataMember]
-        public int account_id { get; set; }
-        [DataMember]
-        public string account_user { get; set; }
-        [DataMember]
-        public string account_pwd { get; set; }
-        [DataMember]
-        public string account_type { get; set; }
-        [DataMember]
-        public int account_level { get; set; }
-        [DataMember]
-        public string account_email { get; set; }
-        [DataMember]
-        public bool account_email_alert { get; set; }
-        [DataMember]
-        public string account_line { get; set; }
-        [DataMember]
-        public bool account_line_alert { get; set; }
+ 
         [DataMember]
         public string polmenu_code { get; set; }
         [DataMember]
@@ -1490,6 +1473,20 @@ namespace HRFocusWCFSystem
 
          [DataMember]
          public List<cls_TRVerifylogs> payitem_date_verifylog { get; set; }
+
+         [DataMember]
+         public List<cls_TRPaytran> paytran_tax { get; set; }
+         [DataMember]
+         public List<cls_TRPaytran> total_SSOEMP_data { get; set; }
+         [DataMember]
+         public List<cls_TRPaytran> total_PFEMP_data { get; set; }
+         [DataMember]
+         public List<cls_TRPaytran> total_SSOCOM_data { get; set; }
+         [DataMember]
+         public List<cls_TRPaytran> total_PFCOM_data { get; set; }
+       
+
+
          [DataMember]
          public string payitemverifylog_date  { get; set; }
          [DataMember]
@@ -1502,6 +1499,17 @@ namespace HRFocusWCFSystem
          public DateTime worker_hiredate { get; set; }
         [DataMember]
          public DateTime worker_resigndate { get; set; }
+
+        //[DataMember]
+        //public DateTime PeriodFrom { get; set; }
+
+        //
+        //public DateTime PeriodTo { get; set; }
+        [DataMember]
+        public string fromdate { get; set; }
+        [DataMember]
+        public string todate { get; set; }     
+
     }
     #endregion
 }

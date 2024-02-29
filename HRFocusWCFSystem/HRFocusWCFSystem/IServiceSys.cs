@@ -862,6 +862,13 @@ namespace HRFocusWCFSystem
         string getTRPayitemVerifyList(string language, string com, string emp, string paydate, string itemtype, string itemcode );
         //
 
+        //
+        //FNTCompareamount_list
+        [OperationContract(Name = "getTRPayitemVerify")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRPayitemVerify(InputFNTCompareamount input);
+        //
+
         [OperationContract(Name = "doManageTRPayitemList")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doManageTRPayitemList(InputTRList input);
@@ -1761,9 +1768,9 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string getFNTCompareamount(InputFNTCompareamount input);
 
-        [OperationContract(Name = "doManageCompareamount")]
-        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        string doManageCompareamount(InputFNTCompareamount input);
+        //[OperationContract(Name = "doManageCompareamount")]
+        //[WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        //string doManageCompareamount(InputFNTCompareamount input);
 
 
         [OperationContract]
@@ -1771,7 +1778,10 @@ namespace HRFocusWCFSystem
         string getFNTCompareclosed(string language, string com, string emp, string itemcode, string verify_status); 
 
 
-
+        //FNTCompareamount_listgetMTPeriodList2
+        [OperationContract(Name = "getFNTCompareamountfix")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getFNTCompareamountfix(InputFNTCompareamount input);
       
         
     }

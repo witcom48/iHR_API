@@ -82,6 +82,36 @@ namespace ClassLibrary_BPC.hrfocus.model
         public string type { get; set; }
 
 
+        //
+        public double paytran_tax_401a { get; set; }
+        public double paytran_tax_4012a { get; set; }
+        public double paytran_tax_4013a { get; set; }
+        public double paytran_tax_402Ia { get; set; }
+        public double paytran_tax_402Oa { get; set; }
+
+        public double paytran_tax_401b { get; set; }
+        public double paytran_tax_4012b { get; set; }
+        public double paytran_tax_4013b { get; set; }
+        public double paytran_tax_402Ib { get; set; }
+        public double paytran_tax_402Ob { get; set; }
+
+
+        public double  total_PFEMP1  { get; set; }
+        public double  total_PFEMP2  { get; set; }
+        public double  total_SSOCOM1  { get; set; }
+        public double total_SSOCOM2 { get; set; }
+        public double total_SSOEMP1 { get; set; }
+        public double total_SSOEMP2 { get; set; }
+        public double total_PFCOM1  { get; set; }
+        public double total_PFCOM2 { get; set; }
+
+        public double tax1 { get; set; }
+        public double tax2 { get; set; }
+        public string status { get; set; }
+
+        //
+
+
 
 
 
