@@ -34,19 +34,24 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append("SELECT ");
 
-                obj_str.Append("COMPANY_CODE");
+                obj_str.Append(" HRM_TR_VERIFY.COMPANY_CODE ");
                 obj_str.Append(", ITEM_CODE");
                 obj_str.Append(", EMPTYPE_ID");
                 obj_str.Append(", PAYITEM_DATE");
 
-                obj_str.Append(", VERIFY_STATUS");
+                obj_str.Append(", ISNULL(VERIFY_STATUS, 0) AS VERIFY_STATUS ");
+
+                obj_str.Append(", HRM_MT_WORKER.WORKER_CODE");
+
                 obj_str.Append(" FROM HRM_TR_VERIFY");
+                obj_str.Append(" LEFT JOIN HRM_MT_WORKER ON HRM_MT_WORKER.COMPANY_CODE=HRM_TR_VERIFY.COMPANY_CODE AND HRM_MT_WORKER.WORKER_EMPTYPE=HRM_TR_VERIFY.EMPTYPE_ID");
+
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append(" ORDER BY COMPANY_CODE");
+                obj_str.Append(" ORDER BY HRM_TR_VERIFY.COMPANY_CODE");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -55,9 +60,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model = new cls_TRVerify();
                     model.company_code = Convert.ToString(dr["COMPANY_CODE"]);
                     model.item_code = Convert.ToString(dr["ITEM_CODE"]);
-                    model.emptype_id = Convert.ToInt32(dr["EMPTYPE_ID"]);
+                    model.emptype_id = Convert.ToString(dr["EMPTYPE_ID"]);
                     model.payitem_date = Convert.ToDateTime(dr["PAYITEM_DATE"]);
                     model.verify_status = Convert.ToString(dr["VERIFY_STATUS"]);
+                    model.worker_code = Convert.ToString(dr["WORKER_CODE"]);
 
 
                     list_model.Add(model);
@@ -72,22 +78,24 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_TRVerify> getDataByFillter(string com, string item_code, string emp, string status)
+        public List<cls_TRVerify> getDataByFillter(string com, string item_code, string emp, string status, string emptype_id)
         {
             string strCondition = "";
 
-            strCondition += " AND COMPANY_CODE='" + com + "'";
+            strCondition += " AND HRM_TR_VERIFY.COMPANY_CODE='" + com + "'";
 
             if (!item_code.Equals(""))
                 strCondition += " AND ITEM_CODE='" + item_code + "'";
             if (!emp.Equals(""))
-                strCondition += " AND EMPTYPE_ID='" + emp + "'";
+                strCondition += " AND HRM_MT_WORKER.WORKER_CODE='" + emp + "'";
 
-            //if (!payitem_date.Equals(""))
-            //    strCondition += " AND PAYITEM_DATE='" + payitem_date + "'";
+            
 
             if (!status.Equals(""))
                 strCondition += " AND VERIFY_STATUS='" + status + "'";
+
+            if (!emptype_id.Equals(""))
+                strCondition += " AND EMPTYPE_ID='" + emptype_id + "'";
             return this.getData(strCondition);
         }
 

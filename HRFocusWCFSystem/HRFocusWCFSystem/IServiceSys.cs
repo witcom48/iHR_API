@@ -1775,7 +1775,7 @@ namespace HRFocusWCFSystem
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getFNTCompareclosed(string language, string com, string emp, string itemcode, string verify_status); 
+        string getFNTCompareclosed(string language, string com, string emp, string itemcode, string verify_status, string emptype_id); 
 
 
         //FNTCompareamount_listgetMTPeriodList2

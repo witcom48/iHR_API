@@ -12,11 +12,12 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         public string company_code { get; set; }
         public string item_code { get; set; }
-        public int emptype_id { get; set; }
+        public string emptype_id { get; set; }
         public DateTime payitem_date { get; set; }
         public string verify_status { get; set; }
+        public string worker_code { get; set; }
 
-
+        
 
         public string created_by { get; set; }
         public DateTime created_date { get; set; }

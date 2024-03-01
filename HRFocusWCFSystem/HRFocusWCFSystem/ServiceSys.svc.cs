@@ -9425,7 +9425,8 @@ namespace HRFocusWCFSystem
                     json.Add("item_type", model.item_type);
                     json.Add("worker_detail", model.worker_detail);
 
-                    
+                    json.Add("verify_status", model.verify_status);
+
                     json.Add("modified_by", model.modified_by);
                     json.Add("modified_date", model.modified_date);
                     json.Add("flag", model.flag);
@@ -9635,7 +9636,7 @@ namespace HRFocusWCFSystem
                         index++;
                         //1
                         cls_ctTRPaytran objPAYTRAN_TAX_401 = new cls_ctTRPaytran();
-                        List<cls_TRPaytran> listPAYTRAN_TAX_401 = objPAYTRAN_TAX_401.getPAYTRAN_TAX(input.company_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate));
+                        List<cls_TRPaytran> listPAYTRAN_TAX_401 = objPAYTRAN_TAX_401.getPAYTRAN_TAX(input.company_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate), "TAX");
                         JArray arrayPAYTRAN_TAX_401 = new JArray();
                         if (listPAYTRAN_TAX_401.Count > 0)
                         {
@@ -9652,7 +9653,8 @@ namespace HRFocusWCFSystem
                                 tax2 = TRPaytran.paytran_tax_401b + TRPaytran.paytran_tax_4012b + TRPaytran.paytran_tax_4013b + TRPaytran.paytran_tax_402Ib + TRPaytran.paytran_tax_402Ob;
                                 jsonTRPlan.Add("tax2", tax2);
 
-                              
+                                jsonTRPlan.Add("item_code", model.item_code);
+
                                 jsonTRPlan.Add("status", TRPaytran.status);
                                 jsonTRPlan.Add("modified_by", model.modified_by);
                                 jsonTRPlan.Add("modified_date", model.modified_date);
@@ -9672,6 +9674,7 @@ namespace HRFocusWCFSystem
                         {
                             json.Add("paytran_tax ", arrayPAYTRAN_TAX_401);
                         }
+
                         #region
                         //2
                         //cls_ctTRPaytran objPAYTRAN_TAX_4012 = new cls_ctTRPaytran();
@@ -9805,7 +9808,7 @@ namespace HRFocusWCFSystem
 
                         //2
                         cls_ctTRPaytran objPAYTRAN_SSOEMP = new cls_ctTRPaytran();
-                        List<cls_TRPaytran> listPAYTRAN_SSOEMP = objPAYTRAN_SSOEMP.getPAYTRAN_SSOEMP(input.company_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate));
+                        List<cls_TRPaytran> listPAYTRAN_SSOEMP = objPAYTRAN_SSOEMP.getPAYTRAN_SSOEMP(input.company_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate), "SSO");
                         JArray arrayPAYTRAN_SSOEMP = new JArray();
                         if (listPAYTRAN_SSOEMP.Count > 0)
                         {
@@ -9817,6 +9820,8 @@ namespace HRFocusWCFSystem
                                 jsonTRPlan.Add("total_SSOEMP1", TRPaytran.total_SSOEMP1);
                                 jsonTRPlan.Add("total_SSOEMP2", TRPaytran.total_SSOEMP2);
                                 jsonTRPlan.Add("status", TRPaytran.status);
+                                jsonTRPlan.Add("item_code", model.item_code);
+
                                 jsonTRPlan.Add("modified_by", model.modified_by);
                                 jsonTRPlan.Add("modified_date", model.modified_date);
                                 jsonTRPlan.Add("flag", model.flag);
@@ -9837,7 +9842,7 @@ namespace HRFocusWCFSystem
                         }
                         //3
                         cls_ctTRPaytran objPAYTRAN_PFEMP = new cls_ctTRPaytran();
-                        List<cls_TRPaytran> listPAYTRAN_PFEMP = objPAYTRAN_PFEMP.getPAYTRAN_PFEMP(input.company_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate));
+                        List<cls_TRPaytran> listPAYTRAN_PFEMP = objPAYTRAN_PFEMP.getPAYTRAN_PFEMP(input.company_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate), "PF");
                         JArray arrayPAYTRAN_PFEMP = new JArray();
                         if (listPAYTRAN_PFEMP.Count > 0)
                         {
@@ -9849,6 +9854,8 @@ namespace HRFocusWCFSystem
                                 jsonTRPlan.Add("total_PFEMP1", TRPaytran.total_PFEMP1);
                                 jsonTRPlan.Add("total_PFEMP2", TRPaytran.total_PFEMP2);
                                 jsonTRPlan.Add("status", TRPaytran.status);
+                                jsonTRPlan.Add("item_code", model.item_code);
+
                                 jsonTRPlan.Add("modified_by", model.modified_by);
                                 jsonTRPlan.Add("modified_date", model.modified_date);
                                 jsonTRPlan.Add("flag", model.flag);
@@ -9869,7 +9876,7 @@ namespace HRFocusWCFSystem
                         }
                         //4
                         cls_ctTRPaytran objPAYTRAN_SSOCOM = new cls_ctTRPaytran();
-                        List<cls_TRPaytran> listPAYTRAN_SSOCOM = objPAYTRAN_SSOCOM.getPAYTRAN_SSOCOM(input.company_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate));
+                        List<cls_TRPaytran> listPAYTRAN_SSOCOM = objPAYTRAN_SSOCOM.getPAYTRAN_SSOCOM(input.company_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate), "SSO_COM");
                         JArray arrayPAYTRAN_SSOCOM = new JArray();
                         if (listPAYTRAN_SSOCOM.Count > 0)
                         {
@@ -9881,6 +9888,8 @@ namespace HRFocusWCFSystem
                                 jsonTRPlan.Add("total_SSOCOM1", TRPaytran.total_SSOCOM1);
                                 jsonTRPlan.Add("total_SSOCOM2", TRPaytran.total_SSOCOM2);
                                 jsonTRPlan.Add("status", TRPaytran.status);
+                                jsonTRPlan.Add("item_code", model.item_code);
+
                                 jsonTRPlan.Add("modified_by", model.modified_by);
                                 jsonTRPlan.Add("modified_date", model.modified_date);
                                 jsonTRPlan.Add("flag", model.flag);
@@ -9901,7 +9910,7 @@ namespace HRFocusWCFSystem
                         }
                         //5
                         cls_ctTRPaytran objPAYTRAN_PFCOM = new cls_ctTRPaytran();
-                        List<cls_TRPaytran> listPAYTRAN_PFCOM = objPAYTRAN_PFCOM.getPAYTRAN_PFCOM(input.company_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate));
+                        List<cls_TRPaytran> listPAYTRAN_PFCOM = objPAYTRAN_PFCOM.getPAYTRAN_PFCOM(input.company_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate), "PF_COM");
                         JArray arrayPAYTRAN_PFCOM = new JArray();
                         if (listPAYTRAN_PFCOM.Count > 0)
                         {
@@ -9913,6 +9922,8 @@ namespace HRFocusWCFSystem
                                 jsonTRPlan.Add("total_PFCOM1", TRPaytran.total_PFCOM1);
                                 jsonTRPlan.Add("total_PFCOM2", TRPaytran.total_PFCOM2);
                                 jsonTRPlan.Add("status", TRPaytran.status);
+                                jsonTRPlan.Add("item_code", model.item_code);
+
                                 jsonTRPlan.Add("modified_by", model.modified_by);
                                 jsonTRPlan.Add("modified_date", model.modified_date);
                                 jsonTRPlan.Add("flag", model.flag);
@@ -21159,7 +21170,7 @@ namespace HRFocusWCFSystem
                         //index++;
                         #endregion
                         cls_ctTRVerify objTRVerify = new cls_ctTRVerify();
-                        List<cls_TRVerify> listTRVerify = objTRVerify.getDataByFillter(input.company_code, "", "",  "");
+                        List<cls_TRVerify> listTRVerify = objTRVerify.getDataByFillter(input.company_code, "", "",  "","");
                         JArray arrayTRAccountpos = new JArray();
                         if (listTRVerify.Count > 0)
                         {
@@ -21173,6 +21184,7 @@ namespace HRFocusWCFSystem
                                 jsonTRPlan.Add("emptype_id", modelTRVerify.emptype_id);
                                 jsonTRPlan.Add("payitem_date", modelTRVerify.payitem_date);
                                 jsonTRPlan.Add("verify_status", modelTRVerify.verify_status);//1=ตรวจสอบแล้ว | 2=ยอดไม่ตรง
+
                                 jsonTRPlan.Add("index", indexTRVerify);
 
 
@@ -21295,12 +21307,12 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
         }
 
-        public string getFNTCompareclosed(string language, string com, string emp, string itemcode, string verify_status)
+        public string getFNTCompareclosed(string language, string com, string emp, string itemcode, string verify_status,string emptype_id)
         {
             JObject output = new JObject();
 
             cls_ctTRVerify objTRVerify = new cls_ctTRVerify();
-            List<cls_TRVerify> listTRVerify = objTRVerify.getDataByFillter(com, itemcode, "", verify_status);
+            List<cls_TRVerify> listTRVerify = objTRVerify.getDataByFillter(com, itemcode, emp, verify_status,emptype_id);
             JArray array = new JArray();
 
             if (listTRVerify.Count > 0)
@@ -21314,6 +21326,8 @@ namespace HRFocusWCFSystem
                     jsonTRPlan.Add("emptype_id", modelTRVerify.emptype_id);
                     jsonTRPlan.Add("payitem_date", modelTRVerify.payitem_date);
                     jsonTRPlan.Add("verify_status", modelTRVerify.verify_status);//1=ตรวจสอบแล้ว | 2=ยอดไม่ตรง
+                    jsonTRPlan.Add("worker_code", modelTRVerify.worker_code);//1=ตรวจสอบแล้ว | 2=ยอดไม่ตรง
+
                     jsonTRPlan.Add("index", index);
 
                      index++;
@@ -21668,7 +21682,7 @@ namespace HRFocusWCFSystem
                         //index++;
                           #endregion
                         cls_ctTRVerify objTRVerify = new cls_ctTRVerify();
-                        List<cls_TRVerify> listTRVerify = objTRVerify.getDataByFillter(input.company_code, "", "", "");
+                        List<cls_TRVerify> listTRVerify = objTRVerify.getDataByFillter(input.company_code, "", "", "","");
                         JArray arrayTRAccountpos = new JArray();
                         if (listTRVerify.Count > 0)
                         {

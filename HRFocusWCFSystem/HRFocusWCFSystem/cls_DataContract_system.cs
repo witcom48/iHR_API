@@ -1476,6 +1476,9 @@ namespace HRFocusWCFSystem
 
          [DataMember]
          public List<cls_TRPaytran> paytran_tax { get; set; }
+
+         [DataMember]
+         public List<cls_TRPaytran> TAX_401 { get; set; }
          [DataMember]
          public List<cls_TRPaytran> total_SSOEMP_data { get; set; }
          [DataMember]

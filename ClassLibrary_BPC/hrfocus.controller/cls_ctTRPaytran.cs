@@ -695,7 +695,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
          
         //
         //1
-        public List<cls_TRPaytran> getPAYTRAN_TAX(string com, DateTime datefrom, DateTime dateto)
+        public List<cls_TRPaytran> getPAYTRAN_TAX(string com, DateTime datefrom, DateTime dateto, string item)
         {
             List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
             cls_TRPaytran model;
@@ -704,6 +704,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
                 obj_str.Append(" SELECT");
                 obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+
+                //obj_str.Append(", MAX( ITEM_CODE) AS ITEM_CODE ");
 
                 obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_401 ELSE 0 END) AS PAYTRAN_TAX_401A");
                 obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_401 ELSE 0 END) AS PAYTRAN_TAX_401B");
@@ -722,15 +724,17 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
 
 
-                 
+
                 obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+
                 obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
                 obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
                 obj_str.Append(" FROM HRM_TR_PAYTRAN");
-                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE  and HRM_TR_VERIFY.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
                 obj_str.Append("  WHERE 1=1 ");
                 obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
                 obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND ITEM_CODE='" + item + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -958,7 +962,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
         //}
         //6
         //2
-        public List<cls_TRPaytran> getPAYTRAN_SSOEMP(string com, DateTime datefrom, DateTime dateto)
+        public List<cls_TRPaytran> getPAYTRAN_SSOEMP(string com, DateTime datefrom, DateTime dateto, string item)
         {
             List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
             cls_TRPaytran model;
@@ -967,16 +971,19 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
                 obj_str.Append(" SELECT");
                 obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+
+ 
                 obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOEMP ELSE 0 END) AS Total_SSOEMP1");
                 obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE ='" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOEMP ELSE 0 END) AS Total_SSOEMP2");
                 obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
                 obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
                 obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
                 obj_str.Append(" FROM HRM_TR_PAYTRAN");
-                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE  and HRM_TR_VERIFY.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
                 obj_str.Append("  WHERE 1=1 ");
                 obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
                 obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND ITEM_CODE='" + item + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -1004,7 +1011,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
         //3
-        public List<cls_TRPaytran> getPAYTRAN_PFEMP(string com, DateTime datefrom, DateTime dateto)
+        public List<cls_TRPaytran> getPAYTRAN_PFEMP(string com, DateTime datefrom, DateTime dateto, string item)
         {
             List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
             cls_TRPaytran model;
@@ -1013,16 +1020,19 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
                 obj_str.Append(" SELECT");
                 obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+
+ 
                 obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_PFEMP ELSE 0 END) AS Total_PFEMP1");
                 obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_PFEMP ELSE 0 END) AS Total_PFEMP2");
                 obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
                 obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
                 obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
                 obj_str.Append(" FROM HRM_TR_PAYTRAN");
-                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE  and HRM_TR_VERIFY.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
                 obj_str.Append("  WHERE 1=1 ");
                 obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
                 obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND ITEM_CODE='" + item + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -1050,7 +1060,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
         //4
-        public List<cls_TRPaytran> getPAYTRAN_SSOCOM(string com, DateTime datefrom, DateTime dateto)
+        public List<cls_TRPaytran> getPAYTRAN_SSOCOM(string com, DateTime datefrom, DateTime dateto, string item)
         {
             List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
             cls_TRPaytran model;
@@ -1060,14 +1070,18 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" SELECT");
                 obj_str.Append("  SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOCOM ELSE 0 END) AS Total_SSOCOM1");
                 obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOCOM ELSE 0 END) AS Total_SSOCOM2");
+
+ 
                 obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+
                 obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
                 obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
                 obj_str.Append(" FROM HRM_TR_PAYTRAN");
-                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE  and HRM_TR_VERIFY.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
                 obj_str.Append("  WHERE 1=1 ");
                 obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
                 obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND ITEM_CODE='" + item + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -1095,7 +1109,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
         //5
-        public List<cls_TRPaytran> getPAYTRAN_PFCOM(string com, DateTime datefrom, DateTime dateto)
+        public List<cls_TRPaytran> getPAYTRAN_PFCOM(string com, DateTime datefrom, DateTime dateto, string item)
         {
             List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
             cls_TRPaytran model;
@@ -1106,14 +1120,17 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
                 obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "'THEN HRM_TR_PAYTRAN.PAYTRAN_PFCOM ELSE 0 END) AS Total_PFCOM1");
                 obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_PFCOM ELSE 0 END) AS Total_PFCOM2");
+
+ 
                 obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
                 obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
                 obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
                 obj_str.Append(" FROM HRM_TR_PAYTRAN");
-                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE  and HRM_TR_VERIFY.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
                 obj_str.Append("  WHERE 1=1 ");
                 obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
                 obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND ITEM_CODE='" + item + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -1251,21 +1268,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
         //             model.total_PFCOM1 = Convert.ToDouble(dr["Total_PFCOM1"]);
         //             model.total_PFCOM2 = Convert.ToDouble(dr["Total_PFCOM2"]);
 
-
- 
-    
-
-
-    
-        
-
-        
-            
-
-            
-
-            
-            
+  
                 
         //            //
         //            model.modified_by = dr["MODIFIED_BY"].ToString();

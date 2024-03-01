@@ -37,12 +37,14 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append("HRM_TR_PAYITEM.COMPANY_CODE");
                 obj_str.Append(", HRM_TR_PAYITEM.WORKER_CODE");
                 obj_str.Append(", HRM_TR_PAYITEM.ITEM_CODE");
-                obj_str.Append(", PAYITEM_DATE");
+                obj_str.Append(", HRM_TR_PAYITEM.PAYITEM_DATE");
                 obj_str.Append(", PAYITEM_AMOUNT");
                 obj_str.Append(", PAYITEM_QUANTITY");
-                obj_str.Append(", PAYITEM_PAYTYPE");                
+                obj_str.Append(", HRM_TR_PAYITEM.PAYITEM_PAYTYPE");                
                 obj_str.Append(", ISNULL(PAYITEM_NOTE, '') AS PAYITEM_NOTE");
-
+                //
+                obj_str.Append(", ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, 0) AS VERIFY_STATUS");
+                //
                 obj_str.Append(", ISNULL(HRM_TR_PAYITEM.MODIFIED_BY, HRM_TR_PAYITEM.CREATED_BY) AS MODIFIED_BY");
                 obj_str.Append(", ISNULL(HRM_TR_PAYITEM.MODIFIED_DATE, HRM_TR_PAYITEM.CREATED_DATE) AS MODIFIED_DATE");
 
@@ -68,13 +70,16 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_str.Append(" INNER JOIN HRM_MT_ITEM ON HRM_MT_ITEM.COMPANY_CODE=HRM_TR_PAYITEM.COMPANY_CODE AND HRM_MT_ITEM.ITEM_CODE=HRM_TR_PAYITEM.ITEM_CODE");
 
+                //
+                obj_str.Append("  LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE=HRM_TR_PAYITEM.COMPANY_CODE AND HRM_TR_VERIFY.ITEM_CODE=HRM_TR_PAYITEM.ITEM_CODE");
+                //
 
                 obj_str.Append(" WHERE 1=1");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append(" ORDER BY HRM_TR_PAYITEM.COMPANY_CODE, HRM_TR_PAYITEM.WORKER_CODE, PAYITEM_DATE DESC, ITEM_TYPE DESC, HRM_TR_PAYITEM.ITEM_CODE");
+                obj_str.Append(" ORDER BY HRM_TR_PAYITEM.COMPANY_CODE, HRM_TR_PAYITEM.WORKER_CODE,  HRM_TR_PAYITEM.PAYITEM_DATE DESC, ITEM_TYPE DESC, HRM_TR_PAYITEM.ITEM_CODE");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -96,7 +101,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.item_type = Convert.ToString(dr["ITEM_TYPE"]);
                     model.worker_detail = Convert.ToString(dr["WORKER_DETAIL"]);
 
-
+                    //
+                    model.verify_status = Convert.ToString(dr["VERIFY_STATUS"]);
+                    //
                     model.modified_by = dr["MODIFIED_BY"].ToString();
                     model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
 

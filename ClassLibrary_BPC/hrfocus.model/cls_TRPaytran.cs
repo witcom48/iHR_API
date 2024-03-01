@@ -80,8 +80,9 @@ namespace ClassLibrary_BPC.hrfocus.model
         public DateTime employment_date { get; set; }
         public string bankaccount { get; set; }
         public string type { get; set; }
+        public string verify_status { get; set; }
 
-
+        
         //
         public double paytran_tax_401a { get; set; }
         public double paytran_tax_4012a { get; set; }
