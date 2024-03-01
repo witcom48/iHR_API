@@ -691,5 +691,613 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return list_model;
         }
+
+         
+        //
+        //1
+        public List<cls_TRPaytran> getPAYTRAN_TAX(string com, DateTime datefrom, DateTime dateto, string item)
+        {
+            List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+            cls_TRPaytran model;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+                obj_str.Append(" SELECT");
+                obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+
+                //obj_str.Append(", MAX( ITEM_CODE) AS ITEM_CODE ");
+
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_401 ELSE 0 END) AS PAYTRAN_TAX_401A");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_401 ELSE 0 END) AS PAYTRAN_TAX_401B");
+
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4012 ELSE 0 END) AS PAYTRAN_TAX_4012A");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4012 ELSE 0 END) AS PAYTRAN_TAX_4012B");
+
+                obj_str.Append(",  SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4013 ELSE 0 END) AS PAYTRAN_TAX_402IA");
+                obj_str.Append(",  SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4013 ELSE 0 END) AS PAYTRAN_TAX_402IB");
+
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402I ELSE 0 END) AS Total_TAX_402IA");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402I ELSE 0 END) AS Total_TAX_402IB");
+
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402O ELSE 0 END) AS PAYTRAN_TAX_402OA");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402O ELSE 0 END) AS PAYTRAN_TAX_402OB");
+
+
+
+
+                obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+
+                obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
+                obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
+                obj_str.Append(" FROM HRM_TR_PAYTRAN");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE  and HRM_TR_VERIFY.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
+                obj_str.Append("  WHERE 1=1 ");
+                obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND ITEM_CODE='" + item + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    model = new cls_TRPaytran();
+                    
+                    model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+
+                    model.paytran_tax_401a = Convert.ToDouble(dr["PAYTRAN_TAX_401A"]);
+                    model.paytran_tax_401b = Convert.ToDouble(dr["PAYTRAN_TAX_401B"]);
+
+                    model.paytran_tax_4012a = Convert.ToDouble(dr["PAYTRAN_TAX_4012A"]);
+                    model.paytran_tax_4012b = Convert.ToDouble(dr["PAYTRAN_TAX_4012B"]);
+
+                    model.paytran_tax_4013a = Convert.ToDouble(dr["PAYTRAN_TAX_402IA"]);
+                    model.paytran_tax_4013b = Convert.ToDouble(dr["PAYTRAN_TAX_402IB"]);
+
+                    model.paytran_tax_402Ia = Convert.ToDouble(dr["Total_TAX_402IA"]);
+                    model.paytran_tax_402Ib = Convert.ToDouble(dr["Total_TAX_402IB"]);
+
+                    model.paytran_tax_402Oa = Convert.ToDouble(dr["PAYTRAN_TAX_402OA"]);
+                    model.paytran_tax_402Ob = Convert.ToDouble(dr["PAYTRAN_TAX_402OB"]);
+                    //
+                    model.modified_by = dr["MODIFIED_BY"].ToString();
+                    model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+                    list_model.Add(model);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+            }
+
+            return list_model;
+        }
+        //2
+        //public List<cls_TRPaytran> getPAYTRAN_TAX_4012(string com, DateTime datefrom, DateTime dateto)
+        //{
+        //    List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+        //    cls_TRPaytran model;
+        //    try
+        //    {
+        //        System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+        //        obj_str.Append(" SELECT");
+        //        obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4012 ELSE 0 END) AS PAYTRAN_TAX_4012A");
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4012 ELSE 0 END) AS PAYTRAN_TAX_4012B");
+
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
+        //        obj_str.Append(" FROM HRM_TR_PAYTRAN");
+        //        obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE");
+        //        obj_str.Append("  WHERE 1=1 ");
+        //        obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+        //        obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+
+        //        DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+        //        foreach (DataRow dr in dt.Rows)
+        //        {
+        //            model = new cls_TRPaytran();
+        //            model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+        //            model.paytran_tax_4012a = Convert.ToDouble(dr["PAYTRAN_TAX_4012A"]);
+        //            model.paytran_tax_4012b = Convert.ToDouble(dr["PAYTRAN_TAX_4012B"]);
+        //            //
+        //            model.modified_by = dr["MODIFIED_BY"].ToString();
+        //            model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+        //            list_model.Add(model);
+
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+        //    }
+
+        //    return list_model;
+        //}
+        ////3
+        //public List<cls_TRPaytran> getPAYTRAN_TAX_4013(string com, DateTime datefrom, DateTime dateto)
+        //{
+        //    List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+        //    cls_TRPaytran model;
+        //    try
+        //    {
+        //        System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+        //        obj_str.Append(" SELECT");
+        //        obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+        //        obj_str.Append(",  SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4013 ELSE 0 END) AS PAYTRAN_TAX_402IA");
+        //        obj_str.Append(",  SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4013 ELSE 0 END) AS PAYTRAN_TAX_402IB");
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
+        //        obj_str.Append(" FROM HRM_TR_PAYTRAN");
+        //        obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE");
+        //        obj_str.Append("  WHERE 1=1 ");
+        //        obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+        //        obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+
+        //        DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+        //        foreach (DataRow dr in dt.Rows)
+        //        {
+        //            model = new cls_TRPaytran();
+
+        //            model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+        //            model.paytran_tax_4013a = Convert.ToDouble(dr["PAYTRAN_TAX_402IA"]);
+        //            model.paytran_tax_4013b = Convert.ToDouble(dr["PAYTRAN_TAX_402IB"]);
+        //            //
+        //            model.modified_by = dr["MODIFIED_BY"].ToString();
+        //            model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+        //            list_model.Add(model);
+
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+        //    }
+
+        //    return list_model;
+        //}
+        ////4
+        //public List<cls_TRPaytran> getPAYTRAN_TAX_402I(string com, DateTime datefrom, DateTime dateto)
+        //{
+        //    List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+        //    cls_TRPaytran model;
+        //    try
+        //    {
+        //        System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+        //        obj_str.Append(" SELECT");
+        //        obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402I ELSE 0 END) AS Total_TAX_402IA");
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402I ELSE 0 END) AS Total_TAX_402IB");
+
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
+        //        obj_str.Append(" FROM HRM_TR_PAYTRAN");
+        //        obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE");
+        //        obj_str.Append("  WHERE 1=1 ");
+        //        obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+        //        obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+
+        //        DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+        //        foreach (DataRow dr in dt.Rows)
+        //        {
+        //            model = new cls_TRPaytran();
+
+        //            model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+        //            model.paytran_tax_402Ia = Convert.ToDouble(dr["Total_TAX_402IA"]);
+        //            model.paytran_tax_402Ib = Convert.ToDouble(dr["Total_TAX_402IB"]);
+        //            //
+        //            model.modified_by = dr["MODIFIED_BY"].ToString();
+        //            model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+        //            list_model.Add(model);
+
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+        //    }
+
+        //    return list_model;
+        //}
+        ////5
+        //public List<cls_TRPaytran> getPAYTRAN_TAX_402O(string com, DateTime datefrom, DateTime dateto)
+        //{
+        //    List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+        //    cls_TRPaytran model;
+        //    try
+        //    {
+        //        System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+        //        obj_str.Append(" SELECT");
+        //        obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402O ELSE 0 END) AS PAYTRAN_TAX_402OA");
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402O ELSE 0 END) AS PAYTRAN_TAX_402OB");
+
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
+        //        obj_str.Append(" FROM HRM_TR_PAYTRAN");
+        //        obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE");
+        //        obj_str.Append("  WHERE 1=1 ");
+        //        obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+        //        obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+
+        //        DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+        //        foreach (DataRow dr in dt.Rows)
+        //        {
+        //            model = new cls_TRPaytran();
+
+        //            model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+        //            model.paytran_tax_402Oa = Convert.ToDouble(dr["PAYTRAN_TAX_402OA"]);
+        //            model.paytran_tax_402Ob = Convert.ToDouble(dr["PAYTRAN_TAX_402OB"]);
+        //            //
+        //            model.modified_by = dr["MODIFIED_BY"].ToString();
+        //            model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+        //            list_model.Add(model);
+
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+        //    }
+
+        //    return list_model;
+        //}
+        //6
+        //2
+        public List<cls_TRPaytran> getPAYTRAN_SSOEMP(string com, DateTime datefrom, DateTime dateto, string item)
+        {
+            List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+            cls_TRPaytran model;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+                obj_str.Append(" SELECT");
+                obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+
+ 
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOEMP ELSE 0 END) AS Total_SSOEMP1");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE ='" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOEMP ELSE 0 END) AS Total_SSOEMP2");
+                obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+                obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
+                obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
+                obj_str.Append(" FROM HRM_TR_PAYTRAN");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE  and HRM_TR_VERIFY.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
+                obj_str.Append("  WHERE 1=1 ");
+                obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND ITEM_CODE='" + item + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    model = new cls_TRPaytran();
+
+                    model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+                    model.total_SSOEMP1 = Convert.ToDouble(dr["Total_SSOEMP1"]);
+                    model.total_SSOEMP2 = Convert.ToDouble(dr["Total_SSOEMP2"]);
+                    //
+                    model.modified_by = dr["MODIFIED_BY"].ToString();
+                    model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+                    list_model.Add(model);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+            }
+
+            return list_model;
+        }
+        //3
+        public List<cls_TRPaytran> getPAYTRAN_PFEMP(string com, DateTime datefrom, DateTime dateto, string item)
+        {
+            List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+            cls_TRPaytran model;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+                obj_str.Append(" SELECT");
+                obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+
+ 
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_PFEMP ELSE 0 END) AS Total_PFEMP1");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_PFEMP ELSE 0 END) AS Total_PFEMP2");
+                obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+                obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
+                obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
+                obj_str.Append(" FROM HRM_TR_PAYTRAN");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE  and HRM_TR_VERIFY.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
+                obj_str.Append("  WHERE 1=1 ");
+                obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND ITEM_CODE='" + item + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    model = new cls_TRPaytran();
+
+                    model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+                    model.total_PFEMP1 = Convert.ToDouble(dr["Total_PFEMP1"]);
+                    model.total_PFEMP2 = Convert.ToDouble(dr["Total_PFEMP2"]);
+                    //
+                    model.modified_by = dr["MODIFIED_BY"].ToString();
+                    model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+                    list_model.Add(model);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+            }
+
+            return list_model;
+        }
+        //4
+        public List<cls_TRPaytran> getPAYTRAN_SSOCOM(string com, DateTime datefrom, DateTime dateto, string item)
+        {
+            List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+            cls_TRPaytran model;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+                obj_str.Append(" SELECT");
+                obj_str.Append("  SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOCOM ELSE 0 END) AS Total_SSOCOM1");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOCOM ELSE 0 END) AS Total_SSOCOM2");
+
+ 
+                obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+
+                obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
+                obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
+                obj_str.Append(" FROM HRM_TR_PAYTRAN");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE  and HRM_TR_VERIFY.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
+                obj_str.Append("  WHERE 1=1 ");
+                obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND ITEM_CODE='" + item + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    model = new cls_TRPaytran();
+
+                    model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+                    model.total_SSOCOM1 = Convert.ToDouble(dr["Total_SSOCOM1"]);
+                    model.total_SSOCOM2 = Convert.ToDouble(dr["Total_SSOCOM2"]);
+                    //
+                    model.modified_by = dr["MODIFIED_BY"].ToString();
+                    model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+                    list_model.Add(model);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+            }
+
+            return list_model;
+        }
+        //5
+        public List<cls_TRPaytran> getPAYTRAN_PFCOM(string com, DateTime datefrom, DateTime dateto, string item)
+        {
+            List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+            cls_TRPaytran model;
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+                obj_str.Append(" SELECT");
+                obj_str.Append(" MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "'THEN HRM_TR_PAYTRAN.PAYTRAN_PFCOM ELSE 0 END) AS Total_PFCOM1");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_PFCOM ELSE 0 END) AS Total_PFCOM2");
+
+ 
+                obj_str.Append(", MAX(ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0')) AS VERIFY_STATUS ");
+                obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
+                obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
+                obj_str.Append(" FROM HRM_TR_PAYTRAN");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE  and HRM_TR_VERIFY.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
+                obj_str.Append("  WHERE 1=1 ");
+                obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+                obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+                obj_str.Append(" AND ITEM_CODE='" + item + "'");
+
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    model = new cls_TRPaytran();
+
+                    model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+                    model.total_PFCOM1 = Convert.ToDouble(dr["Total_PFCOM1"]);
+                    model.total_PFCOM2 = Convert.ToDouble(dr["Total_PFCOM2"]);
+                    //
+                    model.modified_by = dr["MODIFIED_BY"].ToString();
+                    model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+                    list_model.Add(model);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+            }
+
+            return list_model;
+        }
+        //
+        //public List<cls_TRPaytran> getTRPayitemVerify( string com, DateTime datefrom, DateTime dateto)
+        //{
+        //    List<cls_TRPaytran> list_model = new List<cls_TRPaytran>();
+        //    cls_TRPaytran model;
+        //    try
+        //    {
+        //        System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+
+                
+
+        //        obj_str.Append(" SELECT");
+        //        obj_str.Append("   MAX(HRM_TR_PAYTRAN.COMPANY_CODE) AS COMPANY_CODE");
+
+
+                //obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_401 ELSE 0 END) AS PAYTRAN_TAX_401A");
+                //obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_401 ELSE 0 END) AS PAYTRAN_TAX_401B");
+
+                //obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4012 ELSE 0 END) AS PAYTRAN_TAX_4012A");
+                //obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4012 ELSE 0 END) AS PAYTRAN_TAX_4012B");
+
+                //obj_str.Append(",  SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4013 ELSE 0 END) AS PAYTRAN_TAX_402IA");
+                //obj_str.Append(",  SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_4013 ELSE 0 END) AS PAYTRAN_TAX_402IB");
+
+                //obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402I ELSE 0 END) AS Total_TAX_402IA");
+                //obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402I ELSE 0 END) AS Total_TAX_402IB");
+
+                //obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402O ELSE 0 END) AS PAYTRAN_TAX_402OA");
+                //obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_TAX_402O ELSE 0 END) AS PAYTRAN_TAX_402OB");
+
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOEMP ELSE 0 END) AS Total_SSOEMP1");
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE ='" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOEMP ELSE 0 END) AS Total_SSOEMP2");
+
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_PFEMP ELSE 0 END) AS Total_PFEMP1");
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_PFEMP ELSE 0 END) AS Total_PFEMP2");
+
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOCOM ELSE 0 END) AS Total_SSOCOM1");
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_SSOCOM ELSE 0 END) AS Total_SSOCOM2");
+
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "'THEN HRM_TR_PAYTRAN.PAYTRAN_PFCOM ELSE 0 END) AS Total_PFCOM1");
+        //        obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN HRM_TR_PAYTRAN.PAYTRAN_PFCOM ELSE 0 END) AS Total_PFCOM2");
+
+        //        obj_str.Append(",  ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0') AS VERIFY_STATUS ");
+
+
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_BY, HRM_TR_PAYTRAN.CREATED_BY)) AS MODIFIED_BY");
+        //        obj_str.Append(", MAX(ISNULL(HRM_TR_PAYTRAN.MODIFIED_DATE, HRM_TR_PAYTRAN.CREATED_DATE)) AS MODIFIED_DATE");
+
+        //        obj_str.Append(" FROM HRM_TR_PAYTRAN");
+
+        //        obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYTRAN.COMPANY_CODE");
+
+        //        //obj_str.Append(" WHERE HRM_TR_PAYTRAN.COMPANY_CODE='APT'   AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '12/25/2023' AND '01/25/2024') ");
+        //        obj_str.Append("  WHERE 1=1 ");
+        //        obj_str.Append(" AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'");
+        //        obj_str.Append(" AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')");
+
+
+        //        //obj_str.Append(" GROUP BY HRM_TR_PAYTRAN.COMPANY_CODE,HRM_TR_PAYTRAN.WORKER_CODE,HRM_TR_PAYTRAN.PAYTRAN_PAYDATE,HRM_TR_PAYTRAN.MODIFIED_BY,HRM_TR_PAYTRAN.MODIFIED_DATE,HRM_TR_PAYTRAN.CREATED_BY,HRM_TR_PAYTRAN.CREATED_DATE");
+        //        //obj_str.Append(" ORDER BY HRM_TR_PAYTRAN.COMPANY_CODE, HRM_TR_PAYTRAN.PAYTRAN_PAYDATE, HRM_TR_PAYTRAN.WORKER_CODE ");
+
+ 
+        //        DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+        //        foreach (DataRow dr in dt.Rows)
+        //        {
+        //            model = new cls_TRPaytran();
+        //            //model.company_code = Convert.ToString(dr["COMPANY_CODE"]);
+        //            //model.paytran_ssoemp = Convert.ToDouble(dr["Total_SSOEMP"]);
+        //            //model.paytran_pfemp = Convert.ToDouble(dr["Total_PFEMP"]);
+        //            //model.paytran_ssocom = Convert.ToDouble(dr["Total_SSOCOM"]);
+        //            //model.paytran_pfcom = Convert.ToDouble(dr["Total_PFCOM"]);
+
+        //            //model.paytran_tax_401 = Convert.ToDouble(dr["PAYTRAN_TAX_401"]);
+        //            //model.paytran_tax_4012 = Convert.ToDouble(dr["PAYTRAN_TAX_4012"]);
+        //            //model.paytran_tax_4013 = Convert.ToDouble(dr["PAYTRAN_TAX_4013"]);
+        //            //model.paytran_tax_402I = Convert.ToDouble(dr["PAYTRAN_TAX_402I"]);
+        //            //model.paytran_tax_402O = Convert.ToDouble(dr["PAYTRAN_TAX_402O"]);
+
+
+        //            //
+        //            model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+
+                    //model.paytran_tax_401a = Convert.ToDouble(dr["PAYTRAN_TAX_401A"]);
+                    //model.paytran_tax_401b = Convert.ToDouble(dr["PAYTRAN_TAX_401B"]);
+
+                    //model.paytran_tax_4012a = Convert.ToDouble(dr["PAYTRAN_TAX_4012A"]);
+                    //model.paytran_tax_4012b = Convert.ToDouble(dr["PAYTRAN_TAX_4012B"]);
+
+                    //model.paytran_tax_4013a = Convert.ToDouble(dr["PAYTRAN_TAX_402IA"]);
+                    //model.paytran_tax_4013b = Convert.ToDouble(dr["PAYTRAN_TAX_402IB"]);
+
+                    //model.paytran_tax_402Ia = Convert.ToDouble(dr["Total_TAX_402IA"]);
+                    //model.paytran_tax_402Ib = Convert.ToDouble(dr["Total_TAX_402IB"]);
+
+                    //model.paytran_tax_402Oa = Convert.ToDouble(dr["PAYTRAN_TAX_402OA"]);
+                    //model.paytran_tax_402Ob = Convert.ToDouble(dr["PAYTRAN_TAX_402OB"]);
+
+        //             model.total_PFEMP1 = Convert.ToDouble(dr["Total_PFEMP1"]);
+        //            model.total_PFEMP2 = Convert.ToDouble(dr["Total_PFEMP2"]);
+
+        //             model.total_SSOCOM1 = Convert.ToDouble(dr["Total_SSOCOM1"]);
+        //            model.total_SSOCOM2 = Convert.ToDouble(dr["Total_SSOCOM2"]);
+
+        //             model.total_SSOEMP1 = Convert.ToDouble(dr["Total_SSOEMP1"]);
+        //            model.total_SSOEMP2 = Convert.ToDouble(dr["Total_SSOEMP2"]);
+
+        //             model.total_PFCOM1 = Convert.ToDouble(dr["Total_PFCOM1"]);
+        //             model.total_PFCOM2 = Convert.ToDouble(dr["Total_PFCOM2"]);
+
+  
+                
+        //            //
+        //            model.modified_by = dr["MODIFIED_BY"].ToString();
+        //            model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+
+        //            list_model.Add(model);
+
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Message = "ERROR::(Paytran.getExport)" + ex.ToString();
+        //    }
+
+        //    return list_model;
+        //}
+
+        //public List<cls_TRPaytran> getDataByFillterVerify(string condition, string com, DateTime datefrom, DateTime dateto )
+        //{
+        //    string strCondition = "";
+
+        //    strCondition += " AND HRM_TR_PAYTRAN.COMPANY_CODE='" + com + "'";
+        //    strCondition += " AND (HRM_TR_PAYTRAN.PAYTRAN_PAYDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')";
+
+
+        //    return this.getTRPayitemVerify(condition);
+        //}
+//
+
     }
 }

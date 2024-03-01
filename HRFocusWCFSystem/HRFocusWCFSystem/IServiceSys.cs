@@ -857,6 +857,18 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getTRPayitemList(string language, string com, string emp, string paydate, string itemtype, string itemcode);
 
+        //
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getTRPayitemVerifyList(string language, string com, string emp, string paydate, string itemtype, string itemcode );
+        //
+
+        //
+        //FNTCompareamount_list
+        [OperationContract(Name = "getTRPayitemVerify")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getTRPayitemVerify(InputFNTCompareamount input);
+        //
+
         [OperationContract(Name = "doManageTRPayitemList")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doManageTRPayitemList(InputTRList input);
@@ -1596,6 +1608,9 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string getMTAccountList(InputMTAccount input);
 
+       
+
+
         [OperationContract(Name = "account")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doManageMTAccount(InputMTAccount input);
@@ -1756,6 +1771,29 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string Approve(InputApprovedoc input);
         #endregion
+
+
+
+        //FNTCompareamount_list
+        [OperationContract(Name = "FNTCompare")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getFNTCompareamount(InputFNTCompareamount input);
+
+        //[OperationContract(Name = "doManageCompareamount")]
+        //[WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        //string doManageCompareamount(InputFNTCompareamount input);
+
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getFNTCompareclosed(string language, string com, string emp, string itemcode, string verify_status, string emptype_id); 
+
+
+        //FNTCompareamount_listgetMTPeriodList2
+        [OperationContract(Name = "getFNTCompareamountfix")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getFNTCompareamountfix(InputFNTCompareamount input);
+      
         
     }
 

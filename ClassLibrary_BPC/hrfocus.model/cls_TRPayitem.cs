@@ -28,7 +28,17 @@ namespace ClassLibrary_BPC.hrfocus.model
         //-- Show
         public string item_detail { get; set; }
         public string item_type { get; set; }
-        public string worker_detail { get; set; }        
+        public string worker_detail { get; set; }
 
+        public double amount1 { get; set; }
+        public double amount2 { get; set; }
+        public DateTime worker_hiredate { get; set; }
+        public DateTime worker_resigndate { get; set; }
+        public bool worker_resignstatus { get; set; }
+        public string verify_status { get; set; }
+
+        public string status { get; set; }
+        public string create_by { get; set; }
+        public DateTime create_date { get; set; }
     }
 }
