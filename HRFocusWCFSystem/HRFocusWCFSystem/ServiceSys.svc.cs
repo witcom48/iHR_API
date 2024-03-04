@@ -10110,8 +10110,12 @@ namespace HRFocusWCFSystem
         {
             JObject output = new JObject();
 
+            DateTime datefrom = Convert.ToDateTime( fromdate);
+            DateTime dateto = Convert.ToDateTime( todate);
+
+
             cls_ctTRPaytran objPaytran = new cls_ctTRPaytran();
-            List<cls_TRPaytran> listPaytran = objPaytran.getDataByFillter(language, com, Convert.ToDateTime(fromdate), Convert.ToDateTime(todate), emp);
+            List<cls_TRPaytran> listPaytran = objPaytran.getDataByFillter(language, com, datefrom, dateto, emp);
             JArray array = new JArray();
 
             if (listPaytran.Count > 0)
