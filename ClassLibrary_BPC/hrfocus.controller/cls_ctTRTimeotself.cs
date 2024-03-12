@@ -62,6 +62,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ISNULL(SELF_TR_TIMEOT.MODIFIED_BY, SELF_TR_TIMEOT.CREATED_BY) AS MODIFIED_BY");
                 obj_str.Append(", ISNULL(SELF_TR_TIMEOT.MODIFIED_DATE, SELF_TR_TIMEOT.CREATED_DATE) AS MODIFIED_DATE");
                 obj_str.Append(", SELF_MT_JOBTABLE.STATUS_JOB");
+                obj_str.Append(", ISNULL(SELF_TR_TIMEOT.REJECT_NOTE, '') AS REJECT_NOTE");
 
                 obj_str.Append(" FROM SELF_TR_TIMEOT");
 
@@ -116,6 +117,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                     model.modified_by = dr["MODIFIED_BY"].ToString();
                     model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
+                    model.reject_note = dr["REJECT_NOTE"].ToString();
 
                     list_model.Add(model);
                 }
@@ -241,7 +243,14 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 //-- Check data old
                 if (this.checkDataOld(model.company_code, model.worker_code, model.timeot_workdate, model.timeot_workdate))
                 {
-                    return this.update(model);
+                    if (model.timeot_id.Equals(0))
+                    {
+                        return "D";
+                    }
+                    else
+                    {
+                        return this.update(model);
+                    }
                 }
 
                 cls_ctConnection obj_conn = new cls_ctConnection();
@@ -361,6 +370,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", REASON_CODE=@REASON_CODE ");
                 obj_str.Append(", LOCATION_CODE=@LOCATION_CODE ");
                 obj_str.Append(", STATUS=@STATUS ");
+                obj_str.Append(", REJECT_NOTE=@REJECT_NOTE ");
 
                 obj_str.Append(", MODIFIED_BY=@MODIFIED_BY ");
                 obj_str.Append(", MODIFIED_DATE=@MODIFIED_DATE ");
@@ -387,6 +397,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
 
                 obj_cmd.Parameters.Add("@TIMEOT_ID", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_ID"].Value = model.timeot_id;
+
+                obj_cmd.Parameters.Add("@REJECT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@REJECT_NOTE"].Value = model.reject_note;
 
                 obj_cmd.ExecuteNonQuery();
 

@@ -33,7 +33,7 @@ namespace ClassLibrary_BPC.hrfocus.model
         public DateTime created_date { get; set; }
         public string modified_by { get; set; }
         public DateTime modified_date { get; set; }
-
+        public string reject_note { get; set; }
         public bool flag { get; set; }
 
         //-- Show only

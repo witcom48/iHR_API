@@ -6,6 +6,7 @@ using ClassLibrary_BPC.hrfocus.model;
 using System.Security.Cryptography;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json.Linq;
 namespace ClassLibrary_BPC.hrfocus.controller
 {
     public class cls_ctMTAccount
@@ -219,13 +220,14 @@ namespace ClassLibrary_BPC.hrfocus.controller
             {
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
 
-                obj_str.Append("SELECT COUNT(SELF_MT_ACCOUNT.ACCOUNT_TYPE) ");
+                obj_str.Append("SELECT TOP 1 COUNT(SELF_MT_ACCOUNT.ACCOUNT_TYPE) ");
                 obj_str.Append(" FROM SELF_TR_ACCOUNT");
                 obj_str.Append(" JOIN SELF_MT_ACCOUNT ON SELF_MT_ACCOUNT.COMPANY_CODE = SELF_TR_ACCOUNT.COMPANY_CODE");
                 obj_str.Append(" AND SELF_MT_ACCOUNT.ACCOUNT_USER = SELF_TR_ACCOUNT.ACCOUNT_USER");
                 obj_str.Append(" WHERE WORKER_CODE = '" + worker + "'");
                 obj_str.Append(" AND SELF_TR_ACCOUNT.ACCOUNT_TYPE = 'Emp'");
                 obj_str.Append(" AND SELF_TR_ACCOUNT.COMPANY_CODE = '"+com+"'");
+                obj_str.Append(" GROUP BY SELF_MT_ACCOUNT.ACCOUNT_PWD ");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -421,6 +423,36 @@ namespace ClassLibrary_BPC.hrfocus.controller
             }
 
             return blnResult;
+        }
+
+
+
+        public JArray getData(string com,string worker)
+        {
+            JArray result = new JArray();
+            try
+            {
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.AppendLine("SELECT * FROM HRM_TR_EMPPOSITION WHERE EMPPOSITION_POSITION IN (SELECT POSITION_CODE FROM SELF_TR_ACCOUNTPOS");
+                obj_str.AppendLine("WHERE ACCOUNT_USER = '" + worker + "' AND COMPANY_CODE ='" + com + "')");
+                obj_str.AppendLine("AND WORKER_CODE IN (SELECT WORKER_CODE FROM HRM_TR_EMPDEP WHERE EMPDEP_LEVEL01 IN(SELECT DEP_CODE FROM SELF_TR_ACCOUNTDEP");
+                obj_str.AppendLine("WHERE ACCOUNT_USER = '" + worker + "' AND COMPANY_CODE ='" + com + "'))");
+                obj_str.AppendLine("AND COMPANY_CODE ='" + com + "'");
+                DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    result.Add(dr["WORKER_CODE"].ToString());
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(Account.getData)" + ex.ToString();
+            }
+
+            return result;
         }
         private const string ENCRYPTION_KEY = "d42262e6-17c0-45da-bc34-1bd04f8b6928";
         private readonly byte[] SALT = Encoding.ASCII.GetBytes(ENCRYPTION_KEY.Length.ToString());

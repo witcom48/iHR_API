@@ -1280,6 +1280,9 @@ namespace HRFocusWCFSystem
         [DataMember]
         public string todate { get; set; }
 
+        [DataMember]
+        public string reject_note { get; set; }
+
     }
 
     public class Jobdetail

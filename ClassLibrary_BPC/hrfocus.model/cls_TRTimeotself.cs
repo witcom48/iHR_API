@@ -33,6 +33,9 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         public bool flag { get; set; }
 
+        public string reject_note { get; set; }
+
+
         //-- Show only
         public string worker_detail_th { get; set; }
         public string worker_detail_en { get; set; }

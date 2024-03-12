@@ -10110,8 +10110,12 @@ namespace HRFocusWCFSystem
         {
             JObject output = new JObject();
 
+            DateTime datefrom = Convert.ToDateTime( fromdate);
+            DateTime dateto = Convert.ToDateTime( todate);
+
+
             cls_ctTRPaytran objPaytran = new cls_ctTRPaytran();
-            List<cls_TRPaytran> listPaytran = objPaytran.getDataByFillter(language, com, Convert.ToDateTime(fromdate), Convert.ToDateTime(todate), emp);
+            List<cls_TRPaytran> listPaytran = objPaytran.getDataByFillter(language, com, datefrom, dateto, emp);
             JArray array = new JArray();
 
             if (listPaytran.Count > 0)
@@ -18711,7 +18715,7 @@ namespace HRFocusWCFSystem
                 List<cls_MTAccount> list = Account.getDataByFillter(input.company_code, input.usname, "", 0, "");
 
                 JArray array = new JArray();
-
+                int indexuserdata = 0;
                 if (list.Count > 0)
                 {
                     int index = 1;
@@ -18719,7 +18723,10 @@ namespace HRFocusWCFSystem
                     foreach (cls_MTAccount model in list)
                     {
                         JObject json = new JObject();
-
+                        if (!model.account_pwd.Equals(input.pwd)){
+                            indexuserdata++;
+                            continue;
+                        }
                         json.Add("company_code", model.company_code);
                         json.Add("account_user", model.account_user);
                         //json.Add("account_pwd", model.account_pwd);
@@ -18827,7 +18834,7 @@ namespace HRFocusWCFSystem
 
                         array.Add(json);
                     }
-                    if (input.usname.Equals(list[0].account_user) && input.pwd.Equals(list[0].account_pwd))
+                    if (input.usname.Equals(list[indexuserdata].account_user) && input.pwd.Equals(list[indexuserdata].account_pwd))
                     {
                         RequestData aa = new RequestData();
                         aa.usname = input.usname;
@@ -19248,6 +19255,50 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
         }
 
+        public string doManageChangePassowrd(string com, string username,string usertype,string cur_pass,string new_pass)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTAccount controller = new cls_ctMTAccount();
+                List<cls_MTAccount> list = controller.getDataByFillter(com,username,usertype,0,"");
+                if (list.Count > 0)
+                {
+                    if(list[0].account_pwd == cur_pass){
+                        list[0].account_pwd = new_pass;
+
+                        if (!controller.insert(list[0]).Equals(""))
+                        {
+
+                            output["result"] = "1";
+                            output["result_text"] = "change password Success";
+                        }
+                        else
+                        {
+                      output["result"] = "0";
+                      output["result_text"] = controller.getMessage();
+                        }
+                    }
+                    else
+                    {
+                        output["result"] = "2";
+                        output["result_text"] = "The password is incorrect.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
         public string getCountTypeAccount(string com, string worker)
         {
             JObject output = new JObject();
@@ -19257,6 +19308,29 @@ namespace HRFocusWCFSystem
                 output["result"] = "1";
                 output["result_text"] = "1";
                 output["data"] = controller.getCountTypeAccount(com,worker);
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+
+        public string getEmpinApproveUser(string com, string worker)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctMTAccount controller = new cls_ctMTAccount();
+                output["result"] = "1";
+                output["result_text"] = "1";
+                output["data"] = controller.getData(com, worker);
             }
             catch (Exception ex)
             {
@@ -20189,6 +20263,7 @@ namespace HRFocusWCFSystem
 
         }
         #endregion
+
         public string ApprovegetdocStatus(string com,string worker,string jobtype,string doc)
         {
             JObject output = new JObject();
@@ -20275,6 +20350,13 @@ namespace HRFocusWCFSystem
                                 cls_TRTimeleaveself dataleve = leve.getDataByID(Convert.ToInt32(list[0].job_id));
                                 cls_ctTRTimeleave timeleavecontroller = new cls_ctTRTimeleave();
                                 cls_TRTimeleave timeleave = new cls_TRTimeleave();
+                                if (input.approve_status.Equals("C"))
+                                {
+                                    dataleve.modified_by = input.username;
+                                    dataleve.reject_note = input.reject_note;
+                                    leve.insert(dataleve);
+                                }
+
                                 timeleave.company_code = dataleve.company_code;
                                 timeleave.worker_code = dataleve.worker_code;
                                 timeleave.timeleave_doc = dataleve.timeleave_doc;
@@ -20302,6 +20384,12 @@ namespace HRFocusWCFSystem
                                 cls_TRTimeotself data = con.getDataByID(Convert.ToInt32(list[0].job_id))[0];
                                 cls_ctTRTimeot timecontroller = new cls_ctTRTimeot();
                                 cls_TRTimeot timedata = new cls_TRTimeot();
+                                if (input.approve_status.Equals("C"))
+                                {
+                                    data.modified_by = input.username;
+                                    data.reject_note = input.reject_note;
+                                    con.insert(data);
+                                }
                                 timedata.company_code = data.company_code;
                                 timedata.worker_code = data.worker_code;
                                 timedata.timeot_doc = data.timeot_doc;
@@ -20421,6 +20509,8 @@ namespace HRFocusWCFSystem
                         json.Add("status", model.status);
                         json.Add("status_job", model.status_job);
 
+                        json.Add("reject_note", model.reject_note);
+
                         json.Add("modified_by", model.modified_by);
                         json.Add("modified_date", model.modified_date);
                         json.Add("flag", model.flag);
@@ -20524,6 +20614,13 @@ namespace HRFocusWCFSystem
                     model.flag = leavedata.flag;
 
                     strID = objTRTimeleave.insert(model);
+                    if(strID.Equals("D")){
+                    output["success"] = false;
+                    output["result"] = "3";
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                    return output.ToString(Formatting.None);
+                    }
                     if (!strID.Equals(""))
                     {
                         cls_ctTRAccount objTRAccount = new cls_ctTRAccount();
@@ -20654,6 +20751,22 @@ namespace HRFocusWCFSystem
             return output.ToString(Formatting.None);
 
         }
+
+        public string checkdayleave(string com,string worker,string date)
+        {
+            JObject output = new JObject();
+            cls_ctTRTimeleaveself objTRTimeleave = new cls_ctTRTimeleaveself();
+            cls_TRTimeleaveself selfleavemodel = new cls_TRTimeleaveself();
+            selfleavemodel.company_code = com;
+            selfleavemodel.worker_code = worker;
+            selfleavemodel.timeleave_fromdate = Convert.ToDateTime(date);
+            selfleavemodel.timeleave_todate = Convert.ToDateTime(date);
+            bool dayleave = objTRTimeleave.checkDataOld(selfleavemodel,"'0','3'");
+            output["success"] = true;
+            output["indayleave"] = dayleave;
+            output["message"] = "Remove data not successfully";
+            return output.ToString(Formatting.None);
+        }
         #endregion
 
         #region TRTimeot
@@ -20720,6 +20833,8 @@ namespace HRFocusWCFSystem
                         json.Add("reason_name_en", model.reason_name_en);
                         json.Add("status", model.status);
                         json.Add("status_job", model.status_job);
+
+                        json.Add("reject_note", model.reject_note);
 
                         json.Add("modified_by", model.modified_by);
                         json.Add("modified_date", model.modified_date);
@@ -20822,6 +20937,14 @@ namespace HRFocusWCFSystem
                     model.flag = otdata.flag;
 
                     strID = objTRTime.insert(model);
+                    if (strID.Equals("D"))
+                    {
+                        output["success"] = false;
+                        output["result"] = "3";
+                        output["message"] = "Retrieved data successfully";
+                        output["record_id"] = strID;
+                        return output.ToString(Formatting.None);
+                    }
                     if (!strID.Equals(""))
                     {
                         cls_ctTRAccount objTRAccount = new cls_ctTRAccount();

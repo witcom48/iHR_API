@@ -62,7 +62,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ISNULL(SELF_TR_TIMELEAVE.MODIFIED_BY, SELF_TR_TIMELEAVE.CREATED_BY) AS MODIFIED_BY");
                 obj_str.Append(", ISNULL(SELF_TR_TIMELEAVE.MODIFIED_DATE, SELF_TR_TIMELEAVE.CREATED_DATE) AS MODIFIED_DATE");
                 obj_str.Append(", SELF_MT_JOBTABLE.STATUS_JOB");
-
+                obj_str.Append(", ISNULL(SELF_TR_TIMELEAVE.REJECT_NOTE, '') AS REJECT_NOTE");
                 obj_str.Append(" FROM SELF_TR_TIMELEAVE");
 
                 obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_MT_WORKER.COMPANY_CODE=SELF_TR_TIMELEAVE.COMPANY_CODE AND HRM_MT_WORKER.WORKER_CODE=SELF_TR_TIMELEAVE.WORKER_CODE");
@@ -115,7 +115,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                     model.modified_by = dr["MODIFIED_BY"].ToString();
                     model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
-
+                    model.reject_note = dr["REJECT_NOTE"].ToString();
                     list_model.Add(model);
                 }
 
@@ -241,7 +241,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return blnResult;
         }
 
-        public bool checkDataOld(cls_TRTimeleaveself model)
+        public bool checkDataOld(cls_TRTimeleaveself model,string status)
         {
             bool blnResult = false;
             try
@@ -252,11 +252,14 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" FROM SELF_TR_TIMELEAVE");
                 obj_str.Append(" WHERE COMPANY_CODE='" + model.company_code + "'");
                 obj_str.Append(" AND WORKER_CODE='" + model.worker_code + "'");
-                obj_str.Append(" AND TIMELEAVE_FROMDATE='" + model.timeleave_fromdate.ToString("MM/dd/yyyy") + "'");
-                obj_str.Append(" AND TIMELEAVE_TODATE='" + model.timeleave_todate.ToString("MM/dd/yyyy") + "'");
-
-                obj_str.Append(" AND LEAVE_CODE='" + model.leave_code + "'");
-                obj_str.Append(" AND TIMELEAVE_TYPE='" + model.timeleave_type + "'");
+                obj_str.Append(" AND ('" + model.timeleave_fromdate.ToString("MM/dd/yyyy") + "' BETWEEN TIMELEAVE_FROMDATE AND TIMELEAVE_TODATE OR '" + model.timeleave_todate.ToString("MM/dd/yyyy") + "' BETWEEN TIMELEAVE_FROMDATE AND TIMELEAVE_TODATE)");
+                //obj_str.Append(" AND TIMELEAVE_TODATE='" + model.timeleave_todate.ToString("MM/dd/yyyy") + "'");
+                if (!status.Equals(""))
+                {
+                    obj_str.Append(" AND STATUS IN ("+status+")");
+                }
+                //obj_str.Append(" AND LEAVE_CODE='" + model.leave_code + "'");
+                //obj_str.Append(" AND TIMELEAVE_TYPE='" + model.timeleave_type + "'");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -352,7 +355,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             try
             {
                 //-- Check data old
-                if (this.checkDataOld(model))
+                if (this.checkDataOld(model,""))
                 {
                     return this.update(model);
                 }
@@ -460,6 +463,10 @@ namespace ClassLibrary_BPC.hrfocus.controller
         public string update(cls_TRTimeleaveself model)
         {
             string blnResult = "";
+            if (model.timeleave_id.Equals(0))
+            {
+                return "D";
+            }
             try
             {
                 cls_ctConnection obj_conn = new cls_ctConnection();
@@ -482,6 +489,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", LEAVE_CODE=@LEAVE_CODE ");
                 obj_str.Append(", REASON_CODE=@REASON_CODE ");
                 obj_str.Append(", STATUS=@STATUS ");
+                obj_str.Append(", REJECT_NOTE=@REJECT_NOTE ");
 
                 obj_str.Append(", MODIFIED_BY=@MODIFIED_BY ");
                 obj_str.Append(", MODIFIED_DATE=@MODIFIED_DATE ");
@@ -510,6 +518,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@STATUS", SqlDbType.Int); obj_cmd.Parameters["@STATUS"].Value = model.status;
                 obj_cmd.Parameters.Add("@MODIFIED_BY", SqlDbType.VarChar); obj_cmd.Parameters["@MODIFIED_BY"].Value = model.modified_by;
                 obj_cmd.Parameters.Add("@MODIFIED_DATE", SqlDbType.DateTime); obj_cmd.Parameters["@MODIFIED_DATE"].Value = DateTime.Now;
+
+                obj_cmd.Parameters.Add("@REJECT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@REJECT_NOTE"].Value = model.reject_note;
 
                 obj_cmd.Parameters.Add("@TIMELEAVE_ID", SqlDbType.Int); obj_cmd.Parameters["@TIMELEAVE_ID"].Value = model.timeleave_id;
 

@@ -1608,9 +1608,6 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string getMTAccountList(InputMTAccount input);
 
-       
-
-
         [OperationContract(Name = "account")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doManageMTAccount(InputMTAccount input);
@@ -1620,6 +1617,10 @@ namespace HRFocusWCFSystem
         string doDeleteeMTAccount(InputMTAccount input);
 
 
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string doManageChangePassowrd(string com, string username, string usertype, string cur_pass, string new_pass);
+
         [OperationContract(Name = "account_workflow")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string getMTAccountworkflowList(InputMTAccount input);
@@ -1627,6 +1628,10 @@ namespace HRFocusWCFSystem
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getCountTypeAccount(string com, string worker);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string getEmpinApproveUser(string com, string worker);
         #endregion
 
         #region TRAccountpos
@@ -1729,6 +1734,10 @@ namespace HRFocusWCFSystem
         [OperationContract(Name = "timeleave_del")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string doDeleteTRTimeleave(InputTRTimeleaveself input);
+
+        [OperationContract]
+        [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
+        string checkdayleave(string com, string worker, string date);
         #endregion
 
 
