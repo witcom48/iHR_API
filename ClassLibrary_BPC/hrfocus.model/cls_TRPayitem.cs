@@ -32,6 +32,10 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         public double amount1 { get; set; }
         public double amount2 { get; set; }
+        public double amount { get; set; }
+
+        public double pay_previous { get; set; }
+        public double pay_current { get; set; }
         public DateTime worker_hiredate { get; set; }
         public DateTime worker_resigndate { get; set; }
         public bool worker_resignstatus { get; set; }

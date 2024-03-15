@@ -263,70 +263,142 @@ namespace ClassLibrary_BPC.hrfocus.controller
         
         //
         //
-        private List<cls_TRPayitem> getVerifyData(string language, string condition)
+        private List<cls_TRPayitem> getVerifyData(string language, string condition,  DateTime datefrom, DateTime dateto)
         {
             List<cls_TRPayitem> list_modelVerify = new List<cls_TRPayitem>();
             cls_TRPayitem model;
             try
             {
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
-
+                //1 ITEM
                 obj_str.Append("SELECT ");
 
-                obj_str.Append("HRM_TR_PAYITEM.COMPANY_CODE");
+                obj_str.Append("HRM_MT_ITEM.ITEM_TYPE");
 
-                obj_str.Append(", HRM_TR_PAYITEM.ITEM_CODE");
-                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYITEM.PAYITEM_DATE = '12/25/2023' THEN HRM_TR_PAYITEM.PAYITEM_AMOUNT ELSE 0 END) AS AMOUNT1");
-                obj_str.Append(",  SUM(CASE WHEN HRM_TR_PAYITEM.PAYITEM_DATE = '11/24/2023' THEN HRM_TR_PAYITEM.PAYITEM_AMOUNT ELSE 0 END) AS AMOUNT2");
-
+                obj_str.Append(", PAID.ITEM_CODE");
 
                 if (language.Equals("TH"))
                 {
-                    obj_str.Append(", ITEM_NAME_TH AS ITEM_DETAIL");
+                    obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_TH AS ITEM_DETAIL");
                  }
                 else
                 {
-                    obj_str.Append(", ITEM_NAME_EN AS ITEM_DETAIL");
+                    obj_str.Append(", HRM_MT_ITEM.ITEM_NAME_EN AS ITEM_DETAIL");
                  }
-                obj_str.Append(",  ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0') AS VERIFY_STATUS ");
 
-                obj_str.Append(", ISNULL( HRM_TR_VERIFY_LOGS.CREATE_BY, ' ') AS CREATE_BY ");
-                obj_str.Append(", ISNULL( HRM_TR_VERIFY_LOGS.CREATE_DATE, ' ') AS CREATE_DATE ");
+                obj_str.Append(", SUM(CASE WHEN PAID.PAYITEM_DATE ='" + dateto.ToString("MM/dd/yyyy") + "' THEN PAID.AMOUNT ELSE 0 END) AS PAY_CURRENT");
+                obj_str.Append(", SUM(CASE WHEN PAID.PAYITEM_DATE = '" + datefrom.ToString("MM/dd/yyyy") + "'THEN PAID.AMOUNT ELSE 0 END) AS PAY_PREVIOUS");
+                obj_str.Append(", ISNULL(HRM_TR_VERIFY.VERIFY_STATUS, '0') AS VERIFY_STATUS ");
 
+                //obj_str.Append(", ISNULL(HRM_TR_VERIFY_LOGS.MODIFIED_BY, HRM_TR_VERIFY_LOGS.CREATED_BY) AS CREATE_BY");
+                obj_str.Append(", ISNULL(HRM_TR_VERIFY_LOGS.CREATE_DATE, '') AS CREATE_DATE");
 
+                //obj_str.Append(", ISNULL(HRM_TR_VERIFY_LOGS.CREATE_BY, '') AS CREATE_BY");
+                obj_str.Append(", ISNULL(CONVERT(VARCHAR(10), HRM_TR_VERIFY_LOGS.CREATE_DATE, 103), '') AS CREATE_DATE");
+
+                obj_str.Append(" FROM HRM_MT_ITEM");
+
+                obj_str.Append(" INNER JOIN (SELECT COMPANY_CODE, WORKER_CODE, ITEM_CODE, PAYITEM_DATE, PAYITEM_AMOUNT AS AMOUNT");
                 obj_str.Append(" FROM HRM_TR_PAYITEM");
-                obj_str.Append(" INNER JOIN HRM_MT_ITEM ON HRM_MT_ITEM.COMPANY_CODE=HRM_TR_PAYITEM.COMPANY_CODE AND HRM_MT_ITEM.ITEM_CODE=HRM_TR_PAYITEM.ITEM_CODE");
-                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = HRM_TR_PAYITEM.COMPANY_CODE   AND HRM_TR_VERIFY.ITEM_CODE = HRM_TR_PAYITEM.ITEM_CODE ");
 
-                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY_LOGS ON HRM_TR_VERIFY_LOGS.COMPANY_CODE = HRM_TR_PAYITEM.COMPANY_CODE   AND HRM_TR_VERIFY_LOGS.ITEM_CODE = HRM_TR_PAYITEM.ITEM_CODE");
+                obj_str.Append(" WHERE HRM_TR_PAYITEM.PAYITEM_DATE IN ('" + dateto.ToString("MM/dd/yyyy") + "','" + datefrom.ToString("MM/dd/yyyy") + "')  ) AS PAID ON HRM_MT_ITEM.COMPANY_CODE = PAID.COMPANY_CODE AND HRM_MT_ITEM.ITEM_CODE = PAID.ITEM_CODE");
 
-                obj_str.Append(" WHERE 1=1");
-                obj_str.Append(" AND HRM_TR_PAYITEM.PAYITEM_DATE in ('12/25/2023' ,'11/24/2023') ");
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON PAID.COMPANY_CODE = HRM_MT_WORKER.COMPANY_CODE AND PAID.WORKER_CODE = HRM_MT_WORKER.WORKER_CODE");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY ON HRM_TR_VERIFY.COMPANY_CODE = PAID.COMPANY_CODE AND HRM_TR_VERIFY.ITEM_CODE = PAID.ITEM_CODE");
+                obj_str.Append(" LEFT JOIN HRM_TR_VERIFY_LOGS ON HRM_TR_VERIFY_LOGS.COMPANY_CODE = HRM_TR_VERIFY.COMPANY_CODE AND HRM_TR_VERIFY_LOGS.ITEM_CODE = HRM_TR_VERIFY.ITEM_CODE");
+                obj_str.Append(" WHERE HRM_MT_WORKER.WORKER_EMPTYPE = 'M'");
+                obj_str.Append(" GROUP BY PAID.ITEM_CODE, HRM_MT_ITEM.ITEM_TYPE, HRM_MT_ITEM.ITEM_NAME_TH, HRM_MT_ITEM.ITEM_NAME_EN, HRM_TR_VERIFY.VERIFY_STATUS, HRM_TR_VERIFY_LOGS.CREATE_BY, HRM_TR_VERIFY_LOGS.CREATE_DATE");
+                ///1
+                ///
+                obj_str.Append(" UNION ALL");
+                //2 TAX
+                obj_str.Append(" SELECT");
+                obj_str.Append(" 'DE' AS ITEM_TYPE");
+                obj_str.Append(", 'TAX' AS ITEM_CODE");
+                if (language.Equals("TH"))
+                {
+                    obj_str.Append(", '' AS ITEM_DETAIL");
+                }
+                else
+                {
+                    obj_str.Append(",'' AS ITEM_DETAIL");
+                }
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "' THEN (PAYTRAN_TAX_401 + PAYTRAN_TAX_4012 + PAYTRAN_TAX_4013 + PAYTRAN_TAX_402I + PAYTRAN_TAX_402I) ELSE 0 END) AS PAY_CURRENT");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN (PAYTRAN_TAX_401 + PAYTRAN_TAX_4012 + PAYTRAN_TAX_4013 + PAYTRAN_TAX_402I + PAYTRAN_TAX_402I) ELSE 0 END) AS PAY_PREVIOUS");
+                obj_str.Append(", '0' AS VERIFY_STATUS");
+                obj_str.Append(", '' AS CREATE_BY");
+                obj_str.Append(", '' AS CREATE_DATE");
+                obj_str.Append(" FROM HRM_TR_PAYTRAN ");
+                obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_TR_PAYTRAN.COMPANY_CODE = HRM_MT_WORKER.COMPANY_CODE AND HRM_TR_PAYTRAN.WORKER_CODE = HRM_MT_WORKER.WORKER_CODE");
+                obj_str.Append(" WHERE HRM_TR_PAYTRAN.PAYTRAN_PAYDATE IN ('" + dateto.ToString("MM/dd/yyyy") + "', '" + datefrom.ToString("MM/dd/yyyy") + "')  AND HRM_MT_WORKER.WORKER_EMPTYPE = 'M'");
+                //2
+                 obj_str.Append("UNION ALL");
+                 //3 SSO_EMP
+                obj_str.Append(" SELECT");
+                obj_str.Append(" 'DE' AS ITEM_TYPE");
+                obj_str.Append(", 'SSO_EMP' AS ITEM_CODE");
+                if (language.Equals("TH"))
+                {
+                    obj_str.Append(", '' AS ITEM_DETAIL");
+                }
+                else
+                {
+                    obj_str.Append(",'' AS ITEM_DETAIL");
+                }
+
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "'THEN (HRM_TR_PAYTRAN.PAYTRAN_SSOEMP) ELSE 0 END) AS PAY_CURRENT");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN (HRM_TR_PAYTRAN.PAYTRAN_SSOEMP) ELSE 0 END) AS PAY_PREVIOUS");
+                obj_str.Append(", '0' AS VERIFY_STATUS");
+                obj_str.Append(", '' AS CREATE_BY");
+                obj_str.Append(", '' AS CREATE_DATE");
+                obj_str.Append(" FROM HRM_TR_PAYTRAN");
+                 obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_TR_PAYTRAN.COMPANY_CODE = HRM_MT_WORKER.COMPANY_CODE AND HRM_TR_PAYTRAN.WORKER_CODE = HRM_MT_WORKER.WORKER_CODE");
+                 obj_str.Append(" WHERE HRM_TR_PAYTRAN.PAYTRAN_PAYDATE IN ('" + dateto.ToString("MM/dd/yyyy") + "', '" + datefrom.ToString("MM/dd/yyyy") + "')  AND HRM_MT_WORKER.WORKER_EMPTYPE = 'M'");
+                //3                          
+                
+                obj_str.Append(" UNION ALL ");
+                //4 PF_EMP
+                obj_str.Append(" SELECT ");
+                obj_str.Append(" 'DE' AS ITEM_TYPE");
+                obj_str.Append(",'PF_EMP' AS ITEM_CODE");
+                if (language.Equals("TH"))
+                {
+                    obj_str.Append(", '' AS ITEM_DETAIL");
+                }
+                else
+                {
+                    obj_str.Append(",'' AS ITEM_DETAIL");
+                }
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + dateto.ToString("MM/dd/yyyy") + "'THEN (HRM_TR_PAYTRAN.PAYTRAN_PFEMP) ELSE 0 END) AS PAY_CURRENT");
+                obj_str.Append(", SUM(CASE WHEN HRM_TR_PAYTRAN.PAYTRAN_PAYDATE = '" + datefrom.ToString("MM/dd/yyyy") + "' THEN (HRM_TR_PAYTRAN.PAYTRAN_PFEMP) ELSE 0 END) AS PAY_PREVIOUS");
+                obj_str.Append(", '0' AS VERIFY_STATUS");
+                obj_str.Append(", '' AS CREATE_BY");
+                obj_str.Append(", '' AS CREATE_DATE");
+                obj_str.Append("  FROM HRM_TR_PAYTRAN");
+                obj_str.Append("  INNER JOIN HRM_MT_WORKER ON HRM_TR_PAYTRAN.COMPANY_CODE = HRM_MT_WORKER.COMPANY_CODE AND HRM_TR_PAYTRAN.WORKER_CODE = HRM_MT_WORKER.WORKER_CODE");
+                obj_str.Append("  WHERE HRM_TR_PAYTRAN.PAYTRAN_PAYDATE IN ('" + dateto.ToString("MM/dd/yyyy") + "', '" + datefrom.ToString("MM/dd/yyyy") + "')  AND HRM_MT_WORKER.WORKER_EMPTYPE = 'M'");
 
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append(" GROUP BY HRM_TR_PAYITEM.COMPANY_CODE,HRM_TR_PAYITEM.ITEM_CODE, HRM_MT_ITEM.ITEM_NAME_TH,HRM_MT_ITEM.ITEM_NAME_EN,HRM_TR_PAYITEM.PAYITEM_DATE, HRM_TR_VERIFY.VERIFY_STATUS,HRM_TR_VERIFY_LOGS.CREATE_BY,HRM_TR_VERIFY_LOGS.CREATE_DATE");
-
-                obj_str.Append(" ORDER BY HRM_TR_PAYITEM.ITEM_CODE");
-
+                obj_str.Append(" ORDER BY ITEM_TYPE DESC, ITEM_CODE");
+  
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
                 foreach (DataRow dr in dt.Rows)
                 {
                     model = new cls_TRPayitem();
 
-                    model.company_code = Convert.ToString(dr["COMPANY_CODE"]);
-                     model.item_code = Convert.ToString(dr["ITEM_CODE"]);
-                     model.amount1 = Convert.ToDouble(dr["AMOUNT1"]);
-                     model.amount2 = Convert.ToDouble(dr["AMOUNT2"]);
+                      model.item_code = Convert.ToString(dr["ITEM_CODE"]);
+
+                     model.pay_current = Convert.ToDouble(dr["PAY_CURRENT"]);
+                     model.pay_previous = Convert.ToDouble(dr["PAY_PREVIOUS"]);
+                     model.status = Convert.ToString(dr["VERIFY_STATUS"]);
+
+                      model.create_date = Convert.ToDateTime(dr["CREATE_DATE"]);
 
                     model.item_detail = Convert.ToString(dr["ITEM_DETAIL"]);
-                    model.status = Convert.ToString(dr["VERIFY_STATUS"]);
-                    model.create_by = Convert.ToString(dr["CREATE_BY"]);
-                    model.create_date = Convert.ToDateTime(dr["CREATE_DATE"]);
 
-                    
                      list_modelVerify.Add(model);
                 }
 
@@ -339,11 +411,11 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_modelVerify;
         }
 
-        public List<cls_TRPayitem> getDataByVerifyFillter(string language, string com, string emp, DateTime date, string item_type, string item )
+        public List<cls_TRPayitem> getDataByVerifyFillter(string language, string com, string emp,   DateTime datefrom, DateTime dateto, string item_type, string item )
         {
             string strCondition = "";
 
-            strCondition += " AND HRM_TR_PAYITEM.COMPANY_CODE='" + com + "'";
+            strCondition += " AND HRM_MT_WORKER.COMPANY_CODE='" + com + "'";
             //strCondition += " AND HRM_TR_PAYITEM.PAYITEM_DATE='" + date.ToString("MM/dd/yyyy") + "'";
 
             if (!emp.Equals(""))
@@ -351,6 +423,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             if (!item.Equals(""))
                 strCondition += " AND HRM_TR_PAYITEM.ITEM_CODE='" + item + "'";
+
+
+            //strCondition += " AND (HRM_FNT_COMPARE_AMOUNT BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + " AND EmpID='" + com + "'" + " AND EmpID='" + item + "'" + "')";
 
             //if (!item_type.Equals(""))
             //{
@@ -363,7 +438,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             //}
 
 
-            return this.getVerifyData(language, strCondition);
+            return this.getVerifyData(language, strCondition,   datefrom,  dateto);
         }
         //
         public List<cls_TRPayitem> getDataByFillter(string language, string com, string emp, DateTime date, string item_type, string item)
@@ -762,6 +837,136 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return blnResult;
         }
+
+        //
+        public bool insert1(List<cls_TRPayitem> list_model, string username)
+        {
+            bool blnResult = false;
+            try
+            {
+                cls_ctConnection obj_conn = new cls_ctConnection();
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+                //int id = this.getNextID();
+
+                obj_str.Append("INSERT INTO HRM_TR_PAYITEM");
+                obj_str.Append(" (");
+                obj_str.Append("COMPANY_CODE ");
+                obj_str.Append(", WORKER_CODE ");
+                obj_str.Append(", ITEM_CODE ");
+                obj_str.Append(", PAYITEM_DATE ");
+                obj_str.Append(", PAYITEM_AMOUNT ");
+                obj_str.Append(", PAYITEM_QUANTITY ");
+                obj_str.Append(", PAYITEM_PAYTYPE ");
+                obj_str.Append(", PAYITEM_NOTE ");
+                obj_str.Append(", CREATED_BY ");
+                obj_str.Append(", CREATED_DATE ");
+                obj_str.Append(", FLAG ");
+                obj_str.Append(" )");
+
+                obj_str.Append(" VALUES(");
+                obj_str.Append("@COMPANY_CODE ");
+                obj_str.Append(", @WORKER_CODE ");
+                obj_str.Append(", @ITEM_CODE ");
+                obj_str.Append(", @PAYITEM_DATE ");
+                obj_str.Append(", @PAYITEM_AMOUNT ");
+                obj_str.Append(", @PAYITEM_QUANTITY ");
+                obj_str.Append(", @PAYITEM_PAYTYPE ");
+                obj_str.Append(", @PAYITEM_NOTE ");
+                obj_str.Append(", @CREATED_BY ");
+                obj_str.Append(", @CREATED_DATE ");
+                obj_str.Append(", @FLAG ");
+                obj_str.Append(" )");
+
+                obj_conn.doConnect();
+
+                obj_conn.doOpenTransaction();
+
+
+
+                System.Text.StringBuilder obj_str2 = new System.Text.StringBuilder();
+
+
+
+                obj_str2.Append(" DELETE FROM HRM_TR_PAYITEM");
+                obj_str2.Append(" WHERE 1=1 ");
+                obj_str2.Append(" AND COMPANY_CODE='" + list_model[0].company_code + "'");
+                obj_str2.Append(" AND ITEM_CODE='" + list_model[0].item_code + "' ");
+
+                obj_str2.Append(" AND PAYITEM_QUANTITY='" + list_model[0].payitem_quantity + "'");
+                obj_str2.Append(" AND WORKER_CODE='" + list_model[0].worker_code + "'");
+ 
+                obj_str2.Append(" AND PAYITEM_AMOUNT='" + list_model[0].payitem_amount + "' ");
+                obj_str2.Append(" AND PAYITEM_PAYTYPE='" + list_model[0].payitem_paytype + "' ");
+
+                obj_str2.Append(" AND PAYITEM_NOTE='" + list_model[0].payitem_note + "' ");
+                obj_str2.Append(" AND PAYITEM_DATE='" + list_model[0].payitem_date + "' ");
+
+                 
+                     
+                
+                blnResult = obj_conn.doExecuteSQL_transaction(obj_str2.ToString());
+
+                if (blnResult)
+                {
+                    SqlCommand obj_cmd = new SqlCommand(obj_str.ToString(), obj_conn.getConnection());
+                    obj_cmd.Transaction = obj_conn.getTransaction();
+
+                    obj_cmd.Parameters.Add("@COMPANY_CODE", SqlDbType.VarChar);
+                    obj_cmd.Parameters.Add("@WORKER_CODE", SqlDbType.VarChar);
+                    obj_cmd.Parameters.Add("@ITEM_CODE", SqlDbType.VarChar);
+                    obj_cmd.Parameters.Add("@PAYITEM_DATE", SqlDbType.DateTime);
+                    obj_cmd.Parameters.Add("@PAYITEM_AMOUNT", SqlDbType.Decimal);
+                    obj_cmd.Parameters.Add("@PAYITEM_QUANTITY", SqlDbType.Decimal);
+                    obj_cmd.Parameters.Add("@PAYITEM_PAYTYPE", SqlDbType.VarChar);
+                    obj_cmd.Parameters.Add("@PAYITEM_NOTE", SqlDbType.VarChar);
+
+                    obj_cmd.Parameters.Add("@CREATED_BY", SqlDbType.VarChar);
+                    obj_cmd.Parameters.Add("@CREATED_DATE", SqlDbType.DateTime);
+                    obj_cmd.Parameters.Add("@FLAG", SqlDbType.Bit);
+
+                    foreach (cls_TRPayitem model in list_model)
+                    {
+
+                        obj_cmd.Parameters["@COMPANY_CODE"].Value = model.company_code;
+                        obj_cmd.Parameters["@WORKER_CODE"].Value = model.worker_code;
+                        obj_cmd.Parameters["@ITEM_CODE"].Value = model.item_code;
+                        obj_cmd.Parameters["@PAYITEM_DATE"].Value = model.payitem_date;
+                        obj_cmd.Parameters["@PAYITEM_AMOUNT"].Value = model.payitem_amount;
+                        obj_cmd.Parameters["@PAYITEM_QUANTITY"].Value = model.payitem_quantity;
+                        obj_cmd.Parameters["@PAYITEM_PAYTYPE"].Value = model.payitem_paytype;
+                        obj_cmd.Parameters["@PAYITEM_NOTE"].Value = model.payitem_note;
+
+                        obj_cmd.Parameters["@CREATED_BY"].Value = model.modified_by;
+                        obj_cmd.Parameters["@CREATED_DATE"].Value = DateTime.Now;
+                        obj_cmd.Parameters["@FLAG"].Value = false;
+
+                        obj_cmd.ExecuteNonQuery();
+
+                    }
+
+                    blnResult = obj_conn.doCommit();
+
+                    if (!blnResult)
+                    {
+                        obj_conn.doRollback();
+                    }
+                }
+                else
+                {
+                    obj_conn.doRollback();
+                }
+                obj_conn.doClose();
+
+                blnResult = true;
+            }
+            catch (Exception ex)
+            {
+                Message = "ERROR::(verify.insert)" + ex.ToString();
+            }
+
+            return blnResult;
+        }
+        //
 
         public bool update(cls_TRPayitem model)
         {

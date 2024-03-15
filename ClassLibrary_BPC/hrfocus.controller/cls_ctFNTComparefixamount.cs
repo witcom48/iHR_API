@@ -50,12 +50,18 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 foreach (DataRow dr in dt.Rows)
                 {
                     model = new cls_FNTComparefixamount();
-                    model.EmpID = Convert.ToInt32(dr["EmpID"]);
-                    model.EmpName = dr["EmpName"].ToString();
-                    model.Amount = dr["Amount"].ToString();
-                    model.AmountOld = dr["AmountOld"].ToString();
+
+                    model.EmpID = Convert.ToString(dr["EmpID"]);
+                    model.EmpName = Convert.ToString(dr["EmpName"]);
+
+                    model.Amount = Convert.ToDouble(dr["Amount"]);
+                    model.AmountOld = Convert.ToDouble(dr["AmountOld"]);
+
+
                     model.Filldate = Convert.ToDateTime(dr["Filldate"]);
                     model.Resigndate = Convert.ToDateTime(dr["Resigndate"]);
+                    //
+                   
                     list_model.Add(model);
                 }
 
@@ -68,7 +74,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return list_model;
         }
 
-        public List<cls_FNTComparefixamount> getDataByFillter(int id, string user, DateTime datefrom, DateTime dateto, string com, string item)
+        public List<cls_FNTComparefixamount> getDataByFillter(string id, string user, DateTime datefrom, DateTime dateto, string com, string item)
         {
             string strCondition = "";
             if (!id.Equals(""))
