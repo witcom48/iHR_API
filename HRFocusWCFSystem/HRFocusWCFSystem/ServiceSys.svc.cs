@@ -18447,7 +18447,7 @@ namespace HRFocusWCFSystem
         public string doGetLeaveActualDay(string com, string emp, string fromdate, string todate)
         {
             JObject output = new JObject();
-
+            string dayall = "";
             DateTime datefrom = Convert.ToDateTime(fromdate);
             DateTime dateto = Convert.ToDateTime(todate);
 
@@ -18467,6 +18467,7 @@ namespace HRFocusWCFSystem
                     else
                     {
                         intDays++;
+                        dayall += model.timecard_workdate.ToString("dd") + " ";
                     }
 
                 }
@@ -18474,6 +18475,7 @@ namespace HRFocusWCFSystem
                 output["result"] = "0";
                 output["result_text"] = "Success";
                 output["data"] = intDays;
+                output["dayall"] = dayall;
             }
             else
             {
