@@ -38,6 +38,9 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         //-- Show only
         public string worker_detail { get; set; }
+        public int timeot_breakmin { get; set; }
+
+        
 
     }
 }

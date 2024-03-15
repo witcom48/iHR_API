@@ -15365,38 +15365,55 @@ namespace HRFocusWCFSystem
 
             return output.ToString(Formatting.None);
         }
-        public string doManageTRTimeot(InputTRTimeot input)
+
+
+        //15/03/2024
+
+        public string doManageTRTimeotlist(InputTRTimeot input)
         {
             JObject output = new JObject();
 
             try
             {
+
+                var jsonArray = JsonConvert.DeserializeObject<List<cls_TRTimeot>>(input.timeot_data);
+                int success = 0 ;
+                int error = 0 ;
                 cls_ctTRTimeot objTRTime = new cls_ctTRTimeot();
-                cls_TRTimeot model = new cls_TRTimeot();
+                List<cls_TRTimeot> listot= new List<cls_TRTimeot>();
+                bool claer = objTRTime.deletelist(input.company_code, input.worker_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate));
+                if (claer)
+                {
+                    foreach (cls_TRTimeot item in jsonArray)
+                    {
 
-                model.company_code = input.company_code;
-                model.worker_code = input.worker_code;
-                model.timeot_id = input.timeot_id;
-                model.timeot_doc = input.timeot_doc;
-                                
-                model.timeot_workdate = Convert.ToDateTime(input.timeot_workdate);
-                model.timeot_worktodate = Convert.ToDateTime(input.timeot_worktodate);
 
-                model.timeot_beforemin = input.timeot_beforemin;
-                model.timeot_normalmin = input.timeot_normalmin;
-                model.timeot_aftermin = input.timeot_aftermin;
-                model.timeot_break = input.timeot_breakmin;
+                        item.modified_by = input.modified_by;
+                        bool blnResult = objTRTime.insert(item);
+                        if (blnResult)
+                            success++;
+                            
+                         
+ 
 
-                model.timeot_note = input.timeot_note;
-                model.location_code = input.location_code;
-                model.reason_code = input.reason_code;
+                    }
+                }
+                else
+                {
+                    error = 1;
+                }
+               
 
-                model.modified_by = input.modified_by;
-                model.flag = model.flag;
+                //bool blnResult = objTRTime.insertlist(input.company_code, input.worker_code, Convert.ToDateTime(input.fromdate), Convert.ToDateTime(input.todate), listot);
 
-                bool blnResult = objTRTime.insert(model);
 
-                if (blnResult)
+                //cls_ctTRTimeot objTRTime = new cls_ctTRTimeot();
+                //cls_TRTimeot model = new cls_TRTimeot();
+
+
+                //bool blnResult = objTRTime.insert(model);
+
+                if (error == 0)
                 {
                     output["result"] = "1";
                     output["result_text"] = "0";
