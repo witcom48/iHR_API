@@ -859,7 +859,7 @@ namespace HRFocusWCFSystem
 
         //
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getTRPayitemVerifyList(string language, string com, string emp, string paydate, string itemtype, string itemcode );
+        string getTRPayitemVerifyList(string language, string com, string emp, string paydate, string itemtype, string itemcode, string fromdate, string todate);
         //
 
         //
@@ -1788,9 +1788,9 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
         string getFNTCompareamount(InputFNTCompareamount input);
 
-        //[OperationContract(Name = "doManageCompareamount")]
-        //[WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        //string doManageCompareamount(InputFNTCompareamount input);
+        [OperationContract(Name = "doManageCompareamount")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageCompareamount(InputFNTCompareamount input);
 
 
         [OperationContract]

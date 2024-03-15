@@ -1393,6 +1393,8 @@ namespace HRFocusWCFSystem
     public class InputFNTCompareamount
     {
         [DataMember]
+        public string language { get; set; }
+        [DataMember]
         public string device_name { get; set; }
         [DataMember]
         public string ip { get; set; }
@@ -1403,14 +1405,14 @@ namespace HRFocusWCFSystem
         public string company_code { get; set; }
         [DataMember]
         public string EmpName { get; set; }
-        
-        [DataMember]
-        public int EmpID { get; set; }
 
         [DataMember]
-        public string Amount { get; set; }
-         [DataMember]
-        public string AmountOld { get; set; }
+        public string EmpID { get; set; }
+
+        [DataMember]
+        public double Amount { get; set; }
+        [DataMember]
+        public double AmountOld { get; set; }
         
         [DataMember]
         public DateTime Filldate { get; set; }
@@ -1425,8 +1427,7 @@ namespace HRFocusWCFSystem
         public string item_code { get; set; }
         [DataMember]
         public string payitem_date { get; set; }
-        [DataMember]
-        public string language { get; set; }
+        
  
         [DataMember]
         public string polmenu_code { get; set; }
@@ -1490,7 +1491,9 @@ namespace HRFocusWCFSystem
          public List<cls_TRPaytran> total_SSOCOM_data { get; set; }
          [DataMember]
          public List<cls_TRPaytran> total_PFCOM_data { get; set; }
-       
+         [DataMember]
+
+         public string TRPayitem_data { get; set; }
 
 
          [DataMember]

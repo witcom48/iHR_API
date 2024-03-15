@@ -9,10 +9,10 @@ namespace ClassLibrary_BPC.hrfocus.model
    public class cls_FNTCompareamount
   {
        public cls_FNTCompareamount() { }
-       public int EmpID { get; set; }
+       public string EmpID { get; set; }
        public string EmpName { get; set; }
-       public string Amount { get; set; }
-       public string AmountOld { get; set; }
+       public double Amount { get; set; }
+       public double AmountOld { get; set; }
        public DateTime Filldate { get; set; }
        public DateTime Resigndate { get; set; }
 

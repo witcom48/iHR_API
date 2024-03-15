@@ -117,7 +117,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
-                if (dt.Rows.Count > 0)
+                if (dt.Rows.Count > 0 && dt.Rows[0][0] != DBNull.Value)
                 {
                     intResult = Convert.ToInt32(dt.Rows[0][0]) + 1;
                 }
