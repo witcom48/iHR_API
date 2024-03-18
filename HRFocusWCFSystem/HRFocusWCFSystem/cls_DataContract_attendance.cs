@@ -876,11 +876,22 @@ namespace HRFocusWCFSystem
         public int timeot_id { get; set; }
         [DataMember]
         public string timeot_doc { get; set; }
+
+
+        [DataMember]
+        public string fromdate { get; set; }
+        [DataMember]
+        public string todate { get; set; }
+
+
         [DataMember]
         public string timeot_workdate { get; set; }
 
         [DataMember]
         public string timeot_worktodate { get; set; }
+
+
+
         [DataMember]
         public int timeot_beforemin { get; set; }
         [DataMember]
@@ -901,6 +912,8 @@ namespace HRFocusWCFSystem
         public DateTime modified_date { get; set; }
         [DataMember]
         public int index { get; set; }
+        [DataMember]
+        public string timeot_data { get; set; }
     }
 
     [DataContract]

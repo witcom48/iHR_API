@@ -50,8 +50,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ISNULL(TIMEOT_DOC, '') AS TIMEOT_DOC");
 
                 obj_str.Append(", TIMEOT_WORKDATE");
-                obj_str.Append(", ISNULL(TIMEOT_WORKTODATE,TIMEOT_WORKDATE) AS TIMEOT_WORKTODATE");
-
+ 
 
                 obj_str.Append(", ISNULL(TIMEOT_BEFOREMIN, 0) AS TIMEOT_BEFOREMIN");
                 obj_str.Append(", ISNULL(TIMEOT_NORMALMIN, 0) AS TIMEOT_NORMALMIN");
@@ -76,7 +75,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 if (!condition.Equals(""))
                     obj_str.Append(" " + condition);
 
-                obj_str.Append(" ORDER BY HRM_TR_TIMEOT.COMPANY_CODE, HRM_TR_TIMEOT.WORKER_CODE, HRM_TR_TIMEOT.TIMEOT_WORKDATE, HRM_TR_TIMEOT.TIMEOT_WORKTODATE");
+                obj_str.Append(" ORDER BY HRM_TR_TIMEOT.COMPANY_CODE, HRM_TR_TIMEOT.WORKER_CODE, HRM_TR_TIMEOT.TIMEOT_WORKDATE ");
 
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
@@ -93,8 +92,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.timeot_doc = dr["TIMEOT_DOC"].ToString();
 
                     model.timeot_workdate = Convert.ToDateTime(dr["TIMEOT_WORKDATE"]);
-                    model.timeot_worktodate = Convert.ToDateTime(dr["TIMEOT_WORKTODATE"]);
-
+ 
                     model.timeot_beforemin = Convert.ToInt32(dr["TIMEOT_BEFOREMIN"]);
                     model.timeot_normalmin = Convert.ToInt32(dr["TIMEOT_NORMALMIN"]);
                     model.timeot_aftermin = Convert.ToInt32(dr["TIMEOT_AFTERMIN"]);
@@ -125,15 +123,13 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             strCondition += " AND HRM_TR_TIMEOT.COMPANY_CODE='" + com + "'";
             strCondition += " AND HRM_TR_TIMEOT.WORKER_CODE='" + emp + "'";
-            strCondition += " AND (TIMEOT_WORKDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "'";
-            strCondition += " OR TIMEOT_WORKTODATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')";
-
-            //strCondition += " AND (TIMEOT_WORKDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')";
-
+            strCondition += " AND (TIMEOT_WORKDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')";
+ 
+ 
             return this.getData(language, strCondition);
         }
 
-        public bool checkDataOld(string com, string emp, DateTime date, DateTime dateto)
+        public bool checkDataOld(string com, string emp, DateTime date )
         {
             bool blnResult = false;
             try
@@ -145,8 +141,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(" WHERE COMPANY_CODE='" + com + "'");
                 obj_str.Append(" AND WORKER_CODE='" + emp + "'");
                 obj_str.Append(" AND TIMEOT_WORKDATE='" + date.ToString("MM/dd/yyyy") + "'");
-                obj_str.Append(" AND TIMEOT_WORKTODATE='" + dateto.ToString("MM/dd/yyyy") + "'");
-                                               
+                                                
                 DataTable dt = Obj_conn.doGetTable(obj_str.ToString());
 
                 if (dt.Rows.Count > 0)
@@ -211,6 +206,36 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
             return blnResult;
         }
+
+        //
+        public bool deletelist(string com, string emp, DateTime datefrom, DateTime dateto)
+        {
+            bool blnResult = true;
+            try
+            {
+                cls_ctConnection obj_conn = new cls_ctConnection();
+
+                System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+
+                obj_str.Append(" DELETE FROM HRM_TR_TIMEOT");
+                obj_str.Append(" WHERE COMPANY_CODE ='" + com + "' ");
+                obj_str.Append(" AND WORKER_CODE='" + emp + "'");
+
+                obj_str.Append(" AND (TIMEOT_WORKDATE BETWEEN '" + datefrom.ToString("MM/dd/yyyy") + "' AND '" + dateto.ToString("MM/dd/yyyy") + "')"); 
+
+                blnResult = obj_conn.doExecuteSQL(obj_str.ToString());
+
+            }
+            catch (Exception ex)
+            {
+                blnResult = false;
+                Message = "ERROR::(Timeot.delete)" + ex.ToString();
+            }
+
+            return blnResult;
+        }
+
+
         
         public bool insert(cls_TRTimeot model)
         {
@@ -218,7 +243,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             try
             {
                 //-- Check data old
-                if (this.checkDataOld(model.company_code, model.worker_code, model.timeot_workdate, model.timeot_worktodate))
+                if (this.checkDataOld(model.company_code, model.worker_code, model.timeot_workdate ))
                 {
                     return this.update(model);
                 }
@@ -235,8 +260,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", TIMEOT_DOC ");
 
                 obj_str.Append(", TIMEOT_WORKDATE ");
-                obj_str.Append(", TIMEOT_WORKTODATE ");
-
+ 
                 obj_str.Append(", TIMEOT_BEFOREMIN ");
                 obj_str.Append(", TIMEOT_NORMALMIN ");
                 obj_str.Append(", TIMEOT_AFTERMIN ");
@@ -259,8 +283,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", @TIMEOT_DOC ");
 
                 obj_str.Append(", @TIMEOT_WORKDATE ");
-                obj_str.Append(", @TIMEOT_WORKTODATE ");
-
+ 
                 obj_str.Append(", @TIMEOT_BEFOREMIN ");
                 obj_str.Append(", @TIMEOT_NORMALMIN ");
                 obj_str.Append(", @TIMEOT_AFTERMIN ");
@@ -285,12 +308,11 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@TIMEOT_ID", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_ID"].Value = this.getNextID();
                 obj_cmd.Parameters.Add("@TIMEOT_DOC", SqlDbType.VarChar); obj_cmd.Parameters["@TIMEOT_DOC"].Value = model.timeot_doc;
                 obj_cmd.Parameters.Add("@TIMEOT_WORKDATE", SqlDbType.Date); obj_cmd.Parameters["@TIMEOT_WORKDATE"].Value = model.timeot_workdate;
-                obj_cmd.Parameters.Add("@TIMEOT_WORKTODATE", SqlDbType.Date); obj_cmd.Parameters["@TIMEOT_WORKTODATE"].Value = model.timeot_worktodate;
-
+ 
                 obj_cmd.Parameters.Add("@TIMEOT_BEFOREMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_BEFOREMIN"].Value = model.timeot_beforemin;
                 obj_cmd.Parameters.Add("@TIMEOT_NORMALMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_NORMALMIN"].Value = model.timeot_normalmin;
                 obj_cmd.Parameters.Add("@TIMEOT_AFTERMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_AFTERMIN"].Value = model.timeot_aftermin;
-                obj_cmd.Parameters.Add("@TIMEOT_BREAK", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_BREAK"].Value = model.timeot_break;
+                obj_cmd.Parameters.Add("@TIMEOT_BREAK", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_BREAK"].Value = model.timeot_breakmin;
 
                 obj_cmd.Parameters.Add("@TIMEOT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@TIMEOT_NOTE"].Value = model.timeot_note;
                 obj_cmd.Parameters.Add("@LOCATION_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@LOCATION_CODE"].Value = model.location_code;

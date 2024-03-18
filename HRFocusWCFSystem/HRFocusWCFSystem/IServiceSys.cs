@@ -1291,9 +1291,9 @@ namespace HRFocusWCFSystem
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
         string getTRTimeotList(string language, string com, string emp, string fromdate, string todate);
 
-        [OperationContract(Name = "doManageTRTimeot")]
+        [OperationContract(Name = "doManageTRTimeotlist")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
-        string doManageTRTimeot(InputTRTimeot input);
+        string doManageTRTimeotlist(InputTRTimeot input);
 
         [OperationContract(Name = "doDeleteTRTimeot")]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
