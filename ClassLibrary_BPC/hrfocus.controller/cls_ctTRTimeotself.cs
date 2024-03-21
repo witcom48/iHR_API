@@ -63,7 +63,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", ISNULL(SELF_TR_TIMEOT.MODIFIED_DATE, SELF_TR_TIMEOT.CREATED_DATE) AS MODIFIED_DATE");
                 obj_str.Append(", SELF_MT_JOBTABLE.STATUS_JOB");
                 obj_str.Append(", ISNULL(SELF_TR_TIMEOT.REJECT_NOTE, '') AS REJECT_NOTE");
-
+                obj_str.Append(", ISNULL(SELF_TR_TIMEOT.Depart_SO, '') AS Depart_SO");
                 obj_str.Append(" FROM SELF_TR_TIMEOT");
 
                 obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_MT_WORKER.COMPANY_CODE=SELF_TR_TIMEOT.COMPANY_CODE AND HRM_MT_WORKER.WORKER_CODE=SELF_TR_TIMEOT.WORKER_CODE");
@@ -118,6 +118,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.modified_by = dr["MODIFIED_BY"].ToString();
                     model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
                     model.reject_note = dr["REJECT_NOTE"].ToString();
+                    model.depart_so = dr["Depart_SO"].ToString();
 
                     list_model.Add(model);
                 }
@@ -273,6 +274,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", TIMEOT_BREAK ");
                 obj_str.Append(", TIMEOT_AFTERMIN ");
 
+                obj_str.Append(", Depart_SO ");
+
                 obj_str.Append(", TIMEOT_NOTE ");
                 obj_str.Append(", REASON_CODE ");
                 obj_str.Append(", LOCATION_CODE ");
@@ -298,6 +301,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", @TIMEOT_NORMALMIN ");
                 obj_str.Append(", @TIMEOT_BREAK ");
                 obj_str.Append(", @TIMEOT_AFTERMIN ");
+
+                obj_str.Append(", @Depart_SO ");
 
                 obj_str.Append(", @TIMEOT_NOTE ");
                 obj_str.Append(", @REASON_CODE ");
@@ -326,6 +331,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@TIMEOT_NORMALMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_NORMALMIN"].Value = model.timeot_normalmin;
                 obj_cmd.Parameters.Add("@TIMEOT_BREAK", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_BREAK"].Value = model.timeot_breakmin;
                 obj_cmd.Parameters.Add("@TIMEOT_AFTERMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_AFTERMIN"].Value = model.timeot_aftermin;
+
+                obj_cmd.Parameters.Add("@Depart_SO", SqlDbType.VarChar); obj_cmd.Parameters["@Depart_SO"].Value = model.depart_so;
 
                 obj_cmd.Parameters.Add("@TIMEOT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@TIMEOT_NOTE"].Value = model.timeot_note;
                 obj_cmd.Parameters.Add("@LOCATION_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@LOCATION_CODE"].Value = model.location_code;
@@ -366,6 +373,8 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", TIMEOT_BREAK=@TIMEOT_BREAK ");
                 obj_str.Append(", TIMEOT_AFTERMIN=@TIMEOT_AFTERMIN ");
 
+                obj_str.Append(", Depart_SO=@Depart_SO ");
+
                 obj_str.Append(", TIMEOT_NOTE=@TIMEOT_NOTE ");
                 obj_str.Append(", REASON_CODE=@REASON_CODE ");
                 obj_str.Append(", LOCATION_CODE=@LOCATION_CODE ");
@@ -398,7 +407,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
 
                 obj_cmd.Parameters.Add("@TIMEOT_ID", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_ID"].Value = model.timeot_id;
 
-                obj_cmd.Parameters.Add("@REJECT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@REJECT_NOTE"].Value = model.reject_note;
+                obj_cmd.Parameters.Add("@REJECT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@REJECT_NOTE"].Value = (model.reject_note != null) ? model.reject_note : (object)DBNull.Value;
+
+                obj_cmd.Parameters.Add("@Depart_SO", SqlDbType.VarChar); obj_cmd.Parameters["@Depart_SO"].Value = model.depart_so;
 
                 obj_cmd.ExecuteNonQuery();
 

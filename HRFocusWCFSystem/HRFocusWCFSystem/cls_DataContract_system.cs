@@ -1340,6 +1340,9 @@ namespace HRFocusWCFSystem
         public bool flag { get; set; }
         [DataMember]
         public string ot_data { get; set; }
+
+        [DataMember]
+        public string depart_so { get; set; }
     }
     #endregion
 

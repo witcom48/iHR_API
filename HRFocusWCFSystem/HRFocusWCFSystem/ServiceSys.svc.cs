@@ -20947,6 +20947,8 @@ namespace HRFocusWCFSystem
 
                         json.Add("reject_note", model.reject_note);
 
+                        json.Add("depart_so", model.depart_so);
+
                         json.Add("modified_by", model.modified_by);
                         json.Add("modified_date", model.modified_date);
                         json.Add("flag", model.flag);
@@ -21043,6 +21045,8 @@ namespace HRFocusWCFSystem
                     model.location_code = otdata.location_code;
                     model.reason_code = otdata.reason_code;
                     model.status = otdata.status;
+
+                    model.depart_so = otdata.depart_so;
 
                     model.modified_by = input.username;
                     model.flag = otdata.flag;

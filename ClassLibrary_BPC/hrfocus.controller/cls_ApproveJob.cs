@@ -320,6 +320,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
                         json.Add("modified_date", Convert.ToDateTime(dr["MODIFIED_DATE"]));
                         json.Add("flag", false);
                         json.Add("reqdoc_data", this.getdocfile(dr["COMPANY_CODE"].ToString(), dr["TIMEOT_ID"].ToString(), job_type));
+                        json.Add("depart_so", dr["Depart_SO"].ToString());
                         json.Add("index", index);
 
                         index++;

@@ -47,5 +47,7 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         public List<cls_MTReqdocument> reqdoc_data { get; set; }
 
+        public string depart_so { get; set; }
+
     }
 }
