@@ -28,6 +28,7 @@ namespace ClassLibrary_BPC.hrfocus.controller
             try
             {
                 System.Text.StringBuilder obj_str = new System.Text.StringBuilder();
+   
 
                 obj_str.Append("SELECT ");
 
@@ -64,6 +65,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", SELF_MT_JOBTABLE.STATUS_JOB");
                 obj_str.Append(", ISNULL(SELF_TR_TIMEOT.REJECT_NOTE, '') AS REJECT_NOTE");
                 obj_str.Append(", ISNULL(SELF_TR_TIMEOT.Depart_SO, '') AS Depart_SO");
+                obj_str.Append(", ISNULL(SELF_TR_TIMEOT.TIME_IN, '00:00') AS TIME_IN");
+                obj_str.Append(", ISNULL(SELF_TR_TIMEOT.TIME_OUT, '00:00') AS TIME_OUT");
+                obj_str.Append(", ALLOW_BREAK ");
                 obj_str.Append(" FROM SELF_TR_TIMEOT");
 
                 obj_str.Append(" INNER JOIN HRM_MT_WORKER ON HRM_MT_WORKER.COMPANY_CODE=SELF_TR_TIMEOT.COMPANY_CODE AND HRM_MT_WORKER.WORKER_CODE=SELF_TR_TIMEOT.WORKER_CODE");
@@ -119,6 +123,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                     model.modified_date = Convert.ToDateTime(dr["MODIFIED_DATE"]);
                     model.reject_note = dr["REJECT_NOTE"].ToString();
                     model.depart_so = dr["Depart_SO"].ToString();
+                    model.time_in = dr["TIME_IN"].ToString();
+                    model.time_out = dr["TIME_OUT"].ToString();
+                    model.allow_break = Convert.ToBoolean(dr["ALLOW_BREAK"]);
 
                     list_model.Add(model);
                 }
@@ -275,6 +282,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", TIMEOT_AFTERMIN ");
 
                 obj_str.Append(", Depart_SO ");
+                obj_str.Append(", TIME_IN ");
+                obj_str.Append(", TIME_OUT ");
+                obj_str.Append(", ALLOW_BREAK ");
 
                 obj_str.Append(", TIMEOT_NOTE ");
                 obj_str.Append(", REASON_CODE ");
@@ -303,6 +313,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", @TIMEOT_AFTERMIN ");
 
                 obj_str.Append(", @Depart_SO ");
+                obj_str.Append(", @TIME_IN ");
+                obj_str.Append(", @TIME_OUT ");
+                obj_str.Append(", @ALLOW_BREAK ");
 
                 obj_str.Append(", @TIMEOT_NOTE ");
                 obj_str.Append(", @REASON_CODE ");
@@ -333,6 +346,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@TIMEOT_AFTERMIN", SqlDbType.Int); obj_cmd.Parameters["@TIMEOT_AFTERMIN"].Value = model.timeot_aftermin;
 
                 obj_cmd.Parameters.Add("@Depart_SO", SqlDbType.VarChar); obj_cmd.Parameters["@Depart_SO"].Value = model.depart_so;
+                obj_cmd.Parameters.Add("@TIME_IN", SqlDbType.VarChar); obj_cmd.Parameters["@TIME_IN"].Value = model.time_in;
+                obj_cmd.Parameters.Add("@TIME_OUT", SqlDbType.VarChar); obj_cmd.Parameters["@TIME_OUT"].Value = model.time_out;
+                obj_cmd.Parameters.Add("@ALLOW_BREAK", SqlDbType.Bit); obj_cmd.Parameters["@ALLOW_BREAK"].Value = model.allow_break;
 
                 obj_cmd.Parameters.Add("@TIMEOT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@TIMEOT_NOTE"].Value = model.timeot_note;
                 obj_cmd.Parameters.Add("@LOCATION_CODE", SqlDbType.VarChar); obj_cmd.Parameters["@LOCATION_CODE"].Value = model.location_code;
@@ -374,6 +390,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", TIMEOT_AFTERMIN=@TIMEOT_AFTERMIN ");
 
                 obj_str.Append(", Depart_SO=@Depart_SO ");
+                obj_str.Append(", TIME_IN=@TIME_IN ");
+                obj_str.Append(", TIME_OUT=@TIME_OUT ");
+                obj_str.Append(", ALLOW_BREAK=@ALLOW_BREAK ");
 
                 obj_str.Append(", TIMEOT_NOTE=@TIMEOT_NOTE ");
                 obj_str.Append(", REASON_CODE=@REASON_CODE ");
@@ -385,7 +404,6 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_str.Append(", MODIFIED_DATE=@MODIFIED_DATE ");
 
                 obj_str.Append(" WHERE TIMEOT_ID=@TIMEOT_ID ");
-
 
                 obj_conn.doConnect();
 
@@ -410,6 +428,9 @@ namespace ClassLibrary_BPC.hrfocus.controller
                 obj_cmd.Parameters.Add("@REJECT_NOTE", SqlDbType.VarChar); obj_cmd.Parameters["@REJECT_NOTE"].Value = (model.reject_note != null) ? model.reject_note : (object)DBNull.Value;
 
                 obj_cmd.Parameters.Add("@Depart_SO", SqlDbType.VarChar); obj_cmd.Parameters["@Depart_SO"].Value = model.depart_so;
+                obj_cmd.Parameters.Add("@TIME_IN", SqlDbType.VarChar); obj_cmd.Parameters["@TIME_IN"].Value = model.time_in;
+                obj_cmd.Parameters.Add("@TIME_OUT", SqlDbType.VarChar); obj_cmd.Parameters["@TIME_OUT"].Value = model.time_out;
+                obj_cmd.Parameters.Add("@ALLOW_BREAK", SqlDbType.Bit); obj_cmd.Parameters["@ALLOW_BREAK"].Value = model.allow_break;
 
                 obj_cmd.ExecuteNonQuery();
 

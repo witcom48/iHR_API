@@ -49,5 +49,8 @@ namespace ClassLibrary_BPC.hrfocus.model
 
         public string depart_so { get; set; }
 
+        public bool allow_break { get; set; }
+        public string time_in { get; set; }
+        public string time_out { get; set; }
     }
 }

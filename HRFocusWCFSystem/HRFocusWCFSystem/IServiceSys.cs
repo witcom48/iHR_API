@@ -999,7 +999,7 @@ namespace HRFocusWCFSystem
         //-- Shift
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        string getMTShiftList(string com);
+        string getMTShiftList(string com,string code);
 
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]

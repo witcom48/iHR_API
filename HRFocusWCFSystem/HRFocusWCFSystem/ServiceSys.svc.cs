@@ -11432,12 +11432,12 @@ namespace HRFocusWCFSystem
                 
         #region Attendance
         #region MTShift
-        public string getMTShiftList(string com)
+        public string getMTShiftList(string com,string code)
         {
             JObject output = new JObject();
 
             cls_ctMTShift objShift = new cls_ctMTShift();
-            List<cls_MTShift> listShift = objShift.getDataByFillter(com, "", "");
+            List<cls_MTShift> listShift = objShift.getDataByFillter(com,"",code==null?"":code);
 
             JArray array = new JArray();
 
@@ -11487,6 +11487,32 @@ namespace HRFocusWCFSystem
                     json.Add("modified_date", model.modified_date);
                     json.Add("flag", model.flag);
 
+                    cls_ctTRShiftbreak objBreak = new cls_ctTRShiftbreak();
+                    List<cls_TRShiftbreak> listBreak = objBreak.getDataByFillter(model.company_code, model.shift_code);
+                    JArray arrayBreak = new JArray();
+                    if (listBreak.Count > 0)
+                    {
+                        int indexBreak = 1;
+
+                        foreach (cls_TRShiftbreak modelBreak in listBreak)
+                        {
+                            JObject jsonBreak = new JObject();
+
+                            jsonBreak.Add("company_code", modelBreak.company_code);
+                            jsonBreak.Add("shift_code", modelBreak.shift_code);
+                            jsonBreak.Add("shiftbreak_no", modelBreak.shiftbreak_no);
+                            jsonBreak.Add("shiftbreak_from", modelBreak.shiftbreak_from);
+                            jsonBreak.Add("shiftbreak_to", modelBreak.shiftbreak_to);
+                            jsonBreak.Add("shiftbreak_break", modelBreak.shiftbreak_break);
+
+                            jsonBreak.Add("index", indexBreak);
+
+                            indexBreak++;
+
+                            arrayBreak.Add(jsonBreak);
+                        }
+                    }
+                    json.Add("shift_break", arrayBreak);
                     json.Add("index", index);
 
                     index++;
@@ -20948,6 +20974,9 @@ namespace HRFocusWCFSystem
                         json.Add("reject_note", model.reject_note);
 
                         json.Add("depart_so", model.depart_so);
+                        json.Add("time_in", model.time_in);
+                        json.Add("time_out", model.time_out);
+                        json.Add("allow_break", model.allow_break);
 
                         json.Add("modified_by", model.modified_by);
                         json.Add("modified_date", model.modified_date);
@@ -21047,6 +21076,9 @@ namespace HRFocusWCFSystem
                     model.status = otdata.status;
 
                     model.depart_so = otdata.depart_so;
+                    model.time_in = otdata.time_in;
+                    model.time_out = otdata.time_out;
+                    model.allow_break = otdata.allow_break;
 
                     model.modified_by = input.username;
                     model.flag = otdata.flag;
