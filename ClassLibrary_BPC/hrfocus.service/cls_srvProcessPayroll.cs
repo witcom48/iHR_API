@@ -925,6 +925,1508 @@ namespace ClassLibrary_BPC.hrfocus.service
         }
 //SSO
 
+        //
+        //ภงด 91  PND 91
+        public string doExportPND91(string com, string taskid)
+        {
+            string strResult = "";
+
+            cls_ctMTTask objMTTask = new cls_ctMTTask();
+            List<cls_MTTask> listMTTask = objMTTask.getDataByFillter(com, taskid, "TRN_PND91", "");
+            List<string> listError = new List<string>();
+
+            if (listMTTask.Count > 0)
+            {
+                cls_MTTask task = listMTTask[0];
+
+                task.task_start = DateTime.Now;
+
+                cls_ctMTTask objTaskDetail = new cls_ctMTTask();
+                cls_TRTaskdetail task_detail = objTaskDetail.getTaskDetail(task.task_id.ToString());
+
+                cls_ctMTTask objTaskWhose = new cls_ctMTTask();
+                List<cls_TRTaskwhose> listWhose = objTaskWhose.getTaskWhose(task.task_id.ToString());
+
+                DateTime dateEff = task_detail.taskdetail_fromdate;
+                DateTime datePay = task_detail.taskdetail_paydate;
+
+                StringBuilder objStr = new StringBuilder();
+                foreach (cls_TRTaskwhose whose in listWhose)
+                {
+                    objStr.Append("'" + whose.worker_code + "',");
+                }
+
+                string strEmp = objStr.ToString().Substring(0, objStr.ToString().Length - 1);
+
+
+
+                //-- Get worker
+                cls_ctMTWorker objWorker = new cls_ctMTWorker();
+                List<cls_MTWorker> list_worker = objWorker.getDataMultipleEmp(com, strEmp);
+
+                //-- Step 2 Get Paytran
+                cls_ctTRPaytran objPay = new cls_ctTRPaytran();
+                List<cls_TRPaytran> list_paytran = objPay.getDataMultipleEmp("TH", com, datePay, datePay, strEmp);
+
+
+
+                //-- Step 3 Get Company acc
+                cls_ctTRCombank objCombank = new cls_ctTRCombank();
+                List<cls_TRCombank> list_combank = objCombank.getDataByFillter("", com);
+                cls_TRCombank combank = list_combank[0];
+
+                //-- Step 4 Get Company detail
+                cls_ctMTCompany objCom = new cls_ctMTCompany();
+                List<cls_MTCompany> list_com = objCom.getDataByFillter("", com);
+                cls_MTCompany comdetail = list_com[0];
+
+                //-- Step 5 Get Emp address
+                cls_ctTREmpaddress objEmpadd = new cls_ctTREmpaddress();
+                List<cls_TREmpaddress> list_empaddress = objEmpadd.getDataMultipleEmp(com, strEmp);
+
+                //-- Step 6 Get Emp card
+                cls_ctTREmpcard objEmpcard = new cls_ctTREmpcard();
+                List<cls_TREmpcard> list_empcard = objEmpcard.getDataTaxMultipleEmp(com, strEmp);
+
+                //-- Step 7 Get Company card
+                cls_ctTRComcard objComcard = new cls_ctTRComcard();
+                List<cls_TRComcard> list_comcard = objComcard.getDataByFillter(com, "NTID", "", "", "");
+                cls_TRComcard comcard = list_comcard[0];
+
+                cls_ctMTProvince objProvince = new cls_ctMTProvince();
+                List<cls_MTProvince> list_province = objProvince.getDataByFillter("", "");
+
+                 cls_ctTREmpfamily objEmpfamily = new cls_ctTREmpfamily();
+                 List<cls_TREmpfamily> list_Empfamily = objEmpfamily.getDataByFillter2(com, strEmp);
+                //cls_TREmpfamily Empfamily = list_Empfamily[0];
+
+
+                //-- Get Empbenefit
+                cls_ctTREmpreduce objEmpreduce = new cls_ctTREmpreduce();
+                List<cls_TREmpreduce> list_Empreduce = objEmpreduce.getDataByFillter(com, "");
+
+
+                string tmpData = "";
+
+
+                if (list_paytran.Count > 0)
+                {
+
+                    double douTotal = 0;
+
+                    int index = 0;
+                    string bkData;
+                    bool reduceData = false;  
+
+                    foreach (cls_TRPaytran paytran in list_paytran)
+                    {
+
+                        string empname = "";
+
+                        cls_MTWorker obj_worker = new cls_MTWorker();
+                        cls_TREmpaddress obj_address = new cls_TREmpaddress();
+                        cls_MTProvince obj_province = new cls_MTProvince();
+                        cls_TREmpcard obj_card = new cls_TREmpcard();
+                        cls_TREmpfamily obj_TREmpfamily = new cls_TREmpfamily();
+
+                        cls_TREmpreduce obj_TREmpreduce = new cls_TREmpreduce();
+
+                        foreach (cls_MTWorker worker in list_worker)
+                        {
+                            if (paytran.worker_code.Equals(worker.worker_code))
+                            {
+                                empname = worker.initial_name_en + " " + worker.worker_fname_en + " " + worker.worker_lname_en;
+                                obj_worker = worker;
+                                break;
+                            }
+                        }
+
+                        foreach (cls_TREmpaddress address in list_empaddress)
+                        {
+                            if (paytran.worker_code.Equals(address.worker_code))
+                            {
+                                obj_address = address;
+                                break;
+                            }
+                        }
+
+                        foreach (cls_TREmpcard card in list_empcard)
+                        {
+                            if (paytran.worker_code.Equals(card.worker_code))
+                            {
+                                obj_card = card;
+                                break;
+                            }
+                        }
+
+                        foreach (cls_MTProvince province in list_province)
+                        {
+                            if (obj_address.province_code.Equals(province.province_code))
+                            {
+                                obj_province = province;
+                                break;
+                            }
+                        }
+
+
+                       
+
+
+                        if (empname.Equals("") || obj_card.empcard_code.Equals(""))
+                            continue;
+                            bkData = "";
+
+                        if (paytran.paytran_income_401 > 0)
+                        {
+                            //1.เลขประจำตัวประชาชน (ผู้มีเงินได้)
+                            if (comcard.comcard_code.Length == 13)
+                                bkData += comcard.comcard_code + ",";
+                            else
+                                bkData += "0000000000000" + ",";
+
+                            //2.คำนำหน้าชื่อผู้มีเงินได้<InitialNameT>
+                            bkData += obj_worker.initial_name_en + ",";
+
+                            //3.ชื่อกลาง (ถ้ามี)		
+                            bkData += " " + ",";
+
+                            //4.ชื่อผู้มีเงินได้<EmpFNameT>				
+                            bkData += obj_worker.worker_fname_en + ",";
+
+                            //5.นามสกุลผู้มีเงินได้<EmpLNameT>
+                            bkData += obj_worker.worker_lname_en + ",";
+                           
+                            //6	สถานะผู้มีเงินได้"“0” = โสด “1” = สมรส “2” = หม้าย"
+                            foreach (cls_TREmpfamily worker in list_Empfamily)
+                            {
+                                if (paytran.worker_code.Equals(worker.worker_code))
+                                {
+                                    bool foundMatchingCondition = false;
+
+                                    // ตรวจสอบข้อมูลลดหย่อนใน list_Empreduce ที่ตรงกับ worker.worker_code
+                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                    {
+                                        if (TREmpreduce.reduce_type.Equals(worker.family_type))
+                                        {
+                                            // ตรวจสอบประเภทลดหย่อน
+                                            if (TREmpreduce.reduce_type.Equals("00") || TREmpreduce.reduce_type.Equals("02") || TREmpreduce.reduce_type.Equals("11"))
+                                            {
+                                                bkData += "1,"; // “1” = สมรส
+                                                foundMatchingCondition = true;
+                                                break;
+                                            }
+                                            else if (TREmpreduce.reduce_type.Equals(""))
+                                            {
+                                                bkData += "2,"; // “2” = หม้าย
+                                                foundMatchingCondition = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if (!foundMatchingCondition)
+                                    {
+                                        bkData += "0,"; // “0” = โสด
+                                    }
+                                }
+                            }
+
+
+
+                           // //7	สถานภาพการสมรส cls_ctTREmpfamily
+
+                            foreach (cls_TREmpfamily family in list_Empfamily)
+                            {
+                                if (paytran.worker_code.Equals(family.worker_code))
+                                {
+                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                    {
+                                        if (obj_TREmpreduce != null && paytran.worker_code.Equals(family.worker_code))
+                                        {
+                                            if (TREmpreduce.reduce_type.Equals(""))
+                                            {
+                                                bkData = "1,"; // “1” = ไม่มีคู่สมรส
+                                                break;
+                                            }
+                                            else if (family.worker_code.Equals("00") || family.worker_code.Equals("02") || family.worker_code.Equals("11"))
+                                            {
+                                                bkData = "2,"; // “2” = คู่สมรสมีเงินได้ และอยู่ร่วมกันตลอดปีภาษี
+                                                break;
+                                            }
+                                            else if (TREmpreduce.reduce_type.Equals("3"))
+                                            {
+                                                bkData = "3,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
+                                                break;
+                                            }
+                                            else if (TREmpreduce.reduce_type.Equals("4"))
+                                            {
+                                                bkData = "4,"; // “4” = คู่สมรสมีเงินได้ หย่าระหว่างปีภาษี
+                                                break;
+                                            }
+                                            else if (TREmpreduce.reduce_type.Equals("5"))
+                                            {
+                                                bkData = "5,"; // “5” = คู่สมรสมีเงินได้ ตายระหว่างปีภาษี
+                                                break;
+                                            }
+                                            else if (TREmpreduce.reduce_type.Equals("6"))
+                                            {
+                                                bkData = "6,"; // “6” = คู่สมรสไม่มีเงินได้ และอยู่รวมกันตลอดปีภาษี
+                                                break;
+                                            }
+                                            else if (TREmpreduce.reduce_type.Equals("7"))
+                                            {
+                                                bkData = "7,"; // “7” = คู่สมรสไม่มีเงินได้ สมรสระหว่างปีภาษี
+                                                break;
+                                            }
+                                            else if (TREmpreduce.reduce_type.Equals("8"))
+                                            {
+                                                bkData = "8,"; // “8” = คู่สมรสไม่มีเงินได้ หย่าระหว่างปีภาษี
+                                                break;
+                                            }
+                                            else if (TREmpreduce.reduce_type.Equals("9"))
+                                            {
+                                                bkData = "9,"; // “9” = คู่สมรสไม่มีเงินได้ ตายระหว่างปีภาษี
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+
+    
+                           // //8	เลขประจำตัวประชาชน (คู่สมรส)
+                            foreach (cls_TREmpfamily family in list_Empfamily)
+                            {
+                                if (paytran.worker_code.Equals(family.worker_code))
+                                {
+
+
+                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                    {
+
+
+                                        if (TREmpreduce.reduce_type.Equals(family.family_type))
+                                        {
+
+                                            if (family.family_type == "00" || TREmpreduce.reduce_type.Equals("02") || TREmpreduce.reduce_type.Equals("11"))  
+                                            {
+                                                if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                {
+                                                    bkData += family.empfamily_code + ",";
+                                                }
+                                                else
+                                                {
+                                                    bkData += " " + ",";
+                                                }
+
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+
+                           // //9	คำนำหน้าชื่อ (คู่สมรส)
+                            foreach (cls_TREmpfamily family in list_Empfamily)
+                            {
+                                if (paytran.worker_code.Equals(family.worker_code))
+                                {
+
+
+                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                    {
+
+
+                                        if (TREmpreduce.reduce_type.Equals(family.family_type))
+                                        {
+
+                                            if (family.family_type == "00" || TREmpreduce.reduce_type.Equals("02") || TREmpreduce.reduce_type.Equals("11"))
+                                            
+                                                {
+                                                    bkData +=  " " + ",";
+                                                }
+                                                else
+                                                {
+                                                    bkData += " " + ",";
+                                                }
+
+                                                break;
+                                            }
+                                         
+                                    }
+                                }
+                            }
+
+                            //10	ชื่อ (คู่สมรส)
+                            foreach (cls_TREmpfamily family in list_Empfamily)
+                            {
+                                if (paytran.worker_code.Equals(family.worker_code))
+                                {
+                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                    {
+                                         if (TREmpreduce.reduce_type.Equals(family.family_type))
+                                        {
+                                             if (family.family_type == "00" || TREmpreduce.reduce_type.Equals("02") || TREmpreduce.reduce_type.Equals("11"))
+                                            {
+                                                 bkData += (!string.IsNullOrEmpty(family.empfamily_fname_en)) ? family.empfamily_fname_en + "," : " " + ",";
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+
+ 
+                           // //11	ชื่อกลาง (คู่สมรส) (ถ้ามี)
+                            foreach (cls_TREmpfamily family in list_Empfamily)
+                            {
+                                if (paytran.worker_code.Equals(family.worker_code))
+                                {
+                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                    {
+                                        if (TREmpreduce.reduce_type.Equals(family.family_type))
+                                        {
+                                            if (family.family_type == "00" || TREmpreduce.reduce_type.Equals("02") || TREmpreduce.reduce_type.Equals("11"))
+                                            {
+                                                bkData +=   "" + ",";
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                           //    }
+                           // //12	นามสกุล (คู่สมรส)
+                            foreach (cls_TREmpfamily family in list_Empfamily)
+                            {
+                                if (paytran.worker_code.Equals(family.worker_code))
+                                {
+                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                    {
+                                        if (TREmpreduce.reduce_type.Equals(family.family_type))
+                                        {
+                                            if (family.family_type == "00" || TREmpreduce.reduce_type.Equals("02") || TREmpreduce.reduce_type.Equals("11"))
+                                            {
+                                                bkData += (!string.IsNullOrEmpty(family.empfamily_lname_en)) ? family.empfamily_lname_en + "," : " " + ",";
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                           // //13	เงินได้พึงประเมิน (ก.1)
+
+
+
+                           // //14	หัก เงินบริจาคสนับสนุนการศึกษา (ก.8)
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                            {
+
+                                if (paytran.worker_code.Equals(family.worker_code))
+                                {
+                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                    {
+                                        if (  TREmpreduce.reduce_type.Equals("30"))
+                                        {
+                                            bkData += TREmpreduce.empreduce_amount + ",";
+                                            reduceData = true;
+                                            break;
+
+                                        }
+                                    }
+
+                                    if (!reduceData)
+                                    {
+                                        bkData += ",";
+                                    }
+                                }
+                            }
+
+                           // //15	หัก เงินบริจาค (ก.10)////////////
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("31"))
+                                         {
+                                             bkData += TREmpreduce.empreduce_amount + ",";
+                                             reduceData = true;
+                                             break;
+
+                                         }
+                                     }
+
+                                     if (!reduceData)
+                                     {
+                                         bkData += ",";
+                                     }
+                                 }
+                             }
+
+
+                           // //16	หัก ภาษีหัก ณ ที่จ่าย (ก.13)///
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (paytran.paytran_tax_401 == 6)
+                                         {
+                                             bkData += paytran.paytran_tax_401 + ",";
+                                             break;
+                                         }
+                                         else
+                                         {
+                                             bkData += paytran.paytran_tax_401.ToString("000000") + ",";
+                                             break;
+                                         }
+
+                                     }
+                                    
+                                 }
+                             }
+ 
+                           // //17	รวมภาษีที่ต้องชำระ (ก.18, 20)
+
+                           // //18	เงินสะสมกองทุนสำรองเลี้ยงชีพ (ส่วนที่เกิน 10,000) (ข.1)///////////////////////
+                             bool reduceDatapf = false;
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("PF"))
+                                         {
+                                             bkData += TREmpreduce.empreduce_amount + ",";
+                                             reduceDatapf = true;
+                                             break;
+                                         }
+                                     }
+                                     if (!reduceDatapf)
+                                     {
+                                         bkData += ",";
+                                     }
+                                 }
+                             }
+
+
+
+                           // //19	เงินสะสม กบข. (ข.2)//แก้ไข
+                             decimal totalpfAmountk2 = 0m;
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                 {
+                                     foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                     {
+                                         if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                         {
+                                             if (empReduce.reduce_type.Equals(" "))
+                                             {
+                                                 decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                 totalpfAmountk2 += amountToAdd;
+                                                 break;
+                                             }
+                                         }
+                                     }
+                                 }
+                             }
+                             bkData += "0.00" + ",";
+
+                             // //20	เงินสะสมกองทุนสงเคราะห์ครูฯ (ข.3)//แก้ไข
+                             decimal totalpfAmountk3 = 0m;
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                 {
+                                     foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                     {
+                                         if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                         {
+                                             if (empReduce.reduce_type.Equals(" "))
+                                             {
+                                                 decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                 totalpfAmountk3 += amountToAdd;
+                                                 break;
+                                             }
+                                         }
+                                     }
+                                 }
+                             }
+                             bkData += "0.00" + ",";
+
+                           // //21	ค่าลดหย่อนคู่สมรส (ใบแนบฯ.2)////////////////
+                             bool reduce02Data = false;
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("02"))
+                                         {
+                                             bkData += TREmpreduce.empreduce_amount + ",";
+                                             reduce02Data = true;
+                                             break;
+                                         }
+                                     }
+                                     if (!reduce02Data)
+                                     {
+                                         bkData += ",";
+                                     }
+                                 }
+                             }
+
+                           // //22	จำนวนบุตร 30,000 บาท (ใบแนบฯ.3)//////////////////
+                             bool reduceData30000 = false;
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (obj_worker.worker_code.Equals(TREmpreduce.worker_code) && TREmpreduce.reduce_type.Equals("03"))
+                                         {
+                                             bkData += " " + ",";
+                                             reduceData30000 = true;
+                                             break;
+                                         }
+                                     }
+                                     if (!reduceData30000)
+                                     {
+                                         bkData += ",";
+                                     }
+                                 }
+                             }
+
+
+                           // //23	เลขประจำตัวประชาชนบุตร 1 (ใบแนบฯ.3)/////////////////////
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals(family.family_type))
+                                         {
+                                             if (family.family_type == "07" || TREmpreduce.reduce_type.Equals("08"))
+                                             {
+                                                 if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                 {
+                                                     bkData += family.empfamily_code + ",";
+                                                 }
+                                                 else
+                                                 {
+                                                     bkData += " " + ",";
+                                                 }
+                                                 break;
+                                             }
+                                         }
+                                     }
+                                 }
+                             }
+
+                           // //24	เลขประจำตัวประชาชนบุตร 2 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000" + ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+                           // //25	เลขประจำตัวประชาชนบุตร 3 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000" + ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+                           // //26	เลขประจำตัวประชาชนบุตร 4 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000" + ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+                           // //27	เลขประจำตัวประชาชนบุตร 5 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000" + ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+                           // //28	เลขประจำตัวประชาชนบุตร 6 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000" + ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+                           // //29	เลขประจำตัวประชาชนบุตร 7 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000" + ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+
+
+                           // //30	ค่าลดหย่อนบุตร 30,000 บาท (ใบแนบฯ.3)
+                             bool reduce03Data = false;
+                             foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                             {
+                                 if (obj_worker.worker_code.Equals(TREmpreduce.worker_code) && TREmpreduce.reduce_type.Equals("03"))
+                                 {
+                                     bkData += TREmpreduce.empreduce_amount + ",";
+                                     reduce03Data = true;
+
+                                 }
+                             }
+                             if (!reduce03Data)
+                             {
+                                 bkData += ",";
+                             }
+
+                           // //31	จำนวนบุตร 60,000 บาท (ใบแนบฯ.3)
+                             //bool reduce04Data = false;
+                             //foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                             //{
+                             //    if (obj_worker.worker_code.Equals(TREmpreduce.worker_code) && TREmpreduce.reduce_type.Equals("04"))
+                             //    {
+                             //        bkData += TREmpreduce.empreduce_amount + ",";
+                             //        reduce04Data = true;
+                             //    }
+                             //}
+                             //if (!reduce04Data)
+                             //{
+                             //    bkData += ",";
+                             //}
+
+                           // //32	เลขประจำตัวประชาชนบุตร 1 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000" + ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+                           // //33	เลขประจำตัวประชาชนบุตร 2 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000" + ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+                           // //34	เลขประจำตัวประชาชนบุตร 3 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000" + ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+                           // //35	เลขประจำตัวประชาชนบุตร 4 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000"+ ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+                           // //36	เลขประจำตัวประชาชนบุตร 5 (ใบแนบฯ.3)
+                           //    foreach (cls_TREmpfamily family in list_Empfamily)
+                           //    {
+
+                           //        //if (obj_TREmpfamily.worker_code.Equals(family.worker_code) && family.family_type == "00") // 00 = คู่สมรส
+                           //        //{
+                           //        if (comcard.comcard_code != null && comcard.comcard_code.Length == 13)
+                           //        {
+                           //            bkData += " " + ",";
+                           //        }
+                           //        else
+                           //        {
+                           //            bkData += "0000000000000" + ",";
+                           //        }
+
+                           //        break;
+                           //        //}
+                           //    }
+
+
+
+                           // //37	ค่าลดหย่อนบุตร 60,000 บาท (ใบแนบฯ.3)
+                             bool reduce04Data = false;
+                             foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                             {
+                                 if (obj_worker.worker_code.Equals(TREmpreduce.worker_code) && TREmpreduce.reduce_type.Equals("04"))
+                                 {
+                                     bkData += TREmpreduce.empreduce_amount + ",";
+                                     reduce04Data = true;
+                                 }
+                             }
+                             if (!reduce04Data)
+                             {
+                                 bkData += ",";
+                             }
+
+                           // //38	ค่าลดหย่อนบิดา ผู้มีเงินได้ (ใบแนบฯ.4)
+                             double totalFatherReduce = 0;
+                             foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                             {
+                                 if (obj_worker.worker_code.Equals(TREmpreduce.worker_code) && TREmpreduce.reduce_type.Equals("05"))
+                                 {
+                                     totalFatherReduce += (double)TREmpreduce.empreduce_amount;
+                                 }
+                             }
+                             decimal fatherReduceAmount = (decimal)totalFatherReduce;
+                             bkData += fatherReduceAmount.ToString("0.00") + ",";
+                             ///
+
+                           // //39	เลขประจำตัวประชาชนบิดา ผู้มีเงินได้ (ใบแนบฯ.4)
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("05") && family.family_type.Equals("04"))
+                                         {
+                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             {
+                                                 bkData += family.empfamily_code + ",";
+                                                 break;
+                                             }
+                                             else
+                                             {
+                                                 bkData += " " + ",";
+                                             }
+                                             break;
+                                         }
+                                     }
+                                 }
+                             }
+
+ 
+
+                           // //40	ค่าลดหย่อนมารดา ผู้มีเงินได้ (ใบแนบฯ.4)
+                             double reduce06Data = 0;
+                             foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                             {
+                                 if (obj_worker.worker_code.Equals(TREmpreduce.worker_code) && TREmpreduce.reduce_type.Equals("06"))
+                                 {
+                                     reduce06Data += (double)TREmpreduce.empreduce_amount;
+                                 }
+                             }
+                             decimal fatherReduce06Amount = (decimal)totalFatherReduce;
+                             bkData += fatherReduce06Amount.ToString("0.00") + ",";
+
+
+
+                           // //41	เลขประจำตัวประชาชนมารดา ผู้มีเงินได้ (ใบแนบฯ.4)
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("06") && family.family_type.Equals("09"))
+                                         {
+                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             {
+                                                 bkData += family.empfamily_code + ",";
+                                                 break;
+                                             }
+                                             else
+                                             {
+                                                 bkData += " " + ",";
+                                             }
+                                             break;
+                                         }
+                                     }
+                                 }
+                             }
+
+
+                           // //42	ค่าลดหย่อนบิดา คู่สมรส (ใบแนบฯ.4)
+                             double reduce1617Data = 0;
+
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("07") && (family.family_type.Equals("17") || family.family_type.Equals("16")))
+                                         {
+                                             reduce1617Data += (double)TREmpreduce.empreduce_amount;
+                                         }
+                                     }
+                                 }
+                             }
+
+                             decimal fatherReduce617Amount = (decimal)totalFatherReduce;
+                             bkData += fatherReduce617Amount.ToString("0.00") + ",";
+
+
+
+
+                          
+
+                           // //43	เลขประจำตัวประชาชนบิดา คู่สมรส (ใบแนบฯ. 4)
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("07") && (family.family_type.Equals("17") || family.family_type.Equals("16")))
+                                         {
+                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             {
+                                                 bkData += family.empfamily_code + ",";
+                                                 break;
+                                             }
+                                             else
+                                             {
+                                                 bkData += " " + ",";
+                                             }
+                                             break;
+                                         }
+                                     }
+                                 }
+                             }
+
+
+                           // //44	ค่าลดหย่อนมารดา คู่สมรส (ใบแนบฯ.4)
+                             double reduce08Data = 0;
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("08") && (family.family_type.Equals("") || family.family_type.Equals("")))//ยังไม่มีข้อมูล
+                                         {
+                                             reduce08Data += (double)TREmpreduce.empreduce_amount;
+                                         }
+                                     }
+                                 }
+                             }
+
+                             decimal fatherReduce08Amount = (decimal)totalFatherReduce;
+                             bkData += fatherReduce08Amount.ToString("0.00") + ",";
+
+
+
+
+
+                           // //45	เลขประจำตัวประชาชนมารดา คู่สมรส (ใบแนบฯ.4)
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("08") && (family.family_type.Equals(" ") || family.family_type.Equals(" ")))//ยังไม่มีข้อมูล
+                                         {
+                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             {
+                                                 bkData += family.empfamily_code + ",";
+                                                 break;
+                                             }
+                                             else
+                                             {
+                                                 bkData += " " + ",";
+                                             }
+                                             break;
+                                         }
+                                     }
+                                 }
+                             }
+
+                           // //46	เลขประจำตัวประชาชนบิดา ผู้มีเงินได้ ที่ประกันสุขภาพ (ใบแนบฯ.6)
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("10") && family.family_type.Equals("04"))
+                                         {
+                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             {
+                                                 bkData += family.empfamily_code + ",";
+                                                 break;
+                                             }
+                                             else
+                                             {
+                                                 bkData += " " + ",";
+                                             }
+                                             break;
+                                         }
+                                     }
+                                 }
+                             }
+
+                           // //47	เลขประจำตัวประชาชนมารดา ผู้มีเงินได้ ที่ประกันสุขภาพ(ใบแนบฯ.6)
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("11") && family.family_type.Equals("09"))
+                                         {
+                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             {
+                                                 bkData += family.empfamily_code + ",";
+                                                 break;
+                                             }
+                                             else
+                                             {
+                                                 bkData += " " + ",";
+                                             }
+                                             break;
+                                         }
+                                     }
+                                 }
+                             }
+
+
+                           // //48	เบี้ยประกันสุขภาพบิดา, มารดา ผู้มีเงินได้ (ใบแนบฯ.6)
+                             decimal totalInsuranceAmount = 0m;
+
+                             foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                             {
+                                 if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                 {
+                                     if (empReduce.reduce_type.Equals("10"))
+                                     {
+                                         decimal amountToAdd10 = (decimal)empReduce.empreduce_amount;
+                                         totalInsuranceAmount += amountToAdd10;
+                                     }
+                                     if (empReduce.reduce_type.Equals("11"))
+                                     {
+                                         decimal amountToAdd11 = (decimal)empReduce.empreduce_amount;
+                                         totalInsuranceAmount += amountToAdd11;
+                                     }
+                                 }
+                             }
+
+                             bkData += totalInsuranceAmount.ToString("0.00") + ",";
+
+
+
+                           // //49	เลขประจำตัวประชาชนบิดา คู่สมรส ที่ประกันสุขภาพ (ใบแนบฯ.6)
+                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("12") && (family.family_type.Equals("17") || family.family_type.Equals("16")))
+                                         {
+                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             {
+                                                 bkData += family.empfamily_code + ",";
+                                                 break;
+                                             }
+                                             else
+                                             {
+                                                 bkData += " " + ",";
+                                             }
+                                             break;
+                                         }
+                                     }
+                                 }
+                             }
+
+                           // //50	เลขประจำตัวประชาชนมารดา คู่สมรส ที่ประกันสุขภาพ (ใบแนบฯ.6)
+                          foreach (cls_TREmpfamily family in list_Empfamily)
+                             {
+                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 {
+                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     {
+                                         if (TREmpreduce.reduce_type.Equals("16") && family.family_type.Equals(""))//ยังไม่มีข้อมูล
+                                         {
+                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             {
+                                                 bkData += family.empfamily_code + ",";
+                                                 break;
+                                             }
+                                             else
+                                             {
+                                                 bkData += " " + ",";
+                                             }
+                                             break;
+                                         }
+                                     }
+                                 }
+                             }
+
+
+                           // //51	เบี้ยประกันสุขภาพบิดา, มารดา คู่สมรส (ใบแนบฯ.6)
+                          decimal totalSpouseAmount = 0m;
+                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                          {
+                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                              {
+                                  if (empReduce.reduce_type.Equals("12"))
+                                  {
+                                      decimal amountToAdd10 = (decimal)empReduce.empreduce_amount;
+                                      totalSpouseAmount += amountToAdd10;
+                                  }
+                                  if (empReduce.reduce_type.Equals("13"))
+                                  {
+                                      decimal amountToAdd11 = (decimal)empReduce.empreduce_amount;
+                                      totalSpouseAmount += amountToAdd11;
+                                  }
+                              }
+                          }
+
+                          bkData += totalSpouseAmount.ToString("0.00") + ",";
+
+
+
+
+
+
+
+                           // //52	เบี้ยประกันชีวิต (ใบแนบฯ.7)
+                          decimal totalpremiumsAmount = 0m;
+                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                          {
+                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                              {
+                                  if (empReduce.reduce_type.Equals("15"))
+                                  {
+                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                      totalpremiumsAmount += amountToAdd;
+                                      break;
+                                  }
+                              }
+                          }
+                          bkData += totalpremiumsAmount.ToString("0.00") + ",";
+
+
+
+
+
+                           // //53	เบี้ยประกันสุขภาพผู้มีเงินได้ (ใบแนบฯ.7)
+                          decimal totalpremiumsAmount16 = 0m;
+                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                          {
+                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                              {
+                                  if (empReduce.reduce_type.Equals("16"))
+                                  {
+                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                      totalpremiumsAmount16 += amountToAdd;
+                                      break;
+                                  }
+                              }
+                          }
+                          bkData += totalpremiumsAmount16.ToString("0.00") + ",";
+
+
+                           // //54	เบี้ยประกันชีวิตแบบบำนาญ (ใบแนบฯ.7)
+                          decimal totalpremiumsAmount17 = 0m;
+                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                          {
+                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                              {
+                                  if (empReduce.reduce_type.Equals("17"))
+                                  {
+                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                      totalpremiumsAmount17 += amountToAdd;
+                                      break;
+                                  }
+                              }
+                          }
+                          bkData += totalpremiumsAmount17.ToString("0.00") + ",";
+
+                           // //55	เบี้ยประกันชีวิต คู่สมรส (ใบแนบฯ.7)
+                          decimal totalpremiumsAmount15 = 0m;
+                          foreach (cls_TREmpfamily family in list_Empfamily)
+                          {
+                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                              {
+                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  {
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("15"))
+                                          {
+                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                              totalpremiumsAmount15 += amountToAdd;
+                                              break;
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          bkData += totalpremiumsAmount15.ToString("0.00") + ",";
+
+
+
+
+                           // //56	เงินสะสมกองทุนสำรองเลี้ยงชีพ(ส่วนที่ไม่เกิน 10,000) (ใบแนบฯ.8)
+                          decimal totalpfAmount = 0m;
+                          foreach (cls_TREmpfamily family in list_Empfamily)
+                          {
+                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                              {
+                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  {
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("PF"))
+                                          {
+                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                              totalpfAmount += amountToAdd;
+                                              break;
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          bkData += totalpfAmount.ToString("0.00") + ",";
+
+
+
+                           // //57	ค่าซื้อหน่วยลงทุนในกองทุนรวมเพื่อการเลี้ยงชีพ (ใบแนบฯ.10)
+                          decimal totalRMFAmount = 0m;
+                          foreach (cls_TREmpfamily family in list_Empfamily)
+                          {
+                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                              {
+                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  {
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("RMF"))
+                                          {
+                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                              totalRMFAmount += amountToAdd;
+                                              break;
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          bkData += totalRMFAmount.ToString("0.00") + ",";
+
+
+                           // //58	ค่าซื้อหน่วยลงทุนในกองทุนรวมเพื่อการออม SSF (ใบแนบฯ.11)
+                          decimal totalssfAmount = 0m;
+                          foreach (cls_TREmpfamily family in list_Empfamily)
+                          {
+                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                              {
+                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  {
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("SSF"))
+                                          {
+                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                              totalssfAmount += amountToAdd;
+                                              break;
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          bkData += totalssfAmount.ToString("0.00") + ",";
+
+
+
+                           // //59	ดอกเบี้ยเงินกู้ยืมฯ (ใบแนบฯ.12)
+                          decimal totalInterestonloansAmount = 0m;
+                          foreach (cls_TREmpfamily family in list_Empfamily)
+                          {
+                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                              {
+                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  {
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("22"))
+                                          {
+                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                              totalInterestonloansAmount += amountToAdd;
+                                              break;
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          bkData += totalInterestonloansAmount.ToString("0.00") + ",";
+
+
+                           // //60	เงินสมทบกองทุนประกันสังคม (ใบแนบ.13)
+                          decimal totalSSOAmount = 0m;
+                          foreach (cls_TREmpfamily family in list_Empfamily)
+                          {
+                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                              {
+                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  {
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("SSO"))
+                                          {
+                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                              totalSSOAmount += amountToAdd;
+                                              break;
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          bkData += totalSSOAmount.ToString("0.00") + ",";
+
+                           // //61	เงินสมทบกองทุนประกันสังคมคู่สมรส (สูงสุดไม่เกิน 5,100)(ใบแนบฯ.13)
+                          decimal totalSocialsecuritycontributionsAmount = 0m;
+                          foreach (cls_TREmpfamily family in list_Empfamily)
+                          {
+                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                              {
+                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  {
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("SSO") && family.family_type.Equals("11"))
+                                          {
+                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                              totalSocialsecuritycontributionsAmount += amountToAdd;
+                                              break;
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          bkData += "0.00" + ",";
+
+                           // //62	ค่าฝากครรภ์และค่าคลอดบุตร (ใบแนบฯ.16)
+                          decimal totalAmount26 = 0m;
+                          foreach (cls_TREmpfamily family in list_Empfamily)
+                          {
+
+                              foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                              {
+                                  if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                  {
+                                      if (empReduce.reduce_type.Equals("26"))
+                                      {
+                                          decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                          totalAmount26 += amountToAdd;
+                                          break;
+                                      }
+                                  }
+
+                              }
+                          }
+                          bkData += totalAmount26.ToString("0.00") + ",";
+
+                           // //63	รวมค่าลดหย่อน (ใบแนบฯ.19)
+                          double totalEmpreduceAmount = 0;
+                          foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                          {
+                              if (obj_worker.worker_code.Equals(TREmpreduce.worker_code))
+                              {
+                                  totalEmpreduceAmount += (double)TREmpreduce.empreduce_amount;
+                              }
+                          }
+                          decimal resultEmpreduce = (decimal)totalEmpreduceAmount;
+                          bkData += resultEmpreduce + "|";
+
+
+                            ///
+
+ 
+
+                            tmpData += bkData + '\r' + '\n';
+                        }
+
+
+
+
+
+                        douTotal += paytran.paytran_netpay_b;
+
+                        index++;
+                    }
+
+                    int record = list_paytran.Count;
+
+
+                    try
+                    {
+                        //-- Step 1 create file
+                        string filename = "TRN_PND91_" + DateTime.Now.ToString("yyMMddHHmm") + "." + "txt";
+                        string filepath = Path.Combine
+                       (ClassLibrary_BPC.Config.PathFileExport, filename);
+
+                        // Check if file already exists. If yes, delete it.     
+                        if (File.Exists(filepath))
+                        {
+                            File.Delete(filepath);
+                        }
+
+                        // Create a new file     
+                        using (FileStream fs = File.Create(filepath))
+                        {
+                            // Add some text to file    
+                            Byte[] title = new UTF8Encoding(true).GetBytes(tmpData);
+                            fs.Write(title, 0, title.Length);
+                        }
+
+                        strResult = filename;
+
+                    }
+                    catch
+                    {
+                        strResult = "";
+                    }
+
+                }
+
+
+                task.task_end = DateTime.Now;
+                task.task_status = "F";
+                task.task_note = strResult;
+                objMTTask.updateStatus(task);
+
+            }
+            else
+            {
+
+            }
+
+            return strResult;
+        }
+        ///ภงด 91  PND 91
+        //
+
         //TAX เริ่ม
         public string doExportTax(string com, string taskid)
         {
@@ -1066,82 +2568,82 @@ namespace ClassLibrary_BPC.hrfocus.service
                         if (paytran.paytran_income_401 > 0)
                         {
                             //1.ลักษณะการยื่นแบบปกติ
-                            bkData = "00|";
+                            bkData = "00" + ",";
                             
                             //2.เลขประจำตัวประชาชนผู้มี่หน้าที่หัก ณ ที่จ่าย<CardNo>	comcard.card_type
                             if (comcard.comcard_code.Length == 13)
-                                bkData += comcard.comcard_code + "|";
+                                bkData += comcard.comcard_code + ",";
                             else
-                                bkData += "0000000000000|";
+                                bkData += "0000000000000" + ",";
 
                             //3.เลขประจำตัวผู้เสียภาษีอากรผู้มีหน้าที่หัก ณ ที่จ่าย<TaxNo>
                             if (comcard.card_type.Length == 10)
-                                bkData += comcard.comcard_code + "|";
+                                bkData += comcard.comcard_code + ",";
                             else
-                                bkData += "0000000000|";
+                                bkData += "0000000000" + ",";
 
                             //4.เลขที่สาขา ผู้มีหน้าที่หักภาษี ณ ที่จ่าย<BranchID>
 
                             if (combank.company_code.Length == 4)
-                                bkData += combank.company_code + "|";
+                                bkData += combank.company_code + ",";
                             else
-                                bkData += "00000|";
+                                bkData += "00000" + ",";
 
                             //5.เลขประจำตัวประชาชนผู้มีเงินได้<CardNo>	
                             if (obj_card.empcard_code.Length == 13)
-                                bkData += obj_card.empcard_code + "|";
+                                bkData += obj_card.empcard_code + ",";
                             else
-                                bkData += "0000000000000|";
+                                bkData += "0000000000000" + ",";
 
                             //6.เลขประจำตัวผู้เสียภาษีอากรผู้มีเงินได้ <TaxNo>
                             if (obj_card.empcard_code.Length == 13)
-                                bkData += obj_card.empcard_code + "|";
+                                bkData += obj_card.empcard_code + ",";
                             else
-                                bkData += "0000000000|";
+                                bkData += "0000000000" + ",";
 
                             //7.คำนำหน้าชื่อผู้มีเงินได้<InitialNameT>
-                            bkData += obj_worker.initial_name_en + "|";
+                            bkData += obj_worker.initial_name_en + ",";
 
                             //8.ชื่อผู้มีเงินได้<EmpFNameT>				
-                            bkData += obj_worker.worker_fname_en + "|";
+                            bkData += obj_worker.worker_fname_en + ",";
 
                             //9.นามสกุลผู้มีเงินได้<EmpLNameT>
-                            bkData += obj_worker.worker_lname_en + "|";
+                            bkData += obj_worker.worker_lname_en + ",";
 
                             //10.ที่อยู่ 1<Address>
                             string temp = obj_address.empaddress_no  + obj_address.empaddress_soi + " " + obj_address.empaddress_road + " " + obj_address.empaddress_tambon + " " + obj_address.empaddress_amphur + " " + obj_province.province_name_en;
-                            bkData += temp + "|";
+                            bkData += temp + ",";
 
                             //11.ที่อยู่2 
-                            bkData += "|";
+                            bkData += ",";
 
                             //12.รหัสไปรษณีย์ <Poscod>
-                            bkData += obj_address.empaddress_zipcode + "|";
+                            bkData += obj_address.empaddress_zipcode + ",";
 
 
                             //13.เดือนภาษี<TaxMonth>                            
-                            bkData += datePay.Month.ToString().PadLeft(2, '0') + "|";
+                            bkData += datePay.Month.ToString().PadLeft(2, '0') + ",";
 
                             //14.ปีภาษี<TaxYear>                          
                             int n = Convert.ToInt32(datePay.Year);
                             if (n < 2400)
                                 n += 543;
-                            bkData += n.ToString() + "|";
+                            bkData += n.ToString() + ",";
 
                             //15.รหัสเงินได้<AllwonceCode>				
-                            bkData += "1|";
+                            bkData += "1" + ",";
 
                             //16.วันที่จ่ายเงินได้ <TaxDate>+<TaxMonth>+<TaxYear>	
-                            bkData += datePay.ToString("ddMM") + n.ToString() + "|";
+                            bkData += datePay.ToString("ddMM") + n.ToString() + ",";
 
                             //17.อัตราภาษีร้อยละ				
-                            bkData += "0" + "|";
+                            bkData += "0" + ",";
                             
                             //18.จำนวนเงินที่จ่าย<PayMent>
-                            bkData += paytran.paytran_income_401.ToString("0.00") + "|";
+                            bkData += paytran.paytran_income_401.ToString("0.00") + ",";
                             
                             //19.จำนวนเงินภาษีที่หักและนำส่ง<Tax>
-                            bkData += paytran.paytran_tax_401.ToString("0.00") + "|";
+                            bkData += paytran.paytran_tax_401.ToString("0.00") + ",";
                             
                             //20.เงื่อนไขการหักภาษี ณ จ่าย <TaxCondition>				
                             bkData += "1";

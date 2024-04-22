@@ -378,9 +378,6 @@
     <Compile Include="hrfocus.service\cls_srvProcessPayroll.cs" />
     <Compile Include="hrfocus.service\cls_srvProcessTime.cs" />
     <Compile Include="hrfocus.service\MultipartParser.cs" />
-    <Compile Include="hrfocus.service\MultipartParser_2.cs" />
-    <Compile Include="hrfocus.service\MultipartParser_3.cs" />
-    <Compile Include="hrfocus.service\MultipartParser_4.cs" />
     <Compile Include="hrfocus.utility\cls_ctConnection.cs" />
     <Compile Include="hrfocus.utility\cls_Hash.cs" />
     <Compile Include="hrfocus.utility\cls_StyleDataGridView.cs" />
