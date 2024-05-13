@@ -18049,11 +18049,13 @@ namespace HRFocusWCFSystem
                 TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
                 string UserUniqueKey = usr + key;
                 var setupInfo = tfa.GenerateSetupCode("iHR Authenticator", usr, UserUniqueKey, 300, 300);
-                var barcodeImageUrl = setupInfo.QrCodeSetupImageUrl;
+                //var barcodeImageUrl = setupInfo.QrCodeSetupImageUrl;
                 var setupCode = setupInfo.ManualEntryKey;
 
+                string uri = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={0}", Uri.EscapeDataString("iHR Authenticator"), Uri.EscapeDataString(usr), Uri.EscapeDataString(setupCode));
+                string zxingOnlineURL = string.Format("https://zxing.org/w/chart?cht=qr&chs=300x300&chl={0}", Uri.EscapeDataString(uri));
 
-                json.Add("barcode", barcodeImageUrl);
+                json.Add("barcode", zxingOnlineURL);
                 json.Add("setupcode", setupCode);
                 json.Add("uniquekey", UserUniqueKey);
 
@@ -21488,7 +21490,262 @@ namespace HRFocusWCFSystem
         }
         #endregion
 
+        #region TRTimecheckin
+        public string getTRTimecheckinList(InputTRTimecheckin input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                cls_ctTRTimecheckin objTRTimecheckin = new cls_ctTRTimecheckin();
+                List<cls_TRTimecheckin> listTRTimecheckin = objTRTimecheckin.getDataByFillter(input.company_code, input.timecheckin_id, input.timecheckin_time, input.timecheckin_type, input.location_code, input.worker_code, input.timecheckin_workdate, input.timecheckin_todate, input.status);
 
+                JArray array = new JArray();
+
+                if (listTRTimecheckin.Count > 0)
+                {
+                    int index = 1;
+
+                    foreach (cls_TRTimecheckin model in listTRTimecheckin)
+                    {
+                        JObject json = new JObject();
+                        json.Add("company_code", model.company_code);
+                        json.Add("worker_code", model.worker_code);
+                        json.Add("worker_detail_en", model.worker_detail_en);
+                        json.Add("worker_detail_th", model.worker_detail_th);
+                        json.Add("timecheckin_id", model.timecheckin_id);
+                        json.Add("timecheckin_doc", model.timecheckin_doc);
+                        json.Add("timecheckin_workdate", model.timecheckin_workdate.ToString("yyyy-MM-dd"));
+                        json.Add("timecheckin_time", model.timecheckin_time);
+                        json.Add("timecheckin_type", model.timecheckin_type);
+                        json.Add("timecheckin_lat", model.timecheckin_lat);
+                        json.Add("timecheckin_long", model.timecheckin_long);
+                        json.Add("timecheckin_note", model.timecheckin_note);
+                        json.Add("location_code", model.location_code);
+                        json.Add("location_name_en", model.location_name_en);
+                        json.Add("location_name_th", model.location_name_th);
+                        json.Add("status", model.status);
+                        json.Add("status_job", model.status_job);
+                        json.Add("modified_by", model.modified_by);
+                        json.Add("modified_date", model.modified_date);
+                        json.Add("flag", model.flag);
+                        cls_ctMTReqdocument objMTReqdoc = new cls_ctMTReqdocument();
+                        List<cls_MTReqdocument> listTRReqdoc = objMTReqdoc.getDataByFillter(model.company_code, 0, model.timecheckin_id.ToString(), "CI");
+                        JArray arrayTRReqdoc = new JArray();
+                        if (listTRReqdoc.Count > 0)
+                        {
+                            int indexTRReqdoc = 1;
+
+                            foreach (cls_MTReqdocument modelTRReqdoc in listTRReqdoc)
+                            {
+                                JObject jsonTRReqdoc = new JObject();
+                                jsonTRReqdoc.Add("company_code", modelTRReqdoc.company_code);
+                                jsonTRReqdoc.Add("document_id", modelTRReqdoc.document_id);
+                                jsonTRReqdoc.Add("job_id", modelTRReqdoc.job_id);
+                                jsonTRReqdoc.Add("job_type", modelTRReqdoc.job_type);
+                                jsonTRReqdoc.Add("document_name", modelTRReqdoc.document_name);
+                                jsonTRReqdoc.Add("document_type", modelTRReqdoc.document_type);
+                                jsonTRReqdoc.Add("document_path", modelTRReqdoc.document_path);
+                                jsonTRReqdoc.Add("created_by", modelTRReqdoc.created_by);
+                                jsonTRReqdoc.Add("created_date", modelTRReqdoc.created_date);
+
+                                jsonTRReqdoc.Add("index", indexTRReqdoc);
+
+
+                                indexTRReqdoc++;
+
+                                arrayTRReqdoc.Add(jsonTRReqdoc);
+                            }
+                            json.Add("reqdoc_data", arrayTRReqdoc);
+                        }
+                        else
+                        {
+                            json.Add("reqdoc_data", arrayTRReqdoc);
+                        }
+                        json.Add("index", index);
+
+                        index++;
+
+                        array.Add(json);
+                    }
+
+                    output["result"] = "1";
+                    output["result_text"] = "1";
+                    output["data"] = array;
+
+                }
+                else
+                {
+                    output["result"] = "0";
+                    output["result_text"] = "Data not Found";
+                    output["data"] = array;
+                }
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+        }
+        public string doManageTRTimecheckin(InputTRTimecheckin input)
+        {
+            JObject output = new JObject();
+            string message = "Retrieved data not successfully";
+            string strID = "";
+            try
+            {
+                cls_ctTRTimecheckin objTRTimecheckin = new cls_ctTRTimecheckin();
+                var jsonArray = JsonConvert.DeserializeObject<List<cls_TRTimecheckin>>(input.timecheckin_data);
+                foreach (cls_TRTimecheckin cidata in jsonArray)
+                {
+                    cls_TRTimecheckin model = new cls_TRTimecheckin();
+
+                    model.company_code = cidata.company_code;
+                    model.worker_code = cidata.worker_code;
+                    model.timecheckin_id = cidata.timecheckin_id.Equals("") ? 0 : Convert.ToInt32(cidata.timecheckin_id);
+                    model.timecheckin_doc = cidata.timecheckin_doc;
+                    model.timecheckin_workdate = Convert.ToDateTime(cidata.timecheckin_workdate);
+                    model.timecheckin_time = cidata.timecheckin_time;
+                    model.timecheckin_type = cidata.timecheckin_type;
+                    model.timecheckin_lat = cidata.timecheckin_lat;
+                    model.timecheckin_long = cidata.timecheckin_long;
+                    model.timecheckin_note = cidata.timecheckin_note;
+                    model.location_code = cidata.location_code;
+                    model.status = cidata.status;
+                    model.modified_by = input.username;
+                    model.flag = cidata.flag;
+
+                    strID = objTRTimecheckin.insert(model);
+                    if (!strID.Equals(""))
+                    {
+                        cls_ctTRAccount objTRAccount = new cls_ctTRAccount();
+                        List<cls_TRAccount> listTRAccount = objTRAccount.getDataworkflowByFillter(model.company_code, "", model.worker_code, "", "CI");
+                        if (listTRAccount.Count > 0)
+                        {
+                            cls_ctMTJobtable objMTJob = new cls_ctMTJobtable();
+                            cls_MTJobtable modeljob = new cls_MTJobtable();
+                            modeljob.company_code = model.company_code;
+                            modeljob.jobtable_id = 0;
+                            modeljob.job_id = strID;
+                            modeljob.job_type = "CI";
+                            modeljob.status_job = "W";
+                            modeljob.job_date = Convert.ToDateTime(cidata.timecheckin_workdate);
+                            modeljob.job_nextstep = listTRAccount[0].totalapprove;
+                            modeljob.workflow_code = listTRAccount[0].workflow_code;
+                            modeljob.created_by = input.username;
+                            string strID1 = objMTJob.insert(modeljob);
+                        }
+                        else
+                        {
+                            objTRTimecheckin.delete(cidata.company_code, strID, "", cidata.timecheckin_type, "", cidata.worker_code);
+                            strID = "";
+                            message = "There are no workflow contexts for this worker_code :" + cidata.worker_code;
+                            break;
+                        }
+                        if (cidata.reqdoc_data.Count > 0)
+                        {
+                            foreach (cls_MTReqdocument reqdoc in cidata.reqdoc_data)
+                            {
+                                cls_ctMTReqdocument objMTReqdocu = new cls_ctMTReqdocument();
+                                cls_MTReqdocument modelreqdoc = new cls_MTReqdocument();
+                                modelreqdoc.company_code = reqdoc.company_code;
+                                modelreqdoc.document_id = reqdoc.document_id;
+                                modelreqdoc.job_id = strID;
+                                modelreqdoc.job_type = reqdoc.job_type;
+                                modelreqdoc.document_name = reqdoc.document_name;
+                                modelreqdoc.document_type = reqdoc.document_type;
+                                modelreqdoc.document_path = reqdoc.document_path;
+
+                                modelreqdoc.created_by = input.username;
+                                string strIDs = objMTReqdocu.insert(modelreqdoc);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (!strID.Equals(""))
+                {
+                    output["success"] = true;
+                    output["message"] = "Retrieved data successfully";
+                    output["record_id"] = strID;
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = message;
+                }
+
+                objTRTimecheckin.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["result"] = "0";
+                output["result_text"] = ex.ToString();
+
+            }
+            finally
+            {
+            }
+
+            return output.ToString(Formatting.None);
+
+        }
+        public string doDeleteTRTimecheckin(InputTRTimecheckin input)
+        {
+            JObject output = new JObject();
+            try
+            {
+                if (input.timecheckin_workdate.Equals(null))
+                {
+                    input.timecheckin_workdate = "";
+                }
+                cls_ctTRTimecheckin controller = new cls_ctTRTimecheckin();
+                bool blnResult = controller.delete(input.company_code, input.timecheckin_id.ToString(), input.timecheckin_time, input.timecheckin_type, input.timecheckin_workdate, input.worker_code);
+
+                if (blnResult)
+                {
+                    cls_ctMTJobtable MTJob = new cls_ctMTJobtable();
+                    MTJob.delete(input.company_code, 0, input.timecheckin_id.ToString(), "CI");
+                    cls_ctMTReqdocument MTReqdoc = new cls_ctMTReqdocument();
+                    List<cls_MTReqdocument> filelist = MTReqdoc.getDataByFillter(input.company_code, 0, input.timecheckin_id.ToString(), "CI");
+                    if (filelist.Count > 0)
+                    {
+                        foreach (cls_MTReqdocument filedata in filelist)
+                        {
+                            File.Delete(filedata.document_path);
+                        }
+                    }
+                    MTReqdoc.delete(input.company_code, 0, input.timecheckin_id.ToString(), "CI");
+                    output["success"] = true;
+                    output["message"] = "Remove data successfully";
+                }
+                else
+                {
+                    output["success"] = false;
+                    output["message"] = "Remove data not successfully";
+                }
+                controller.dispose();
+            }
+            catch (Exception ex)
+            {
+                output["success"] = false;
+                output["message"] = "(C)Remove data not successfully";
+            }
+            finally
+            {
+            }
+            return output.ToString(Formatting.None);
+
+        }
+        #endregion
 
         #region  FNTCompareamount
         public string getFNTCompareamount(InputFNTCompareamount input)
