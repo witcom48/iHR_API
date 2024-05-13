@@ -2255,6 +2255,18 @@ namespace HRFocusWCFSystem
                     }
                         //SSO
 
+                        //TRN_PND91
+                    else if (input.task_type.Trim().Equals("TRN_PND91"))
+                    {
+                        cls_srvProcessPayroll srvPay = new cls_srvProcessPayroll();
+                        string link = srvPay.doExportPND91(input.company_code, intTaskID.ToString());
+
+                        output["result_link"] = link;
+                    }
+                    //TRN_PND91
+
+
+
                         //ATX
                     else if (input.task_type.Trim().Equals("TRN_TAX"))
                     {

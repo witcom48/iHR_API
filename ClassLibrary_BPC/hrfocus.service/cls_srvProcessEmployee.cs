@@ -1421,7 +1421,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 bool reduce17Data = false;
                                 foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                 {
-                                    if (MTWorkers.worker_code.Equals(TREmpreduce.worker_code) && TREmpreduce.reduce_type.Equals("ๅึ"))
+                                    if (MTWorkers.worker_code.Equals(TREmpreduce.worker_code) && TREmpreduce.reduce_type.Equals("17"))
                                     {
                                         // เพิ่มข้อมูลที่มีหัวข้อ SBA ลงใน bkData
                                         bkData += TREmpreduce.empreduce_amount + "|";
