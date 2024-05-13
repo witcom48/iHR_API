@@ -1082,21 +1082,21 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 if (comcard.comcard_code.Length == 13)
                                     bkData += comcard.comcard_code + ",";
                                 else
-                                    bkData += "0000000000000" + "1." + ",";
+                                    bkData += "0000000000000"   + ",";
 
                                 //2.คำนำหน้าชื่อผู้มีเงินได้<InitialNameT>
-                                bkData += obj_worker.initial_name_en + "2." + ",";
+                                bkData += obj_worker.initial_name_en +  ",";
 
 
 
                                 //4.ชื่อผู้มีเงินได้<EmpFNameT>				
-                                bkData += obj_worker.worker_fname_en + "3." + ",";
+                                bkData += obj_worker.worker_fname_en + ",";
 
                                 //3.ชื่อกลาง (ถ้ามี)		
                                 bkData += " " + "4." + ",";
 
                                 //5.นามสกุลผู้มีเงินได้<EmpLNameT>
-                                bkData += obj_worker.worker_lname_en + "5." + ",";
+                                bkData += obj_worker.worker_lname_en + ",";
 
                                 //6	สถานะผู้มีเงินได้"“0” = โสด “1” = สมรส “2” = หม้าย"
                                 foreach (cls_TREmpfamily worker in list_Empfamily)
@@ -1108,7 +1108,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                         if (worker.family_type.Equals("00") || worker.family_type.Equals("02") || worker.family_type.Equals("11"))
                                         {
-                                            bkData += "1,= สมรส,"; // “1” = สมรส
+                                            bkData += "1, "; // “1” = สมรส
                                             foundMatchingCondition = true;
                                         }
                                         //else if (worker.family_type.Equals(""))
@@ -1119,7 +1119,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                         if (!foundMatchingCondition)
                                         {
-                                            bkData += "0,= โสด"; // “0” = โสด
+                                            bkData += "0,"; // “0” = โสด
                                         }
                                     } break;
                                 }
@@ -1133,12 +1133,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         bool foundMatchingCondition = false;
                                         if (worker.family_type.Equals("00"))
                                         {
-                                            bkData += "2,= คู่สมรสมีเงินได้,"; //“2” = คู่สมรสมีเงินได้ และอยู่ร่วมกันตลอดปีภาษี
+                                            bkData += "2,"; //“2” = คู่สมรสมีเงินได้ และอยู่ร่วมกันตลอดปีภาษี
                                             foundMatchingCondition = true;
                                         }
                                         if (!foundMatchingCondition)
                                         {
-                                            bkData += "1,= ไม่มีคู่สมรส,"; // “1” = ไม่มีคู่สมรส
+                                            bkData += "1,"; // “1” = ไม่มีคู่สมรส
                                         }
                                         if (worker.family_type.Equals(""))
                                         {
@@ -1178,70 +1178,6 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     } break;
                                 }
 
-
-
-
-
-                                //foreach (cls_TREmpfamily family in list_Empfamily)
-                                //{
-                                //    if (paytran.worker_code.Equals(family.worker_code))
-                                //    {
-                                //        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                //        {
-                                //            if (obj_TREmpreduce != null && paytran.worker_code.Equals(family.worker_code))
-                                //            {
-                                //                if (TREmpreduce.reduce_type.Equals(""))
-                                //                {
-                                //                    bkData = "1,"; // “1” = ไม่มีคู่สมรส
-                                //                    break;
-                                //                }
-                                //                else if (family.worker_code.Equals("00") || family.worker_code.Equals("02") || family.worker_code.Equals("11"))
-                                //                {
-                                //                    bkData = "2,"; // “2” = คู่สมรสมีเงินได้ และอยู่ร่วมกันตลอดปีภาษี
-                                //                    break;
-                                //                }
-                                //                else if (TREmpreduce.reduce_type.Equals("3"))
-                                //                {
-                                //                    bkData = "3,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
-                                //                    break;
-                                //                }
-                                //                else if (TREmpreduce.reduce_type.Equals("4"))
-                                //                {
-                                //                    bkData = "4,"; // “4” = คู่สมรสมีเงินได้ หย่าระหว่างปีภาษี
-                                //                    break;
-                                //                }
-                                //                else if (TREmpreduce.reduce_type.Equals("5"))
-                                //                {
-                                //                    bkData = "5,"; // “5” = คู่สมรสมีเงินได้ ตายระหว่างปีภาษี
-                                //                    break;
-                                //                }
-                                //                else if (TREmpreduce.reduce_type.Equals("6"))
-                                //                {
-                                //                    bkData = "6,"; // “6” = คู่สมรสไม่มีเงินได้ และอยู่รวมกันตลอดปีภาษี
-                                //                    break;
-                                //                }
-                                //                else if (TREmpreduce.reduce_type.Equals("7"))
-                                //                {
-                                //                    bkData = "7,"; // “7” = คู่สมรสไม่มีเงินได้ สมรสระหว่างปีภาษี
-                                //                    break;
-                                //                }
-                                //                else if (TREmpreduce.reduce_type.Equals("8"))
-                                //                {
-                                //                    bkData = "8,"; // “8” = คู่สมรสไม่มีเงินได้ หย่าระหว่างปีภาษี
-                                //                    break;
-                                //                }
-                                //                else if (TREmpreduce.reduce_type.Equals("9"))
-                                //                {
-                                //                    bkData = "9,"; // “9” = คู่สมรสไม่มีเงินได้ ตายระหว่างปีภาษี
-                                //                    break;
-                                //                }
-                                //            }
-                                //        }
-                                //    }
-                                //}
-
-
-
                                 // //8	เลขประจำตัวประชาชน (คู่สมรส)
                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                 {
@@ -1255,11 +1191,11 @@ namespace ClassLibrary_BPC.hrfocus.service
                                             {
                                                 if (family.empfamily_code != null && family.empfamily_code.Length == 13)
                                                 {
-                                                    bkData += family.empfamily_code + "8." + ",";
+                                                    bkData += family.empfamily_code + ",";
                                                 }
                                                 else
                                                 {
-                                                    bkData += " " + "8." + ",";
+                                                    bkData += " " +  ",";
                                                 }
 
                                                 break;
@@ -1281,7 +1217,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         if (family.family_type == "00")
                                         {
                                             // หากเป็นประเภท "00" กำหนดค่าให้เป็น "9."
-                                            bkData += "ว่าง,";
+                                            bkData += ",";
                                         }
 
 
@@ -1289,37 +1225,6 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     }
                                 }
 
-
-
-                                //foreach (cls_TREmpfamily family in list_Empfamily)
-                                //{
-                                //    if (paytran.worker_code.Equals(family.worker_code))
-                                //    {
-
-
-                                //        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                //        {
-
-
-                                //            if (TREmpreduce.reduce_type.Equals(family.family_type))
-                                //            {
-
-                                //                if (family.family_type == "00" || TREmpreduce.reduce_type.Equals("02") || TREmpreduce.reduce_type.Equals("11"))
-
-                                //                    {
-                                //                        bkData += " " + "9." + ",";
-                                //                    }
-                                //                    else
-                                //                    {
-                                //                        bkData += " " + "9." + ",";
-                                //                    }
-
-                                //                    break;
-                                //                }
-
-                                //        }
-                                //    }
-                                //}
 
                                 //10	ชื่อ (คู่สมรส)
                                 foreach (cls_TREmpfamily family in list_Empfamily)
@@ -1331,7 +1236,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                             if (family.family_type == "00")
                                             {
-                                                bkData += family.empfamily_fname_en + "10.,";
+                                                bkData += family.empfamily_fname_en + ",";
                                                 break;
                                             }
 
@@ -1352,7 +1257,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                             if (family.family_type == "00")
                                             {
-                                                bkData += "" + "11." + ",";
+                                                bkData += "" + ",";
                                                 break;
                                             }
 
@@ -1371,7 +1276,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                             if (family.family_type == "00")
                                             {
-                                                bkData += family.empfamily_lname_en + "12.,";
+                                                bkData += family.empfamily_lname_en + ",";
                                                 break;
                                             }
 
@@ -1381,13 +1286,35 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
                                 // //13	เงินได้พึงประเมิน (ก.1)
+                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                {
+                                    bool reduceData13 = false; 
+
+                                    if (paytran.worker_code.Equals(family.worker_code))
+                                    {
+                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                        {
+                                            if (TREmpreduce.reduce_type.Equals("")) //ไม่มีข้อมูล
+                                            {
+                                                bkData += TREmpreduce.empreduce_amount + ",";
+                                                reduceData13 = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (!reduceData13)
+                                        {
+                                            bkData += ",";
+                                        }
+                                    } break;
+                                }
 
 
 
                                 // //14	หัก เงินบริจาคสนับสนุนการศึกษา (ก.8)
                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                 {
-                                    bool reduceData30 = false; // เพิ่มตัวแปรนี้เพื่อตรวจสอบว่ามีข้อมูลลดหย่อนประเภท "30" หรือไม่
+                                    bool reduceData30 = false;  
 
                                     if (paytran.worker_code.Equals(family.worker_code))
                                     {
@@ -1395,7 +1322,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         {
                                             if (TREmpreduce.reduce_type.Equals("30"))
                                             {
-                                                bkData += TREmpreduce.empreduce_amount + "14.,"; // เพิ่มข้อมูลลดหย่อนและเครื่องหมาย "14."
+                                                bkData += TREmpreduce.empreduce_amount + ",";  
                                                 reduceData30 = true;
                                                 break;
                                             }
@@ -1419,7 +1346,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         {
                                             if (TREmpreduce.reduce_type.Equals("31"))
                                             {
-                                                bkData += TREmpreduce.empreduce_amount + "15." + ",";
+                                                bkData += TREmpreduce.empreduce_amount + "" + ",";
                                                 reduceData = true;
                                                 break;
 
@@ -1441,7 +1368,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     if (paytran.worker_code.Equals(family.worker_code))
                                     {
 
-                                        bkData += paytran.paytran_tax_401 + "16." + ",";
+                                        bkData += paytran.paytran_tax_401 + "" + ",";
                                         break;
                                     }
                                     else
@@ -1462,7 +1389,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     if (paytran.worker_code.Equals(family.worker_code))
                                     {
 
-                                        bkData += paytran.paytran_tax_4012 + paytran.paytran_tax_4012 + paytran.paytran_tax_4013 + paytran.paytran_tax_402I + paytran.paytran_tax_402O + "17.,";
+                                        bkData += paytran.paytran_tax_4012 + paytran.paytran_tax_4012 + paytran.paytran_tax_4013 + paytran.paytran_tax_402I + paytran.paytran_tax_402O + ",";
                                         break;
                                     }
                                     else
@@ -1486,7 +1413,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         {
                                             if (TREmpreduce.reduce_type.Equals("PF") && TREmpreduce.empreduce_amount > 10000)
                                             {
-                                                bkData += TREmpreduce.empreduce_amount + "ข.1" + ",";
+                                                bkData += TREmpreduce.empreduce_amount  + ",";
                                                 break;
                                             }
                                         }
@@ -1517,7 +1444,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         }
                                     }
                                 }
-                                bkData += "0.00" + "19." + ",";
+                                bkData += "0.00"  + ",";
 
                                 // //20	เงินสะสมกองทุนสงเคราะห์ครูฯ (ข.3)//แก้ไข
                                 decimal totalpfAmountk3 = 0m;
@@ -1539,7 +1466,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         }
                                     }
                                 }
-                                bkData += "0.00" + "20." + ",";
+                                bkData += "0.00"  + ",";
 
                                 // //21	ค่าลดหย่อนคู่สมรส (ใบแนบฯ.2)//////////////////แก้ไข
                                 double reduce02Data = 0;
@@ -1551,9 +1478,9 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         {
                                             if (TREmpreduce.reduce_type.Equals("02"))
                                             {
-                                                bkData += TREmpreduce.empreduce_amount.ToString("0.00") + "ค่าลดหย่อนคู่,";
+                                                bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
                                                 reduce02Data += (double)TREmpreduce.empreduce_amount;
-                                                break; // หยุดการวนลูปเมื่อพบข้อมูลที่ต้องการ
+                                                break;  
                                             }
                                         }
                                     }
@@ -1562,7 +1489,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 // หากไม่พบข้อมูลที่ต้องการ
                                 if (reduce02Data == 0)
                                 {
-                                    bkData += "ค่าลดหย่อนคู่// ,"; // ใส่ช่องว่างเมื่อไม่พบข้อมูล
+                                    bkData += ","; 
                                 }
 
 
@@ -1588,12 +1515,12 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                     if (foundChildReduce)
                                     {
-                                        bkData += (countChildren + 1) + "f.,";
+                                        bkData += (countChildren + 1) + ",";
                                         break;
                                     }
                                     else
                                     {
-                                        bkData += "g.,";
+                                        bkData += ",";
                                     }
                                 }
 
@@ -1615,23 +1542,22 @@ namespace ClassLibrary_BPC.hrfocus.service
                                             {
                                                 foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                 {
-                                                    // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบน้อยกว่าวันเกิดของบุตรปัจจุบัน
-                                                    if (prevFamily.empfamily_birthdate <= family.empfamily_birthdate)
+                                                     if (prevFamily.empfamily_birthdate <= family.empfamily_birthdate)
                                                     {
                                                         if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                         {
-                                                            bkData += prevFamily.empfamily_code + "ssa,";
+                                                            bkData += prevFamily.empfamily_code + ",";
                                                             foundChildReduce1 = true;
                                                             break;
                                                         }
                                                         else
                                                         {
-                                                            bkData += "ลูกคนที่1";
+                                                            bkData += "" + ",";
                                                             foundChildReduce1 = true;
 
                                                         }
-                                                        countChildren23++; // เพิ่มจำนวนบุตรที่พบ
-                                                        break; // หยุดการวนลูปเมื่อพบบุตรที่เกิดก่อน
+                                                        countChildren23++; 
+                                                        break;
                                                     }
                                                 }
                                             }
@@ -1639,8 +1565,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                                     }
                                 }
 
-                                int countChildren2 = 0; // เก็บจำนวนลูกที่พบครั้งที่สอง อั๋นโทษทีพอดีจะถามหน่อยAPI ของ Mobile มันตั้งค่า Connection ที่ไฟล์ไหนอะ พอจะจำได้ไหม
-                                bool foundChildReduce2 = false; // เช็คว่าพบลูกที่มีการลดหย่อนแล้วหรือไม่ (ครั้งที่สอง)
+                                int countChildren2 = 0;  
+                                bool foundChildReduce2 = false; 
 
                                 foreach (cls_TREmpfamily family1 in list_Empfamily)
                                 {
@@ -1652,45 +1578,41 @@ namespace ClassLibrary_BPC.hrfocus.service
                                             {
                                                 foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                 {
-                                                    // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบมากกว่าวันเกิดของบุตรปัจจุบัน
-                                                    if (prevFamily.empfamily_birthdate > family1.empfamily_birthdate)
+                                                     if (prevFamily.empfamily_birthdate > family1.empfamily_birthdate)
                                                     {
-                                                        if (!foundChildReduce2) // ตรวจสอบว่ายังไม่พบลูกคนที่สอง
+                                                        if (!foundChildReduce2) 
                                                         {
                                                             foundChildReduce2 = true;
-                                                            countChildren2++; // เพิ่มจำนวนลูกคนที่สองที่พบ
+                                                            countChildren2++;  
 
-                                                            // ตรวจสอบว่าลูกมีรหัสหรือไม่
-                                                            if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                             if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                             {
-                                                                bkData += prevFamily.empfamily_code + "ssa,";
+                                                                bkData += prevFamily.empfamily_code + ",";
                                                             }
                                                             else
                                                             {
-                                                                bkData += "2aaa3d.,";
+                                                                bkData += ",";
                                                             }
 
 
-                                                            // หยุดการวนลูปเมื่อพบบุตรที่มากกว่า
-                                                            break;
+                                                             break;
                                                         }
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                    // หากไม่พบลูกคนที่สอง
                                     if (!foundChildReduce2)
                                     {
-                                        bkData += "ลูกคนที่สอง,"; break;
+                                        bkData += ","; break;
                                     }
                                 }
 
 
 
 
-                                int countChildren3 = 0; // เก็บจำนวนลูกที่พบครั้งที่สาม
-                                bool foundChildReduce3 = false; // เช็คว่าพบลูกที่มีการลดหย่อนแล้วหรือไม่ (ครั้งที่สาม)
+                                int countChildren3 = 0; 
+                                bool foundChildReduce3 = false; 
 
                                 foreach (cls_TREmpfamily family2 in list_Empfamily)
                                 {
@@ -1702,25 +1624,22 @@ namespace ClassLibrary_BPC.hrfocus.service
                                             {
                                                 foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                 {
-                                                    // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบมากกว่าวันเกิดของบุตรปัจจุบัน
                                                     if (prevFamily.empfamily_birthdate > family2.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                     {
-                                                        if (!foundChildReduce3) // ตรวจสอบว่ายังไม่พบลูกคนที่สอง
+                                                        if (!foundChildReduce3)
                                                         {
                                                             foundChildReduce3 = true;
-                                                            countChildren3++; // เพิ่มจำนวนลูกคนที่สองที่พบ
+                                                            countChildren3++; 
 
-                                                            // ตรวจสอบว่าลูกมีรหัสหรือไม่
                                                             if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                             {
-                                                                bkData += prevFamily.empfamily_code + "ssa,";
+                                                                bkData += prevFamily.empfamily_code + ",";
                                                             }
                                                             else
                                                             {
-                                                                bkData += "2aaa3d.,";
+                                                                bkData += ",";
                                                             }
                                                         }
-                                                        // หยุดการวนลูปเมื่อพบบุตรที่มากกว่า
                                                         break;
                                                     }
                                                 }
@@ -1728,10 +1647,9 @@ namespace ClassLibrary_BPC.hrfocus.service
                                         }
                                     }
 
-                                    // หากไม่พบลูกคนที่สอง
-                                    if (!foundChildReduce3)
+                                     if (!foundChildReduce3)
                                     {
-                                        bkData += "ลูกคนที่3,"; break;
+                                        bkData += ","; break;
                                     }
                                 }
 
@@ -1739,8 +1657,8 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
 
-                                int countChildren4 = 0; // เก็บจำนวนลูกที่พบครั้งที่สี่
-                                bool foundChildReduce4 = false; // เช็คว่าพบลูกที่มีการลดหย่อนแล้วหรือไม่ (ครั้งที่สี่)
+                                int countChildren4 = 0;
+                                bool foundChildReduce4 = false; 
 
                                 foreach (cls_TREmpfamily family3 in list_Empfamily)
                                 {
@@ -1752,45 +1670,37 @@ namespace ClassLibrary_BPC.hrfocus.service
                                             {
                                                 foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                 {
-                                                    // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบมากกว่าวันเกิดของบุตรที่หนึ่งและสอง และสาม
                                                     if (prevFamily.empfamily_birthdate > family3.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                     {
-                                                        if (!foundChildReduce4) // ตรวจสอบว่ายังไม่พบลูกคนที่สี่
+                                                        if (!foundChildReduce4) 
                                                         {
                                                             foundChildReduce4 = true;
-                                                            countChildren4++; // เพิ่มจำนวนลูกคนที่สี่ที่พบ
+                                                            countChildren4++; 
 
-                                                            // ตรวจสอบว่าลูกมีรหัสหรือไม่
                                                             if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                             {
-                                                                bkData += prevFamily.empfamily_code + "ssa,";
+                                                                bkData += prevFamily.empfamily_code + ",";
                                                             }
                                                             else
                                                             {
-                                                                bkData += "2aaa3d.,";
+                                                                bkData += ",";
                                                             }
                                                         }
-
-                                                        // หยุดการวนลูปเมื่อพบบุตรที่มากกว่าทั้งคนที่หนึ่ง สอง และสาม
                                                         break;
                                                 }
                                             }
                                         }
                                     }
                                 }
-
-
-
-                                // หากไม่พบลูกคนที่สี่
                                 if (!foundChildReduce4)
                                 {
-                                    bkData += "ลูกคนที่4,"; break;
+                                    bkData += ","; break;
                                 }
                             }
 
 
-                             int countChildren5 = 0; // เก็บจำนวนลูกที่พบครั้งที่ห้า
-                             bool foundChildReduce5 = false; // เช็คว่าพบลูกที่มีการลดหย่อนแล้วหรือไม่ (ครั้งที่ห้า)
+                             int countChildren5 = 0; 
+                             bool foundChildReduce5 = false; 
 
                              foreach (cls_TREmpfamily family4 in list_Empfamily)
                              {
@@ -1802,26 +1712,21 @@ namespace ClassLibrary_BPC.hrfocus.service
                                          {
                                              foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                              {
-                                                 // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบมากกว่าวันเกิดของบุตรที่หนึ่ง สอง สาม และสี่
                                                  if (prevFamily.empfamily_birthdate > family4.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                  {
-                                                     if (!foundChildReduce5) // ตรวจสอบว่ายังไม่พบลูกคนที่ห้า
+                                                     if (!foundChildReduce5) 
                                                      {
                                                          foundChildReduce5 = true;
-                                                         countChildren5++; // เพิ่มจำนวนลูกคนที่ห้าที่พบ
-
-                                                         // ตรวจสอบว่าลูกมีรหัสหรือไม่
+                                                         countChildren5++; 
                                                          if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                          {
-                                                             bkData += prevFamily.empfamily_code + "ssa,";
+                                                             bkData += prevFamily.empfamily_code + ",";
                                                          }
                                                          else
                                                          {
-                                                             bkData += "2aaa3d.,";
+                                                             bkData += ",";
                                                          }
                                                      }
-
-                                                     // หยุดการวนลูปเมื่อพบบุตรที่มากกว่าทั้งคนที่หนึ่ง สอง สาม และสี่
                                                      break;
                                                  }
                                              }
@@ -1830,16 +1735,15 @@ namespace ClassLibrary_BPC.hrfocus.service
                                  }
                                  //}
 
-                                 // หากไม่พบลูกคนที่ห้า
                                  if (!foundChildReduce5)
                                  {
-                                     bkData += "ลูกคนที่5,"; break;
+                                     bkData += ","; break;
                                  }
                              }
 
 
-                             int countChildren6 = 0; // เก็บจำนวนลูกที่พบครั้งที่หก
-                             bool foundChildReduce6 = false; // เช็คว่าพบลูกที่มีการลดหย่อนแล้วหรือไม่ (ครั้งที่หก)
+                             int countChildren6 = 0;
+                             bool foundChildReduce6 = false;
 
                              foreach (cls_TREmpfamily family5 in list_Empfamily)
                              {
@@ -1851,26 +1755,22 @@ namespace ClassLibrary_BPC.hrfocus.service
                                          {
                                              foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                              {
-                                                 // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบมากกว่าวันเกิดของบุตรที่หนึ่ง สอง สาม สี่ และห้า
                                                  if (prevFamily.empfamily_birthdate > family5.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                  {
-                                                     if (!foundChildReduce6) // ตรวจสอบว่ายังไม่พบลูกคนที่หก
+                                                     if (!foundChildReduce6)
                                                      {
                                                          foundChildReduce6 = true;
-                                                         countChildren6++; // เพิ่มจำนวนลูกคนที่หกที่พบ
+                                                         countChildren6++; 
 
-                                                         // ตรวจสอบว่าลูกมีรหัสหรือไม่
                                                          if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                          {
-                                                             bkData += prevFamily.empfamily_code + "ssa,";
+                                                             bkData += prevFamily.empfamily_code + ",";
                                                          }
                                                          else
                                                          {
-                                                             bkData += "2aaa3d.,";
+                                                             bkData += ",";
                                                          }
                                                      }
-
-                                                     // หยุดการวนลูปเมื่อพบบุตรที่มากกว่าทั้งคนที่หนึ่ง สอง สาม สี่ และห้า
                                                      break;
                                                  }
                                              }
@@ -1878,16 +1778,14 @@ namespace ClassLibrary_BPC.hrfocus.service
                                      }
 
                                  }
-
-                                 // หากไม่พบลูกคนที่หก
                                  if (!foundChildReduce6)
                                  {
-                                     bkData += "ลูกคนที่6,"; break;
+                                     bkData += ","; break;
                                  }
                              }
 
-                             int countChildren7 = 0; // เก็บจำนวนลูกที่พบครั้งที่เจ็ด
-                             bool foundChildReduce7 = false; // เช็คว่าพบลูกที่มีการลดหย่อนแล้วหรือไม่ (ครั้งที่เจ็ด)
+                             int countChildren7 = 0; 
+                             bool foundChildReduce7 = false;
 
                              foreach (cls_TREmpfamily family6 in list_Empfamily)
                              {
@@ -1899,26 +1797,23 @@ namespace ClassLibrary_BPC.hrfocus.service
                                          {
                                              foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                              {
-                                                 // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบมากกว่าวันเกิดของบุตรที่หนึ่ง สอง สาม สี่ ห้า และหก
                                                  if (prevFamily.empfamily_birthdate > family6.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                  {
-                                                     if (!foundChildReduce7) // ตรวจสอบว่ายังไม่พบลูกคนที่เจ็ด
+                                                     if (!foundChildReduce7) 
                                                      {
                                                          foundChildReduce7 = true;
-                                                         countChildren7++; // เพิ่มจำนวนลูกคนที่เจ็ดที่พบ
+                                                         countChildren7++; 
 
-                                                         // ตรวจสอบว่าลูกมีรหัสหรือไม่
                                                          if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                          {
-                                                             bkData += prevFamily.empfamily_code + "ssa,";
+                                                             bkData += prevFamily.empfamily_code + ",";
                                                          }
                                                          else
                                                          {
-                                                             bkData += "2aaa3d.,";
+                                                             bkData += ",";
                                                          }
                                                      }
 
-                                                     // หยุดการวนลูปเมื่อพบบุตรที่มากกว่าทั้งคนที่หนึ่ง สอง สาม สี่ ห้า และหก
                                                      break;
                                                  }
                                              }
@@ -1926,22 +1821,17 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                      }
                                  }
-
-                                 // หากไม่พบลูกคนที่เจ็ด
                                  if (!foundChildReduce7)
                                  {
-                                     bkData += "ลูกคนที่7,"; break;
+                                     bkData += ","; break;
                                  }
                              }
 
- 
-
 
                              // //30	ค่าลดหย่อนบุตร 30,000 บาท (ใบแนบฯ.3)
-
                              foreach (cls_TREmpfamily family in list_Empfamily)
                              {
-                                 bool reduce03Data = false; // ตั้งค่าตัวแปรใหม่ในทุกการวนลูป
+                                 bool reduce03Data = false; 
 
                                  if (paytran.worker_code.Equals(family.worker_code))
                                  {
@@ -1949,7 +1839,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                      {
                                          if ((family.family_type == "07" || family.family_type == "10") && TREmpreduce.reduce_type.Equals("03"))
                                          {
-                                             bkData += TREmpreduce.empreduce_amount + "30d1,";
+                                             bkData += TREmpreduce.empreduce_amount + ",";
                                              reduce03Data = true;
                                              break;
                                          }
@@ -1959,7 +1849,7 @@ namespace ClassLibrary_BPC.hrfocus.service
   
 
                            // //31	จำนวนบุตร 60,000 บาท (ใบแนบฯ.3) หาจำนวน เช็คปี 2561 หา คศ
-                             int checkyear = 0; // สร้างตัวแปรเพื่อเก็บจำนวนเช็คปี 2561
+                             int checkyear = 0;  
 
                               foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                              {
@@ -1976,10 +1866,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                                      }
                                  }
                              }
-                             bkData += checkyear.ToString() + "3e1." + ",";
-
-
-                             //bool foundChild7 = false;  
+                             bkData += checkyear.ToString() + "" + ",";
                              bool foundChildReduce104 = false;
                              int countChildren04 = 0;
 
@@ -1995,22 +1882,21 @@ namespace ClassLibrary_BPC.hrfocus.service
                                          {
                                              foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                              {
-                                                 // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบน้อยกว่าวันเกิดของบุตรปัจจุบัน
                                                  if (prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                  {
                                                      if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                      {
-                                                         bkData += prevFamily.empfamily_code + "ssa,";
+                                                         bkData += prevFamily.empfamily_code + ",";
                                                          foundChildReduce104 = true;
                                                          break;
                                                      }
                                                      
-                                                     countChildren04++; // เพิ่มจำนวนบุตรที่พบ
-                                                     break; // หยุดการวนลูปเมื่อพบบุตรที่เกิดก่อน
+                                                     countChildren04++; 
+                                                     break; 
                                                  }
                                                  else
                                                  {
-                                                     bkData += "ลูกคนที่1"; 
+                                                     bkData += ""+ ","; 
                                                      foundChildReduce104 = true;
 
                                                  }break;
@@ -2021,8 +1907,8 @@ namespace ClassLibrary_BPC.hrfocus.service
                              }
 
 
-                             int countChildren042 = 0; // เก็บจำนวนลูกที่พบครั้งที่สอง อั๋นโทษทีพอดีจะถามหน่อยAPI ของ Mobile มันตั้งค่า Connection ที่ไฟล์ไหนอะ พอจะจำได้ไหม
-                             bool foundChildReduce042 = false; // เช็คว่าพบลูกที่มีการลดหย่อนแล้วหรือไม่ (ครั้งที่สอง)
+                             int countChildren042 = 0; 
+                             bool foundChildReduce042 = false; 
 
                              foreach (cls_TREmpfamily family1 in list_Empfamily)
                              {
@@ -2034,26 +1920,21 @@ namespace ClassLibrary_BPC.hrfocus.service
                                          {
                                              foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                              {
-                                                 // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบมากกว่าวันเกิดของบุตรปัจจุบัน
                                                  if (prevFamily.empfamily_birthdate > family1.empfamily_birthdate)
                                                  {
-                                                     if (!foundChildReduce042) // ตรวจสอบว่ายังไม่พบลูกคนที่สอง
+                                                     if (!foundChildReduce042) 
                                                      {
                                                          foundChildReduce042 = true;
-                                                         countChildren042++; // เพิ่มจำนวนลูกคนที่สองที่พบ
+                                                         countChildren042++; 
 
-                                                         // ตรวจสอบว่าลูกมีรหัสหรือไม่
                                                          if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                          {
-                                                             bkData += prevFamily.empfamily_code + "ssa,";
+                                                             bkData += prevFamily.empfamily_code + ",";
                                                          }
                                                          else
                                                          {
-                                                             bkData += "2aaa3d.,";
+                                                             bkData += ",";
                                                          }
-
-
-                                                         // หยุดการวนลูปเมื่อพบบุตรที่มากกว่า
                                                          break;
                                                      }
                                                  }
@@ -2061,18 +1942,17 @@ namespace ClassLibrary_BPC.hrfocus.service
                                          }
                                      }
                                  }
-                                 // หากไม่พบลูกคนที่สอง
                                  if (!foundChildReduce042)
                                  {
-                                     bkData += "ลูกคนที่สอง,"; break;
+                                     bkData += ","; break;
                                  }
                              }
 
 
 
 
-                             int countChildren043 = 0; // เก็บจำนวนลูกที่พบครั้งที่สาม
-                             bool foundChildReduce043 = false; // เช็คว่าพบลูกที่มีการลดหย่อนแล้วหรือไม่ (ครั้งที่สาม)
+                             int countChildren043 = 0; 
+                             bool foundChildReduce043 = false;  
 
                              foreach (cls_TREmpfamily family2 in list_Empfamily)
                              {
@@ -2084,25 +1964,22 @@ namespace ClassLibrary_BPC.hrfocus.service
                                          {
                                              foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                              {
-                                                 // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบมากกว่าวันเกิดของบุตรปัจจุบัน
                                                  if (prevFamily.empfamily_birthdate > family2.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                  {
-                                                     if (!foundChildReduce043) // ตรวจสอบว่ายังไม่พบลูกคนที่สอง
+                                                     if (!foundChildReduce043)
                                                      {
                                                          foundChildReduce043 = true;
-                                                         countChildren043++; // เพิ่มจำนวนลูกคนที่สองที่พบ
+                                                         countChildren043++;
 
-                                                         // ตรวจสอบว่าลูกมีรหัสหรือไม่
                                                          if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                          {
-                                                             bkData += prevFamily.empfamily_code + "ssa,";
+                                                             bkData += prevFamily.empfamily_code + ",";
                                                          }
                                                          else
                                                          {
-                                                             bkData += "2aaa3d.,";
+                                                             bkData += ",";
                                                          }
                                                      }
-                                                     // หยุดการวนลูปเมื่อพบบุตรที่มากกว่า
                                                      break;
                                                  }
                                              }
@@ -2110,10 +1987,9 @@ namespace ClassLibrary_BPC.hrfocus.service
                                      }
                                  }
 
-                                 // หากไม่พบลูกคนที่สอง
                                  if (!foundChildReduce043)
                                  {
-                                     bkData += "ลูกคนที่3,"; break;
+                                     bkData += ","; break;
                                  }
                              }
 
@@ -2121,8 +1997,8 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
 
-                             int countChildren044 = 0; // เก็บจำนวนลูกที่พบครั้งที่สี่
-                             bool foundChildReduce044 = false; // เช็คว่าพบลูกที่มีการลดหย่อนแล้วหรือไม่ (ครั้งที่สี่)
+                             int countChildren044 = 0;
+                             bool foundChildReduce044 = false; 
 
                              foreach (cls_TREmpfamily family3 in list_Empfamily)
                              {
@@ -2134,26 +2010,21 @@ namespace ClassLibrary_BPC.hrfocus.service
                                          {
                                              foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                              {
-                                                 // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบมากกว่าวันเกิดของบุตรที่หนึ่งและสอง และสาม
                                                  if (prevFamily.empfamily_birthdate > family3.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                  {
-                                                     if (!foundChildReduce044) // ตรวจสอบว่ายังไม่พบลูกคนที่สี่
+                                                     if (!foundChildReduce044)
                                                      {
                                                          foundChildReduce044 = true;
-                                                         countChildren044++; // เพิ่มจำนวนลูกคนที่สี่ที่พบ
-
-                                                         // ตรวจสอบว่าลูกมีรหัสหรือไม่
+                                                         countChildren044++; 
                                                          if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                          {
-                                                             bkData += prevFamily.empfamily_code + "ssa,";
+                                                             bkData += prevFamily.empfamily_code + ",";
                                                          }
                                                          else
                                                          {
-                                                             bkData += "2aaa3d.,";
+                                                             bkData += ",";
                                                          }
                                                      }
-
-                                                     // หยุดการวนลูปเมื่อพบบุตรที่มากกว่าทั้งคนที่หนึ่ง สอง และสาม
                                                      break;
                                                  }
                                              }
@@ -2161,18 +2032,15 @@ namespace ClassLibrary_BPC.hrfocus.service
                                      }
                                  }
 
-
-
-                                 // หากไม่พบลูกคนที่สี่
                                  if (!foundChildReduce044)
                                  {
-                                     bkData += "ลูกคนที่4,"; break;
+                                     bkData += ","; break;
                                  }
                              }
 
 
-                             int countChildren045 = 0; // เก็บจำนวนลูกที่พบครั้งที่ห้า
-                             bool foundChildReduce055 = false; // เช็คว่าพบลูกที่มีการลดหย่อนแล้วหรือไม่ (ครั้งที่ห้า)
+                             int countChildren045 = 0;
+                             bool foundChildReduce055 = false; 
 
                              foreach (cls_TREmpfamily family4 in list_Empfamily)
                              {
@@ -2184,26 +2052,21 @@ namespace ClassLibrary_BPC.hrfocus.service
                                          {
                                              foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                              {
-                                                 // ตรวจสอบว่าวันเกิดของลูกที่กำลังตรวจสอบมากกว่าวันเกิดของบุตรที่หนึ่ง สอง สาม และสี่
                                                  if (prevFamily.empfamily_birthdate > family4.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                  {
-                                                     if (!foundChildReduce055) // ตรวจสอบว่ายังไม่พบลูกคนที่ห้า
+                                                     if (!foundChildReduce055) 
                                                      {
                                                          foundChildReduce055 = true;
-                                                         countChildren045++; // เพิ่มจำนวนลูกคนที่ห้าที่พบ
-
-                                                         // ตรวจสอบว่าลูกมีรหัสหรือไม่
+                                                         countChildren045++; 
                                                          if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                          {
-                                                             bkData += prevFamily.empfamily_code + "ssa,";
+                                                             bkData += prevFamily.empfamily_code + ",";
                                                          }
                                                          else
                                                          {
-                                                             bkData += "2aaa3d.,";
+                                                             bkData += ",";
                                                          }
                                                      }
-
-                                                     // หยุดการวนลูปเมื่อพบบุตรที่มากกว่าทั้งคนที่หนึ่ง สอง สาม และสี่
                                                      break;
                                                  }
                                              }
@@ -2212,17 +2075,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                  }
                                  //}
 
-                                 // หากไม่พบลูกคนที่ห้า
                                  if (!foundChildReduce055)
                                  {
-                                     bkData += "ลูกคนที่5,"; break;
+                                     bkData += ","; break;
                                  }
                              }
- 
-
-
- 
- 
+  
                            // //37	ค่าลดหย่อนบุตร 60,000 บาท (ใบแนบฯ.3)
                              bool reduce04Data = false;
                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
@@ -2249,26 +2107,19 @@ namespace ClassLibrary_BPC.hrfocus.service
                                      {
                                          if (TREmpreduce.reduce_type.Equals("05"))
                                          {
-                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + "ค่าลดหย่อนบิดา1,";
+                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
                                              totalFatherReduce += (double)TREmpreduce.empreduce_amount;
-                                             break; // หยุดการวนลูปเมื่อพบข้อมูลที่ต้องการ
+                                             break;
                                          }
                                      }
                                  }
                              }
-
-                             // หากไม่พบข้อมูลที่ต้องการ
                              if (totalFatherReduce == 0)
                              {
-                                 bkData += " ,"; // ใส่ช่องว่างเมื่อไม่พบข้อมูล
+                                 bkData += ","; 
                              }
 
 
-                              
-
-
-
-                             ///
 
                            // //39	เลขประจำตัวประชาชนบิดา ผู้มีเงินได้ (ใบแนบฯ.4)
                              foreach (cls_TREmpfamily family in list_Empfamily)
@@ -2281,12 +2132,12 @@ namespace ClassLibrary_BPC.hrfocus.service
                                          {
                                              if (family.empfamily_code != null && family.empfamily_code.Length == 13)
                                              {
-                                                 bkData += family.empfamily_code + "เลขประจำตัวประชาชนบิดา,";
+                                                 bkData += family.empfamily_code + ",";
                                                  break;
                                              }
                                              else
                                              {
-                                                 bkData += " " + "เลขประจำตัวประชาชนบิดา,";
+                                                 bkData += " " + ",";
                                              }
                                              break;
                                          }
@@ -2306,18 +2157,17 @@ namespace ClassLibrary_BPC.hrfocus.service
                                      {
                                          if (TREmpreduce.reduce_type.Equals("06"))
                                          {
-                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + "ค่าลดหย่อนมารดา11,";
+                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
                                              reduce06Data += (double)TREmpreduce.empreduce_amount;
-                                             break; // หยุดการวนลูปเมื่อพบข้อมูลที่ต้องการ
+                                             break; 
                                          }
                                      }
                                  }
                              }
 
-                             // หากไม่พบข้อมูลที่ต้องการ
                              if (reduce06Data == 0)
                              {
-                                 bkData += "ค่าลดหย่อนมารดา// ,"; // ใส่ช่องว่างเมื่อไม่พบข้อมูล
+                                 bkData += ","; 
                              }
 
 
@@ -2358,18 +2208,17 @@ namespace ClassLibrary_BPC.hrfocus.service
                                      {
                                          if (TREmpreduce.reduce_type.Equals("07"))
                                          {
-                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + "ค่าลดหย่อนบิดา,";
+                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
                                              reduce1617Data += (double)TREmpreduce.empreduce_amount;
-                                             break; // หยุดการวนลูปเมื่อพบข้อมูลที่ต้องการ
+                                             break;
                                          }
                                      }
                                  }
                              }
 
-                             // หากไม่พบข้อมูลที่ต้องการ
                              if (reduce1617Data == 0)
                              {
-                                 bkData += "ค่าลดหย่อนบิดา// ,"; // ใส่ช่องว่างเมื่อไม่พบข้อมูล
+                                 bkData += ","; 
                              }
 
  
@@ -2411,18 +2260,17 @@ namespace ClassLibrary_BPC.hrfocus.service
                                      {
                                          if (TREmpreduce.reduce_type.Equals("08"))
                                          {
-                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + "ค่าลดหย่อนมารดา,";
+                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
                                              reduce08Data += (double)TREmpreduce.empreduce_amount;
-                                             break; // หยุดการวนลูปเมื่อพบข้อมูลที่ต้องการ
+                                             break; 
                                          }
                                      }
                                  }
                              }
 
-                             // หากไม่พบข้อมูลที่ต้องการ
                              if (reduce08Data == 0)
                              {
-                                 bkData += "ค่าลดหย่อนมารดา// ,"; // ใส่ช่องว่างเมื่อไม่พบข้อมูล
+                                 bkData += ","; 
                              }
 
 
