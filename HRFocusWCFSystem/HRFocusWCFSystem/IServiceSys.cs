@@ -1795,6 +1795,20 @@ namespace HRFocusWCFSystem
         string Approve(InputApprovedoc input);
         #endregion
 
+        #region MTArea
+        [OperationContract(Name = "area_list")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string getMTAreaList(InputMTArea input);
+
+        [OperationContract(Name = "area")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doManageMTArea(InputMTArea input);
+
+        [OperationContract(Name = "area_del")]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json)]
+        string doDeleteeMTArea(InputMTArea input);
+        #endregion
+
 
 
         //FNTCompareamount_list

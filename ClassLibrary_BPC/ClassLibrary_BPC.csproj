@@ -65,6 +65,7 @@
     <Compile Include="hrfocus.controller\cls_ctFNTCompareamount.cs" />
     <Compile Include="hrfocus.controller\cls_ctFNTComparefixamount.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTAccount.cs" />
+    <Compile Include="hrfocus.controller\cls_ctMTArea.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTEmpStatus.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTJobtable.cs" />
     <Compile Include="hrfocus.controller\cls_ctMTMailconfig.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="hrfocus.controller\cls_ctTRAccountapprove.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRAccountdep.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRAccountpos.cs" />
+    <Compile Include="hrfocus.controller\cls_ctTRArea.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRAttTimecardDash.cs" />
     <Compile Include="hrfocus.controller\cls_ctTRAttTtimeleaveDash.cs" />
     <Compile Include="hrfocus.controller\cls_ctTREmpEempdepDash.cs" />
@@ -216,6 +218,8 @@
     <Compile Include="hrfocus.controller\cls_ctTRTimecard.cs" />
     <Compile Include="hrfocus.model\cls_FNTCompareamount.cs" />
     <Compile Include="hrfocus.model\cls_FNTComparefixamount.cs" />
+    <Compile Include="hrfocus.model\cls_MTArea.cs" />
+    <Compile Include="hrfocus.model\cls_TRArea.cs" />
     <Compile Include="hrfocus.model\cls_TRVerify.cs" />
     <Compile Include="hrfocus.model\cls_MTAccount.cs" />
     <Compile Include="hrfocus.model\cls_MTBdashboard.cs" />
