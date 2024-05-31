@@ -18065,7 +18065,7 @@ namespace HRFocusWCFSystem
                 var setupCode = setupInfo.ManualEntryKey;
 
                 string uri = string.Format("otpauth://totp/{0}:{1}?secret={2}&issuer={0}", Uri.EscapeDataString("iHR Authenticator"), Uri.EscapeDataString(usr), Uri.EscapeDataString(setupCode));
-                string zxingOnlineURL = string.Format("https://zxing.org/w/chart?cht=qr&chs=300x300&chl={0}", Uri.EscapeDataString(uri));
+                string zxingOnlineURL = string.Format("https://quickchart.io/qr?text={0}&size=300", Uri.EscapeDataString(uri));
 
                 json.Add("barcode", zxingOnlineURL);
                 json.Add("setupcode", setupCode);
