@@ -104,16 +104,19 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(strCondition);
         }
 
+       
+
         public List<cls_TREmpfamily> getDataByFillter2(string com, string worker)
         {
             string strCondition = " AND COMPANY_CODE='" + com + "'";
-
-            if (!worker.Equals(""))
-                strCondition += " AND WORKER_CODE=" + worker + "";
-
+             strCondition += " AND WORKER_CODE IN (" + worker + ") ";
 
             return this.getData(strCondition);
         }
+
+
+
+
         public bool checkDataOld(string com, string worker, string type, string card)
         {
             bool blnResult = false;

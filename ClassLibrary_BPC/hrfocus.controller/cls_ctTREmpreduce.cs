@@ -90,6 +90,15 @@ namespace ClassLibrary_BPC.hrfocus.controller
             return this.getData(strCondition);
         }
 
+
+        public List<cls_TREmpreduce> getDataByFillter2(string com, string worker)
+        {
+            string strCondition = " AND COMPANY_CODE='" + com + "'";
+            strCondition += " AND WORKER_CODE IN (" + worker + ") ";
+
+            return this.getData(strCondition);
+        }
+
         public bool checkDataOld(string com, string worker, string type)
         {
             bool blnResult = false;

@@ -795,11 +795,6 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                          }
 
- 
-
-
-
-
                         douTotal += paytran.paytran_netpay_b;
 
                         index++;
@@ -1048,7 +1043,7 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                 //-- Get Empbenefit
                 cls_ctTREmpreduce objEmpreduce = new cls_ctTREmpreduce();
-                List<cls_TREmpreduce> list_Empreduce = objEmpreduce.getDataByFillter(com, "");
+                List<cls_TREmpreduce> list_Empreduce = objEmpreduce.getDataByFillter2(com, strEmp);
 
 
                 string tmpData = "";
@@ -1125,7 +1120,7 @@ namespace ClassLibrary_BPC.hrfocus.service
                             {
                                 //1.เลขประจำตัวประชาชน (ผู้มีเงินได้)
                                 if (comcard.comcard_code.Length == 13)
-                                    bkData += comcard.comcard_code + ",";
+                                    bkData += obj_card.empcard_code + ",";
                                 else
                                     bkData += "0000000000000"   + ",";
 
@@ -1144,148 +1139,214 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 bkData += obj_worker.worker_lname_th + ",";
 
                                 //6	สถานะผู้มีเงินได้"“0” = โสด “1” = สมรส “2” = หม้าย"
-                                foreach (cls_TREmpfamily worker in list_Empfamily)
+                                bool foundWorker = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    if (paytran.worker_code.Equals(worker.worker_code))
-                                    {
-                                        bool foundMatchingCondition = false;
-
-
-                                        if (worker.family_type.Equals("00") || worker.family_type.Equals("02") || worker.family_type.Equals("11"))
-                                        {
-                                            bkData += "1, "; // “1” = สมรส
-                                            foundMatchingCondition = true;
-                                        }
-                                        //else if (worker.family_type.Equals(""))
-                                        //{
-                                        //    bkData += "2,= หม้าย"; // “2” = หม้าย
-                                        //    foundMatchingCondition = true;
-                                        //}
-
-                                        if (!foundMatchingCondition)
-                                        {
-                                            bkData += "0,"; // “0” = โสด
-                                        }
-                                    } break;
+                                    bkData += "0,";
                                 }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily worker in list_Empfamily)
+                                    {
+                                        if (paytran.worker_code.Equals(worker.worker_code))
+                                        {
+                                            foundWorker = true;
+                                            bool foundMatchingCondition = false;
+
+                                            if (worker.family_type.Equals("00") || worker.family_type.Equals("02") || worker.family_type.Equals("11"))
+                                            {
+                                                bkData += "1, "; // “1” = สมรส
+                                                foundMatchingCondition = true;
+                                            }
+
+                                            if (!foundMatchingCondition)
+                                            {
+                                                bkData += "0,"; // “0” = โสด
+                                            }
+
+                                            break;
+                                        }
+                                    }
+
+                                    if (!foundWorker)
+                                    {
+                                        bkData += "0,"; // “0” = โสด
+                                    }
+                                }
+
+
 
 
                                 //7	สถานภาพการสมรส cls_ctTREmpfamily
-                                foreach (cls_TREmpfamily worker in list_Empfamily)
+                                 bool foundWorker7 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    if (paytran.worker_code.Equals(worker.worker_code))
-                                    {
-                                        bool foundMatchingCondition = false;
-                                        if (worker.family_type.Equals("00"))
-                                        {
-                                            bkData += "2,"; //“2” = คู่สมรสมีเงินได้ และอยู่ร่วมกันตลอดปีภาษี
-                                            foundMatchingCondition = true;
-                                        }
-                                        if (!foundMatchingCondition)
-                                        {
-                                            bkData += "1,"; // “1” = ไม่มีคู่สมรส
-                                        }
-                                        if (worker.family_type.Equals(""))
-                                        {
-                                            bkData = "3,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
-                                            break;
-                                        }
-                                        if (worker.family_type.Equals(""))
-                                        {
-                                            bkData = "4,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
-                                            break;
-                                        }
-                                        if (worker.family_type.Equals(""))
-                                        {
-                                            bkData = "5,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
-                                            break;
-                                        }
-                                        if (worker.family_type.Equals(""))
-                                        {
-                                            bkData = "6,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
-                                            break;
-                                        }
-                                        if (worker.family_type.Equals(""))
-                                        {
-                                            bkData = "7,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
-                                            break;
-                                        }
-                                        if (worker.family_type.Equals(""))
-                                        {
-                                            bkData = "8,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
-                                            break;
-                                        }
-                                        if (worker.family_type.Equals(""))
-                                        {
-                                            bkData = "9,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
-                                            break;
-                                        }
-                                    } break;
+                                    bkData += "1,";
                                 }
-
-                                // //8	เลขประจำตัวประชาชน (คู่สมรส)
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                else
                                 {
-                                    if (paytran.worker_code.Equals(family.worker_code))
+                                    foreach (cls_TREmpfamily worker in list_Empfamily)
                                     {
-
-
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                        if (paytran.worker_code.Equals(worker.worker_code))
                                         {
-                                            if (family.family_type == "00")
-                                            {
-                                                if (family.empfamily_code != null && family.empfamily_code.Length == 13)
-                                                {
-                                                    bkData += family.empfamily_code + ",";
-                                                }
-                                                else
-                                                {
-                                                    bkData += " " +  ",";
-                                                }
+                                            foundWorker7 = true;
 
+                                            bool foundMatchingCondition = false;
+                                            if (worker.family_type.Equals("00"))
+                                            {
+                                                bkData += "2,"; //“2” = คู่สมรสมีเงินได้ และอยู่ร่วมกันตลอดปีภาษี
+                                                foundMatchingCondition = true;
+                                            }
+                                            if (!foundMatchingCondition)
+                                            {
+                                                bkData += "1,"; // “1” = ไม่มีคู่สมรส
+                                            }
+                                            if (worker.family_type.Equals(""))
+                                            {
+                                                bkData = "3,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
+                                                break;
+                                            }
+                                            if (worker.family_type.Equals(""))
+                                            {
+                                                bkData = "4,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
+                                                break;
+                                            }
+                                            if (worker.family_type.Equals(""))
+                                            {
+                                                bkData = "5,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
+                                                break;
+                                            }
+                                            if (worker.family_type.Equals(""))
+                                            {
+                                                bkData = "6,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
+                                                break;
+                                            }
+                                            if (worker.family_type.Equals(""))
+                                            {
+                                                bkData = "7,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
+                                                break;
+                                            }
+                                            if (worker.family_type.Equals(""))
+                                            {
+                                                bkData = "8,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
+                                                break;
+                                            }
+                                            if (worker.family_type.Equals(""))
+                                            {
+                                                bkData = "9,"; // “3” = คู่สมรสมีเงินได้ สมรสระหว่างปีภาษี
                                                 break;
                                             }
                                         }
                                     }
                                 }
 
+                                if (!foundWorker7)
+                                {
+                                    bkData += "1,"; // “1” = ไม่มีคู่สมรส ถ้าไม่มีการจับคู่ใดๆ
+                                }
+
+
+
+                                // //8	เลขประจำตัวประชาชน (คู่สมรส)
+                                bool foundWorker8 = false;
+
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
+                                    {
+                                        if (paytran.worker_code.Equals(family.worker_code))
+                                        {
+
+                                            foundWorker8 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if (family.family_type == "00")
+                                                {
+                                                    if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                    {
+                                                        bkData += family.empfamily_code + ",";
+                                                    }
+                                                    else
+                                                    {
+                                                        bkData +=  ",";
+                                                    }
+
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (!foundWorker8)
+                                {
+                                    bkData += ",";  
+                                }
+
+
+
 
                                 // //9	คำนำหน้าชื่อ (คู่สมรส)
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                //bool foundWorker9 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    if (paytran.worker_code.Equals(family.worker_code))
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
-                                        // เพิ่มคำนำหน้าชื่อของคู่สมรสลงใน bkData
-                                        //bkData += obj_worker.initial_name_en  ;
-
-                                        // ตรวจสอบประเภทของครอบครัว
-                                        if (family.family_type == "00")
+                                        if (paytran.worker_code.Equals(family.worker_code))
                                         {
-                                            // หากเป็นประเภท "00" กำหนดค่าให้เป็น "9."
-                                            bkData += ",";
+                                            
+                                            //bkData += obj_worker.initial_name_en  ;
+
+                                            // ตรวจสอบประเภทของครอบครัว
+                                            if (family.family_type == "00")
+                                            {
+                                                 bkData += ",";
+                                            }
+
+
+                                            break; 
                                         }
-
-
-                                        break; // พบข้อมูลแล้วจึงออกจากลูป
                                     }
                                 }
 
 
                                 //10	ชื่อ (คู่สมรส)
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                bool foundWorker10 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    if (paytran.worker_code.Equals(family.worker_code))
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                        if (paytran.worker_code.Equals(family.worker_code))
                                         {
+                                            foundWorker10 = true;
 
                                             if (family.family_type == "00")
                                             {
                                                 bkData += family.empfamily_fname_en + ",";
                                                 break;
                                             }
-
                                         }
+                                    }
+
+                                    if (!foundWorker10)
+                                    {
+                                        bkData += ",";
                                     }
                                 }
 
@@ -1293,249 +1354,462 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
                                 // //11	ชื่อกลาง (คู่สมรส) (ถ้ามี)
-                                foreach (cls_TREmpfamily family in list_Empfamily)
-                                {
-                                    if (paytran.worker_code.Equals(family.worker_code))
-                                    {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                        {
+                                bool foundWorker11 = false;
 
-                                            if (family.family_type == "00")
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
+                                    {
+                                        if (paytran.worker_code.Equals(family.worker_code))
+                                        {
+                                            foundWorker11 = true;
+
+                                            bool foundFamilyType00 = false;
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                             {
-                                                bkData += "" + ",";
-                                                break;
+                                                if (family.family_type == "00")
+                                                {
+                                                    bkData += "" + ","; // คุณต้องการเพิ่มค่าว่างลงใน bkData
+                                                    foundFamilyType00 = true;
+                                                    break;
+                                                }
                                             }
 
+                                            if (!foundFamilyType00)
+                                            {
+                                                bkData += ",";
+                                            }
+
+                                            break; // หยุดการวนลูปเมื่อเจอ worker_code ที่ตรงกัน
                                         }
                                     }
                                 }
+
+                                if (!foundWorker11)
+                                {
+                                    bkData += ",";
+                                }
+
 
                                 //    }
                                 // //12	นามสกุล (คู่สมรส)
-                                foreach (cls_TREmpfamily family in list_Empfamily)
-                                {
-                                    if (paytran.worker_code.Equals(family.worker_code))
-                                    {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                        {
+                                bool foundWorker12 = false;
 
-                                            if (family.family_type == "00")
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
+                                    {
+                                        if (paytran.worker_code.Equals(family.worker_code))
+                                        {
+                                            foundWorker12 = true;
+
+                                            bool foundFamilyType00 = false;
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                             {
-                                                bkData += family.empfamily_lname_en + ",";
-                                                break;
+                                                if (family.family_type == "00")
+                                                {
+                                                    bkData += family.empfamily_lname_en + ",";
+                                                    foundFamilyType00 = true;
+                                                    break;
+                                                }
                                             }
 
+                                            if (!foundFamilyType00)
+                                            {
+                                                bkData += ",";
+                                            }
+
+                                            break; // หยุดการวนลูปเมื่อเจอ worker_code ที่ตรงกัน
                                         }
                                     }
                                 }
 
+                                if (!foundWorker12)
+                                {
+                                    bkData += ",";
+                                }
+
+
+
 
                                 // //13	เงินได้พึงประเมิน (ก.1)
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                bool foundWorker13 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    bool reduceData13 = false; 
-
-                                    if (paytran.worker_code.Equals(family.worker_code))
+                                    bkData += "0.00,";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                        {
-                                            if (TREmpreduce.reduce_type.Equals("")) //ไม่มีข้อมูล
-                                            {
-                                                bkData += TREmpreduce.empreduce_amount + ",";
-                                                reduceData13 = true;
-                                                break;
-                                            }
-                                        }
+                                        //bool reduceData13 = false;
 
-                                        if (!reduceData13)
+                                        if (paytran.worker_code.Equals(family.worker_code))
                                         {
-                                            bkData += ",";
-                                        }
-                                    } break;
+                                            foundWorker13 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if (TREmpreduce.reduce_type.Equals("")) //ไม่มีข้อมูล
+                                                {
+                                                    bkData += TREmpreduce.empreduce_amount + ",";
+                                                    //reduceData13 = true;
+                                                    break;
+                                                }
+                                            }
+
+                                            //if (!reduceData13)
+                                            //{
+                                            //    bkData += "0.00,";
+                                            //}
+                                        } 
+                                    }
+                                }
+                                if (!foundWorker13)
+                                {
+                                    bkData += "0.00,";
                                 }
 
 
 
                                 // //14	หัก เงินบริจาคสนับสนุนการศึกษา (ก.8)
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                bool foundWorker14 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    bool reduceData30 = false;  
-
-                                    if (paytran.worker_code.Equals(family.worker_code))
+                                    bkData += "0.00,";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                        {
-                                            if (TREmpreduce.reduce_type.Equals("30"))
-                                            {
-                                                bkData += TREmpreduce.empreduce_amount + ",";  
-                                                reduceData30 = true;
-                                                break;
-                                            }
-                                        }
+                                        bool reduceData30 = false;
 
-                                        if (!reduceData30)
+                                        if (paytran.worker_code.Equals(family.worker_code))
                                         {
-                                            bkData += ",";
-                                        }
-                                    } break;
+                                            foundWorker14 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if (TREmpreduce.reduce_type.Equals("30"))
+                                                {
+                                                    bkData += TREmpreduce.empreduce_amount + ",";
+                                                    reduceData30 = true;
+                                                    break;
+                                                }
+                                            }
+
+                                            if (!reduceData30)
+                                            {
+                                                //bkData += "0.00,";
+                                            }
+                                        } break;
+                                    }
+                                } if (!foundWorker14)
+                                {
+                                    bkData += "0.00,";
                                 }
 
-
                                 // //15	หัก เงินบริจาค (ก.10)////////////
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                bool foundWorker15 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-
-                                    if (paytran.worker_code.Equals(family.worker_code))
+                                    bkData += "0.00,";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+
+                                        if (paytran.worker_code.Equals(family.worker_code))
                                         {
-                                            if (TREmpreduce.reduce_type.Equals("31"))
+                                            foundWorker15 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                             {
-                                                bkData += TREmpreduce.empreduce_amount + "" + ",";
-                                                reduceData = true;
-                                                break;
+                                                if (TREmpreduce.reduce_type.Equals("31"))
+                                                {
+                                                    bkData += TREmpreduce.empreduce_amount   + ",";
+                                                    reduceData = true;
+                                                    break;
 
+                                                }
                                             }
-                                        }
 
-                                        if (!reduceData)
-                                        {
-                                            bkData += ",";
-                                        }
-                                    } break;
+                                            if (!reduceData)
+                                            {
+                                                //bkData += "0.00,";
+                                            }
+                                        } break;
+                                    }
+                                } if (!foundWorker15)
+                                {
+                                    bkData += "0.00,";
                                 }
 
 
                                 // //16	หัก ภาษีหัก ณ ที่จ่าย (ก.13)///
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                bool foundWorker16 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-
-                                    if (paytran.worker_code.Equals(family.worker_code))
+                                    bkData += "0.00,";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
 
-                                        bkData += paytran.paytran_tax_401 + "" + ",";
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        bkData += ",";
-                                        break;
+                                        if (paytran.worker_code.Equals(family.worker_code))
+                                        {
+                                            foundWorker16 = true;
+
+                                            bkData += paytran.paytran_tax_401   + ",";
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            //bkData += "0.00,";
+                                            break;
+                                        }
                                     }
 
-
+                                }
+                                if (!foundWorker16)
+                                {
+                                    bkData += "0.00,";
                                 }
 
 
-
                                 // //17	รวมภาษีที่ต้องชำระ (ก.18, 20)
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                bool foundWorker17 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-
-                                    if (paytran.worker_code.Equals(family.worker_code))
+                                    bkData += "0.00,";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
 
-                                        bkData += paytran.paytran_tax_4012 + paytran.paytran_tax_4012 + paytran.paytran_tax_4013 + paytran.paytran_tax_402I + paytran.paytran_tax_402O + ",";
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        bkData += ",";
-                                        break;
-                                    }
+                                        if (paytran.worker_code.Equals(family.worker_code))
+                                        {
+                                            foundWorker17 = true;
 
+                                            bkData += paytran.paytran_tax_4012 + paytran.paytran_tax_4012 + paytran.paytran_tax_4013 + paytran.paytran_tax_402I + paytran.paytran_tax_402O + ",";
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            //bkData += "0.00,";
+                                            break;
+                                        }
 
+                                    }
+                                } if (!foundWorker17)
+                                {
+                                    bkData += "0.00,";
                                 }
                                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-                                // //18	เงินสะสมกองทุนสำรองเลี้ยงชีพ (ส่วนที่เกิน 10,000) (ข.1)///////////////////////
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                 // //18	เงินสะสมกองทุนสำรองเลี้ยงชีพ (ส่วนที่เกิน 10,000) (ข.1)
+                                bool foundWorker18 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    if (paytran.worker_code.Equals(family.worker_code))
-                                    {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                        {
-                                            if (TREmpreduce.reduce_type.Equals("PF") && TREmpreduce.empreduce_amount > 10000)
-                                            {
-                                                bkData += TREmpreduce.empreduce_amount  + ",";
-                                                break;
-                                            }
-                                        }
-                                        if (!bkData.EndsWith("ข.1,"))
-                                        {
-                                            bkData += ",";
-                                        }
-                                    }
+                                    bkData += "0.00,";
                                 }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
+                                    {
+
+                                        if (paytran.worker_code.Equals(family.worker_code))
+                                        {
+                                            foundWorker18 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if (TREmpreduce.reduce_type.Equals("PF") && TREmpreduce.empreduce_amount > 10000)
+                                                {
+                                                    bkData += TREmpreduce.empreduce_amount   + ",";
+                                                    reduceData = true;
+                                                    break;
+
+                                                }
+                                            }
+
+                                            if (!reduceData)
+                                            {
+                                                //bkData += "0.00,";
+                                            }
+                                        } break;
+                                    }
+                                } if (!foundWorker18)
+                                {
+                                    bkData += "0.00,";
+                                }
+
+
+                                //foreach (cls_TREmpfamily family in list_Empfamily)
+                                //{
+                                //    if (paytran.worker_code.Equals(family.worker_code))
+                                //    {
+                                //        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                //        {
+                                //            if (TREmpreduce.reduce_type.Equals("PF") && TREmpreduce.empreduce_amount > 10000)
+                                //            {
+                                //                bkData += TREmpreduce.empreduce_amount + ",";
+                                //                break;
+                                //            }
+                                //            else
+                                //            {
+                                //                bkData += ",";
+                                //                //
+                                //            }break;
+                                //        }
+                                //    }
+                                //}
+                                            
+                                       
+
 
                                 // //19	เงินสะสม กบข. (ข.2)//แก้ไข
+                                bool foundWorker19 = false;
+
                                 decimal totalpfAmountk2 = 0m;
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                    bkData += "0.00,";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
-                                        foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                        if (paytran.worker_code.Equals(family.worker_code))
                                         {
-                                            if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                            foundWorker19 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                             {
-                                                if (empReduce.reduce_type.Equals(" "))
+                                                foreach (cls_TREmpreduce empReduce in list_Empreduce)
                                                 {
-                                                    decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                                    totalpfAmountk2 += amountToAdd;
-                                                    break;
+                                                    if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                                    {
+                                                        if (empReduce.reduce_type.Equals(" "))
+                                                        {
+                                                            decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                            totalpfAmountk2 += amountToAdd;
+                                                            bkData += totalpfAmountk2 + ",";
+
+                                                            break;
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
                                     }
+                                } if (!foundWorker19)
+                                {
+                                    bkData += "0.00,";
                                 }
-                                bkData += "0.00"  + ",";
+                                //bkData += "0.00"  + ",";
 
                                 // //20	เงินสะสมกองทุนสงเคราะห์ครูฯ (ข.3)//แก้ไข
+                                bool foundWorker20 = false;
+
                                 decimal totalpfAmountk3 = 0m;
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                    bkData += "0.00,";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
-                                        foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                        if (paytran.worker_code.Equals(family.worker_code))
                                         {
-                                            if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                            foundWorker20 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                             {
-                                                if (empReduce.reduce_type.Equals(" "))
+                                                foreach (cls_TREmpreduce empReduce in list_Empreduce)
                                                 {
-                                                    decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                                    totalpfAmountk3 += amountToAdd;
-                                                    break;
+                                                    if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                                    {
+                                                        if (empReduce.reduce_type.Equals(" "))
+                                                        {
+                                                            decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                            totalpfAmountk3 += amountToAdd;
+                                                            bkData += totalpfAmountk3 + ",";
+                                                            break;
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
                                     }
+                                } if (!foundWorker20)
+                                {
+                                    bkData += "0.00,";
                                 }
-                                bkData += "0.00"  + ",";
+                                //bkData += "0.00"  + ",";
 
                                 // //21	ค่าลดหย่อนคู่สมรส (ใบแนบฯ.2)//////////////////แก้ไข
                                 double reduce02Data = 0;
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                bool foundWorker21 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    if ((family.family_type == "00" || family.family_type.Equals("02") || family.family_type.Equals("	11")))
+                                    bkData += "0.00,";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                        if (paytran.worker_code.Equals(family.worker_code))
                                         {
-                                            if (TREmpreduce.reduce_type.Equals("02"))
+                                            foundWorker21 = true;
+
+                                            if ((family.family_type == "00" || family.family_type.Equals("02") || family.family_type.Equals("11")))
                                             {
-                                                bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
-                                                reduce02Data += (double)TREmpreduce.empreduce_amount;
-                                                break;  
+                                                foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                                {
+                                                    if (TREmpreduce.reduce_type.Equals("02"))
+                                                    {
+                                                        bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
+                                                        reduce02Data += (double)TREmpreduce.empreduce_amount;
+                                                        bkData += reduce02Data + ",";
+
+                                                        break;
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
-
-                                // หากไม่พบข้อมูลที่ต้องการ
-                                if (reduce02Data == 0)
+                                if (!foundWorker21)
                                 {
-                                    bkData += ","; 
+                                    bkData += "0.00,";
                                 }
+                                // หากไม่พบข้อมูลที่ต้องการ
+                                //if (reduce02Data == 0)
+                                //{
+                                //    bkData += ","; 
+                                //}
 
 
 
@@ -1544,31 +1818,48 @@ namespace ClassLibrary_BPC.hrfocus.service
                               
 
                                 // //22	จำนวนบุตร 30,000 บาท (ใบแนบฯ.3)  มีกี่คน
-                                foreach (cls_TREmpfamily family in list_Empfamily)
-                                {
-                                    bool foundChildReduce = false;
-                                    int countChildren = 0;
+                                //double reduce02Data = 0;
+                                bool foundWorker22 = false;
 
-                                    foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
-                                        if (TREmpreduce.reduce_type.Equals("03") || family.family_type == "07" || family.family_type == "10")
+                                        bool foundChildReduce = false;
+                                        int countChildren = 0;
+                                        if (paytran.worker_code.Equals(family.worker_code))
                                         {
-                                            foundChildReduce = true;
+                                            foundWorker22 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if (TREmpreduce.reduce_type.Equals("03") || family.family_type == "07" || family.family_type == "10")
+                                                {
+                                                    foundChildReduce = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (foundChildReduce)
+                                        {
+                                            bkData += (countChildren + 1) + ",";
                                             break;
                                         }
-                                    }
-
-                                    if (foundChildReduce)
-                                    {
-                                        bkData += (countChildren + 1) + ",";
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        bkData += ",";
+                                        else
+                                        {
+                                            //bkData += "0.00,";
+                                        }
                                     }
                                 }
-
+                                if (!foundWorker22)
+                                {
+                                    bkData += ",";
+                                }
 
 
                                 //bool foundChild7 = false;  
@@ -1576,80 +1867,99 @@ namespace ClassLibrary_BPC.hrfocus.service
                                 int countChildren23 = 0;
 
                                 //23 เลขประจำตัวประชาชนบุตร 1
-                                foreach (cls_TREmpfamily family in list_Empfamily)
+                                bool foundWorker23 = false;
+
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    if (paytran.worker_code.Equals(family.worker_code))
-                                    {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                        {
-
-                                            if ((family.family_type == "07" || family.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
-                                            {
-                                                foreach (cls_TREmpfamily prevFamily in list_Empfamily)
-                                                {
-                                                     if (prevFamily.empfamily_birthdate <= family.empfamily_birthdate)
-                                                    {
-                                                        if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
-                                                        {
-                                                            bkData += prevFamily.empfamily_code + ",";
-                                                            foundChildReduce1 = true;
-                                                            break;
-                                                        }
-                                                        else
-                                                        {
-                                                            bkData += "" + ",";
-                                                            foundChildReduce1 = true;
-
-                                                        }
-                                                        countChildren23++; 
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                    bkData += ",";
                                 }
-
-                                int countChildren2 = 0;  
-                                bool foundChildReduce2 = false; 
-
-                                foreach (cls_TREmpfamily family1 in list_Empfamily)
+                                else
                                 {
-                                    if (paytran.worker_code.Equals(family1.worker_code))
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
                                     {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                        if (paytran.worker_code.Equals(family.worker_code))
                                         {
-                                            if ((family1.family_type == "07" || family1.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                             {
-                                                foreach (cls_TREmpfamily prevFamily in list_Empfamily)
-                                                {
-                                                     if (prevFamily.empfamily_birthdate > family1.empfamily_birthdate)
-                                                    {
-                                                        if (!foundChildReduce2) 
-                                                        {
-                                                            foundChildReduce2 = true;
-                                                            countChildren2++;  
+                                                foundWorker23 = true;
 
-                                                             if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                if ((family.family_type == "07" || family.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
+                                                {
+                                                    foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                                    {
+                                                        if (prevFamily.empfamily_birthdate <= family.empfamily_birthdate)
+                                                        {
+                                                            if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
                                                             {
                                                                 bkData += prevFamily.empfamily_code + ",";
+                                                                foundChildReduce1 = true;
+                                                                break;
                                                             }
                                                             else
                                                             {
-                                                                bkData += ",";
+                                                                bkData += "" + ",";
+                                                                foundChildReduce1 = true;
+
                                                             }
-
-
-                                                             break;
+                                                            countChildren23++;
+                                                            break;
                                                         }
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                    if (!foundChildReduce2)
+                                } if (!foundWorker23)
+                                {
+                                    bkData += "0.00,";
+                                }
+
+                                int countChildren2 = 0;  
+                                bool foundChildReduce2 = false;
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family1 in list_Empfamily)
                                     {
-                                        bkData += ","; break;
+                                        if (paytran.worker_code.Equals(family1.worker_code))
+                                        {
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if ((family1.family_type == "07" || family1.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
+                                                {
+                                                    foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                                    {
+                                                        if (prevFamily.empfamily_birthdate > family1.empfamily_birthdate)
+                                                        {
+                                                            if (!foundChildReduce2)
+                                                            {
+                                                                foundChildReduce2 = true;
+                                                                countChildren2++;
+
+                                                                if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                                {
+                                                                    bkData += prevFamily.empfamily_code + ",";
+                                                                }
+                                                                else
+                                                                {
+                                                                    bkData += ",";
+                                                                }
+
+
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (!foundChildReduce2)
+                                        {
+                                            bkData += ","; break;
+                                        }
                                     }
                                 }
 
@@ -1658,43 +1968,49 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                                 int countChildren3 = 0; 
                                 bool foundChildReduce3 = false; 
-
-                                foreach (cls_TREmpfamily family2 in list_Empfamily)
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    if (paytran.worker_code.Equals(family2.worker_code))
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family2 in list_Empfamily)
                                     {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                        if (paytran.worker_code.Equals(family2.worker_code))
                                         {
-                                            if ((family2.family_type == "07" || family2.family_type == "10") && !foundChildReduce3 && TREmpreduce.reduce_type.Equals("03"))
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                             {
-                                                foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                                if ((family2.family_type == "07" || family2.family_type == "10") && !foundChildReduce3 && TREmpreduce.reduce_type.Equals("03"))
                                                 {
-                                                    if (prevFamily.empfamily_birthdate > family2.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
+                                                    foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                     {
-                                                        if (!foundChildReduce3)
+                                                        if (prevFamily.empfamily_birthdate > family2.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                         {
-                                                            foundChildReduce3 = true;
-                                                            countChildren3++; 
+                                                            if (!foundChildReduce3)
+                                                            {
+                                                                foundChildReduce3 = true;
+                                                                countChildren3++;
 
-                                                            if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
-                                                            {
-                                                                bkData += prevFamily.empfamily_code + ",";
+                                                                if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                                {
+                                                                    bkData += prevFamily.empfamily_code + ",";
+                                                                }
+                                                                else
+                                                                {
+                                                                    bkData += ",";
+                                                                }
                                                             }
-                                                            else
-                                                            {
-                                                                bkData += ",";
-                                                            }
+                                                            break;
                                                         }
-                                                        break;
                                                     }
                                                 }
                                             }
                                         }
-                                    }
 
-                                     if (!foundChildReduce3)
-                                    {
-                                        bkData += ","; break;
+                                        if (!foundChildReduce3)
+                                        {
+                                            bkData += ","; break;
+                                        }
                                     }
                                 }
 
@@ -1703,210 +2019,257 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
                                 int countChildren4 = 0;
-                                bool foundChildReduce4 = false; 
-
-                                foreach (cls_TREmpfamily family3 in list_Empfamily)
+                                bool foundChildReduce4 = false;
+                                if (list_Empfamily.Count == 0)
                                 {
-                                    if (paytran.worker_code.Equals(family3.worker_code))
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family3 in list_Empfamily)
                                     {
-                                        foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                        if (paytran.worker_code.Equals(family3.worker_code))
                                         {
-                                            if ((family3.family_type == "07" || family3.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                             {
-                                                foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                                if ((family3.family_type == "07" || family3.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
                                                 {
-                                                    if (prevFamily.empfamily_birthdate > family3.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
+                                                    foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                     {
-                                                        if (!foundChildReduce4) 
+                                                        if (prevFamily.empfamily_birthdate > family3.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                         {
-                                                            foundChildReduce4 = true;
-                                                            countChildren4++; 
+                                                            if (!foundChildReduce4)
+                                                            {
+                                                                foundChildReduce4 = true;
+                                                                countChildren4++;
 
-                                                            if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
-                                                            {
-                                                                bkData += prevFamily.empfamily_code + ",";
+                                                                if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                                {
+                                                                    bkData += prevFamily.empfamily_code + ",";
+                                                                }
+                                                                else
+                                                                {
+                                                                    bkData += ",";
+                                                                }
                                                             }
-                                                            else
-                                                            {
-                                                                bkData += ",";
-                                                            }
+                                                            break;
                                                         }
-                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
+                                        if (!foundChildReduce4)
+                                        {
+                                            bkData += ","; break;
+                                        }
                                     }
                                 }
-                                if (!foundChildReduce4)
-                                {
-                                    bkData += ","; break;
-                                }
-                            }
 
 
                              int countChildren5 = 0; 
                              bool foundChildReduce5 = false; 
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family4 in list_Empfamily)
+                                    {
+                                        if (paytran.worker_code.Equals(family4.worker_code))
+                                        {
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if ((family4.family_type == "07" || family4.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
+                                                {
+                                                    foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                                    {
+                                                        if (prevFamily.empfamily_birthdate > family4.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
+                                                        {
+                                                            if (!foundChildReduce5)
+                                                            {
+                                                                foundChildReduce5 = true;
+                                                                countChildren5++;
+                                                                if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                                {
+                                                                    bkData += prevFamily.empfamily_code + ",";
+                                                                }
+                                                                else
+                                                                {
+                                                                    bkData += ",";
+                                                                }
+                                                            }
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //}
 
-                             foreach (cls_TREmpfamily family4 in list_Empfamily)
-                             {
-                                 if (paytran.worker_code.Equals(family4.worker_code))
-                                 {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                     {
-                                         if ((family4.family_type == "07" || family4.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
-                                         {
-                                             foreach (cls_TREmpfamily prevFamily in list_Empfamily)
-                                             {
-                                                 if (prevFamily.empfamily_birthdate > family4.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
-                                                 {
-                                                     if (!foundChildReduce5) 
-                                                     {
-                                                         foundChildReduce5 = true;
-                                                         countChildren5++; 
-                                                         if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
-                                                         {
-                                                             bkData += prevFamily.empfamily_code + ",";
-                                                         }
-                                                         else
-                                                         {
-                                                             bkData += ",";
-                                                         }
-                                                     }
-                                                     break;
-                                                 }
-                                             }
-                                         }
-                                     }
-                                 }
-                                 //}
-
-                                 if (!foundChildReduce5)
-                                 {
-                                     bkData += ","; break;
-                                 }
+                                        if (!foundChildReduce5)
+                                        {
+                                            bkData += ","; break;
+                                        }
+                                    }
                              }
 
 
                              int countChildren6 = 0;
                              bool foundChildReduce6 = false;
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family5 in list_Empfamily)
+                                    {
+                                        if (paytran.worker_code.Equals(family5.worker_code))
+                                        {
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if ((family5.family_type == "07" || family5.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
+                                                {
+                                                    foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                                    {
+                                                        if (prevFamily.empfamily_birthdate > family5.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
+                                                        {
+                                                            if (!foundChildReduce6)
+                                                            {
+                                                                foundChildReduce6 = true;
+                                                                countChildren6++;
 
-                             foreach (cls_TREmpfamily family5 in list_Empfamily)
-                             {
-                                 if (paytran.worker_code.Equals(family5.worker_code))
-                                 {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                     {
-                                         if ((family5.family_type == "07" || family5.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
-                                         {
-                                             foreach (cls_TREmpfamily prevFamily in list_Empfamily)
-                                             {
-                                                 if (prevFamily.empfamily_birthdate > family5.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
-                                                 {
-                                                     if (!foundChildReduce6)
-                                                     {
-                                                         foundChildReduce6 = true;
-                                                         countChildren6++; 
+                                                                if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                                {
+                                                                    bkData += prevFamily.empfamily_code + ",";
+                                                                }
+                                                                else
+                                                                {
+                                                                    bkData += ",";
+                                                                }
+                                                            }
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
 
-                                                         if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
-                                                         {
-                                                             bkData += prevFamily.empfamily_code + ",";
-                                                         }
-                                                         else
-                                                         {
-                                                             bkData += ",";
-                                                         }
-                                                     }
-                                                     break;
-                                                 }
-                                             }
-                                         }
-                                     }
-
-                                 }
-                                 if (!foundChildReduce6)
-                                 {
-                                     bkData += ","; break;
-                                 }
+                                        }
+                                        if (!foundChildReduce6)
+                                        {
+                                            bkData += ","; break;
+                                        }
+                                    }
                              }
 
                              int countChildren7 = 0; 
                              bool foundChildReduce7 = false;
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family6 in list_Empfamily)
+                                    {
+                                        if (paytran.worker_code.Equals(family6.worker_code))
+                                        {
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if ((family6.family_type == "07" || family6.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
+                                                {
+                                                    foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                                    {
+                                                        if (prevFamily.empfamily_birthdate > family6.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
+                                                        {
+                                                            if (!foundChildReduce7)
+                                                            {
+                                                                foundChildReduce7 = true;
+                                                                countChildren7++;
 
-                             foreach (cls_TREmpfamily family6 in list_Empfamily)
-                             {
-                                 if (paytran.worker_code.Equals(family6.worker_code))
-                                 {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                     {
-                                         if ((family6.family_type == "07" || family6.family_type == "10") && !foundChildReduce1 && TREmpreduce.reduce_type.Equals("03"))
-                                         {
-                                             foreach (cls_TREmpfamily prevFamily in list_Empfamily)
-                                             {
-                                                 if (prevFamily.empfamily_birthdate > family6.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
-                                                 {
-                                                     if (!foundChildReduce7) 
-                                                     {
-                                                         foundChildReduce7 = true;
-                                                         countChildren7++; 
+                                                                if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                                {
+                                                                    bkData += prevFamily.empfamily_code + ",";
+                                                                }
+                                                                else
+                                                                {
+                                                                    bkData += ",";
+                                                                }
+                                                            }
 
-                                                         if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
-                                                         {
-                                                             bkData += prevFamily.empfamily_code + ",";
-                                                         }
-                                                         else
-                                                         {
-                                                             bkData += ",";
-                                                         }
-                                                     }
+                                                            break;
+                                                        }
+                                                    }
+                                                }
 
-                                                     break;
-                                                 }
-                                             }
-                                         }
-
-                                     }
-                                 }
-                                 if (!foundChildReduce7)
-                                 {
-                                     bkData += ","; break;
-                                 }
+                                            }
+                                        }
+                                        if (!foundChildReduce7)
+                                        {
+                                            bkData += ","; break;
+                                        }
+                                    }
                              }
 
 
                              // //30	ค่าลดหย่อนบุตร 30,000 บาท (ใบแนบฯ.3)
-                             foreach (cls_TREmpfamily family in list_Empfamily)
-                             {
-                                 bool reduce03Data = false; 
+                                bool foundWorker30 = false;
 
-                                 if (paytran.worker_code.Equals(family.worker_code))
-                                 {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                     {
-                                         if ((family.family_type == "07" || family.family_type == "10") && TREmpreduce.reduce_type.Equals("03"))
-                                         {
-                                             bkData += TREmpreduce.empreduce_amount + ",";
-                                             reduce03Data = true;
-                                             break;
-                                         }
-                                     }
-                                 }
-                             }
-  
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += "0.00,";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
+                                    {
+                                        bool reduce03Data = false;
+
+                                        if (paytran.worker_code.Equals(family.worker_code))
+                                        {
+                                            foundWorker30 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if ((family.family_type == "07" || family.family_type == "10") && TREmpreduce.reduce_type.Equals("03"))
+                                                {
+                                                    bkData += TREmpreduce.empreduce_amount + ",";
+                                                    reduce03Data = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (!foundWorker30)
+                                {
+                                    bkData += "0.00,";
+                                }
 
                            // //31	จำนวนบุตร 60,000 บาท (ใบแนบฯ.3) หาจำนวน เช็คปี 2561 หา คศ
-                             int checkyear = 0;  
-
-                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                             int checkyear = 0;
+                             if (list_Empfamily.Count == 0)
                              {
-                                 foreach (cls_TREmpfamily family in list_Empfamily)
+                                 bkData += "0.00,";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                  {
-                                     int year = family.empfamily_birthdate.Year + 543;
-
-                                     if (year == 2561)
+                                     if (paytran.worker_code.Equals(TREmpreduce.worker_code))
                                      {
-                                         if (TREmpreduce.reduce_type.Equals("04"))
+                                         foreach (cls_TREmpfamily family in list_Empfamily)
                                          {
-                                             checkyear++;
+                                             int year = family.empfamily_birthdate.Year + 543;
+
+                                             if (year == 2561)
+                                             {
+                                                 if (TREmpreduce.reduce_type.Equals("04"))
+                                                 {
+                                                     checkyear++;
+                                                 }
+                                             }
                                          }
                                      }
                                  }
@@ -1916,35 +2279,42 @@ namespace ClassLibrary_BPC.hrfocus.service
                              int countChildren04 = 0;
 
                              //23 เลขประจำตัวประชาชนบุตร 1
-                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family.worker_code))
                                      {
-
-                                         if ((family.family_type == "07" || family.family_type == "10") && !foundChildReduce104 && TREmpreduce.reduce_type.Equals("04"))
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+
+                                             if ((family.family_type == "07" || family.family_type == "10") && !foundChildReduce104 && TREmpreduce.reduce_type.Equals("04"))
                                              {
-                                                 if (prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
+                                                 foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                  {
-                                                     if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                     if (prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                      {
-                                                         bkData += prevFamily.empfamily_code + ",";
-                                                         foundChildReduce104 = true;
+                                                         if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                         {
+                                                             bkData += prevFamily.empfamily_code + ",";
+                                                             foundChildReduce104 = true;
+                                                             break;
+                                                         }
+
+                                                         countChildren04++;
                                                          break;
                                                      }
-                                                     
-                                                     countChildren04++; 
-                                                     break; 
-                                                 }
-                                                 else
-                                                 {
-                                                     bkData += ""+ ","; 
-                                                     foundChildReduce104 = true;
+                                                     else
+                                                     {
+                                                         bkData += "" + ",";
+                                                         foundChildReduce104 = true;
 
-                                                 }break;
+                                                     } break;
+                                                 }
                                              }
                                          }
                                      }
@@ -1953,43 +2323,49 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
                              int countChildren042 = 0; 
-                             bool foundChildReduce042 = false; 
-
-                             foreach (cls_TREmpfamily family1 in list_Empfamily)
+                             bool foundChildReduce042 = false;
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family1.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family1 in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family1.worker_code))
                                      {
-                                         if ((family1.family_type == "07" || family1.family_type == "10") && !foundChildReduce104 && TREmpreduce.reduce_type.Equals("04"))
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                             if ((family1.family_type == "07" || family1.family_type == "10") && !foundChildReduce104 && TREmpreduce.reduce_type.Equals("04"))
                                              {
-                                                 if (prevFamily.empfamily_birthdate > family1.empfamily_birthdate)
+                                                 foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                  {
-                                                     if (!foundChildReduce042) 
+                                                     if (prevFamily.empfamily_birthdate > family1.empfamily_birthdate)
                                                      {
-                                                         foundChildReduce042 = true;
-                                                         countChildren042++; 
+                                                         if (!foundChildReduce042)
+                                                         {
+                                                             foundChildReduce042 = true;
+                                                             countChildren042++;
 
-                                                         if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
-                                                         {
-                                                             bkData += prevFamily.empfamily_code + ",";
+                                                             if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                             {
+                                                                 bkData += prevFamily.empfamily_code + ",";
+                                                             }
+                                                             else
+                                                             {
+                                                                 bkData += ",";
+                                                             }
+                                                             break;
                                                          }
-                                                         else
-                                                         {
-                                                             bkData += ",";
-                                                         }
-                                                         break;
                                                      }
                                                  }
                                              }
                                          }
                                      }
-                                 }
-                                 if (!foundChildReduce042)
-                                 {
-                                     bkData += ","; break;
+                                     if (!foundChildReduce042)
+                                     {
+                                         bkData += ","; break;
+                                     }
                                  }
                              }
 
@@ -1997,44 +2373,50 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
                              int countChildren043 = 0; 
-                             bool foundChildReduce043 = false;  
-
-                             foreach (cls_TREmpfamily family2 in list_Empfamily)
+                             bool foundChildReduce043 = false;
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family2.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family2 in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family2.worker_code))
                                      {
-                                         if ((family2.family_type == "07" || family2.family_type == "10") && !foundChildReduce104 && TREmpreduce.reduce_type.Equals("04"))
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                             if ((family2.family_type == "07" || family2.family_type == "10") && !foundChildReduce104 && TREmpreduce.reduce_type.Equals("04"))
                                              {
-                                                 if (prevFamily.empfamily_birthdate > family2.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
+                                                 foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                  {
-                                                     if (!foundChildReduce043)
+                                                     if (prevFamily.empfamily_birthdate > family2.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                      {
-                                                         foundChildReduce043 = true;
-                                                         countChildren043++;
+                                                         if (!foundChildReduce043)
+                                                         {
+                                                             foundChildReduce043 = true;
+                                                             countChildren043++;
 
-                                                         if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
-                                                         {
-                                                             bkData += prevFamily.empfamily_code + ",";
+                                                             if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                             {
+                                                                 bkData += prevFamily.empfamily_code + ",";
+                                                             }
+                                                             else
+                                                             {
+                                                                 bkData += ",";
+                                                             }
                                                          }
-                                                         else
-                                                         {
-                                                             bkData += ",";
-                                                         }
+                                                         break;
                                                      }
-                                                     break;
                                                  }
                                              }
                                          }
                                      }
-                                 }
 
-                                 if (!foundChildReduce043)
-                                 {
-                                     bkData += ","; break;
+                                     if (!foundChildReduce043)
+                                     {
+                                         bkData += ","; break;
+                                     }
                                  }
                              }
 
@@ -2043,279 +2425,393 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
                              int countChildren044 = 0;
-                             bool foundChildReduce044 = false; 
-
-                             foreach (cls_TREmpfamily family3 in list_Empfamily)
+                             bool foundChildReduce044 = false;
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family3.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family3 in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family3.worker_code))
                                      {
-                                         if ((family3.family_type == "07" || family3.family_type == "10") && !foundChildReduce104 && TREmpreduce.reduce_type.Equals("04"))
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                             if ((family3.family_type == "07" || family3.family_type == "10") && !foundChildReduce104 && TREmpreduce.reduce_type.Equals("04"))
                                              {
-                                                 if (prevFamily.empfamily_birthdate > family3.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
+                                                 foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                  {
-                                                     if (!foundChildReduce044)
+                                                     if (prevFamily.empfamily_birthdate > family3.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                      {
-                                                         foundChildReduce044 = true;
-                                                         countChildren044++; 
-                                                         if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                         if (!foundChildReduce044)
                                                          {
-                                                             bkData += prevFamily.empfamily_code + ",";
+                                                             foundChildReduce044 = true;
+                                                             countChildren044++;
+                                                             if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                             {
+                                                                 bkData += prevFamily.empfamily_code + ",";
+                                                             }
+                                                             else
+                                                             {
+                                                                 bkData += ",";
+                                                             }
                                                          }
-                                                         else
-                                                         {
-                                                             bkData += ",";
-                                                         }
+                                                         break;
                                                      }
-                                                     break;
                                                  }
                                              }
                                          }
                                      }
-                                 }
 
-                                 if (!foundChildReduce044)
-                                 {
-                                     bkData += ","; break;
+                                     if (!foundChildReduce044)
+                                     {
+                                         bkData += ","; break;
+                                     }
                                  }
                              }
 
 
                              int countChildren045 = 0;
                              bool foundChildReduce055 = false; 
-
-                             foreach (cls_TREmpfamily family4 in list_Empfamily)
+                                 if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family4.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family4 in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family4.worker_code))
                                      {
-                                         if ((family4.family_type == "07" || family4.family_type == "10") && !foundChildReduce104 && TREmpreduce.reduce_type.Equals("04"))
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             foreach (cls_TREmpfamily prevFamily in list_Empfamily)
+                                             if ((family4.family_type == "07" || family4.family_type == "10") && !foundChildReduce104 && TREmpreduce.reduce_type.Equals("04"))
                                              {
-                                                 if (prevFamily.empfamily_birthdate > family4.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
+                                                 foreach (cls_TREmpfamily prevFamily in list_Empfamily)
                                                  {
-                                                     if (!foundChildReduce055) 
+                                                     if (prevFamily.empfamily_birthdate > family4.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate && prevFamily.empfamily_birthdate > prevFamily.empfamily_birthdate)
                                                      {
-                                                         foundChildReduce055 = true;
-                                                         countChildren045++; 
-                                                         if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                         if (!foundChildReduce055)
                                                          {
-                                                             bkData += prevFamily.empfamily_code + ",";
+                                                             foundChildReduce055 = true;
+                                                             countChildren045++;
+                                                             if (prevFamily.empfamily_code != null && prevFamily.empfamily_code.Length == 13)
+                                                             {
+                                                                 bkData += prevFamily.empfamily_code + ",";
+                                                             }
+                                                             else
+                                                             {
+                                                                 bkData += ",";
+                                                             }
                                                          }
-                                                         else
-                                                         {
-                                                             bkData += ",";
-                                                         }
+                                                         break;
                                                      }
+                                                 }
+                                             }
+                                         }
+                                     }
+                                     //}
+
+                                     if (!foundChildReduce055)
+                                     {
+                                         bkData += ","; break;
+                                     }
+                                 }
+                             }
+  
+                           // //37	ค่าลดหย่อนบุตร 60,000 บาท (ใบแนบฯ.3)
+                             bool reduce04Data = false;
+                             if (list_Empfamily.Count == 0)
+                             {
+                                 bkData += "0.00,";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                 {
+                                     if (paytran.worker_code.Equals(TREmpreduce.worker_code))
+                                     {
+                                         if (obj_worker.worker_code.Equals(TREmpreduce.worker_code) && TREmpreduce.reduce_type.Equals("04"))
+                                         {
+                                             bkData += TREmpreduce.empreduce_amount + ",";
+                                             reduce04Data = true;
+                                         }
+                                     }
+                                 }
+                                 if (!reduce04Data)
+                                 {
+                                     bkData += "0.00,";
+                                 }
+                             }
+
+                           // //38	ค่าลดหย่อนบิดา ผู้มีเงินได้ (ใบแนบฯ.4)
+ 
+                             double totalFatherReduce = 0;
+                             if (list_Empfamily.Count == 0)
+                             {
+                                 bkData += "0.00,";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
+                                 {
+                                     if (paytran.worker_code.Equals(family.worker_code))
+                                     {
+                                         if ((family.family_type == "04"))
+                                         {
+                                             foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                             {
+                                                 if (TREmpreduce.reduce_type.Equals("05"))
+                                                 {
+                                                     bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
+                                                     totalFatherReduce += (double)TREmpreduce.empreduce_amount;
                                                      break;
                                                  }
                                              }
                                          }
                                      }
                                  }
-                                 //}
-
-                                 if (!foundChildReduce055)
+                                 if (totalFatherReduce == 0)
                                  {
-                                     bkData += ","; break;
+                                     bkData += "0.00,";
                                  }
-                             }
-  
-                           // //37	ค่าลดหย่อนบุตร 60,000 บาท (ใบแนบฯ.3)
-                             bool reduce04Data = false;
-                             foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                             {
-                                 if (obj_worker.worker_code.Equals(TREmpreduce.worker_code) && TREmpreduce.reduce_type.Equals("04"))
-                                 {
-                                     bkData += TREmpreduce.empreduce_amount + ",";
-                                     reduce04Data = true;
-                                 }
-                             }
-                             if (!reduce04Data)
-                             {
-                                 bkData += ",";
-                             }
-
-                           // //38	ค่าลดหย่อนบิดา ผู้มีเงินได้ (ใบแนบฯ.4)
- 
-                             double totalFatherReduce = 0;
-                             foreach (cls_TREmpfamily family in list_Empfamily)
-                             {
-                                 if ((family.family_type == "04" ))
-                                 {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                     {
-                                         if (TREmpreduce.reduce_type.Equals("05"))
-                                         {
-                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
-                                             totalFatherReduce += (double)TREmpreduce.empreduce_amount;
-                                             break;
-                                         }
-                                     }
-                                 }
-                             }
-                             if (totalFatherReduce == 0)
-                             {
-                                 bkData += ","; 
                              }
 
 
 
                            // //39	เลขประจำตัวประชาชนบิดา ผู้มีเงินได้ (ใบแนบฯ.4)
-                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             bool foundWorker39 = false;
+
+                                 if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     foundWorker39 = true;
+
+                                     if (paytran.worker_code.Equals(family.worker_code))
                                      {
-                                         if (TREmpreduce.reduce_type.Equals("05") && family.family_type.Equals("04"))
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             if (TREmpreduce.reduce_type.Equals("05") && family.family_type.Equals("04"))
                                              {
-                                                 bkData += family.empfamily_code + ",";
+                                                 if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                 {
+                                                     bkData += family.empfamily_code + ",";
+                                                     break;
+                                                 }
+                                                 else
+                                                 {
+                                                     bkData += " " + ",";
+                                                 }
                                                  break;
                                              }
-                                             else
-                                             {
-                                                 bkData += " " + ",";
-                                             }
-                                             break;
                                          }
                                      }
                                  }
                              }
-
+                                 if (!foundWorker39)
+                                 {
+                                     bkData += ",";
+                                 }
  
 
                            // //40	ค่าลดหย่อนมารดา ผู้มีเงินได้ (ใบแนบฯ.4)
+                                 bool foundWorker40 = false;
+                                
+ 
                              double reduce06Data = 0;
-                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if ((family.family_type == "09"))
+                                 bkData += "0.00,";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family.worker_code))
                                      {
-                                         if (TREmpreduce.reduce_type.Equals("06"))
+                                         foundWorker40 = true;
+
+                                         if ((family.family_type == "09"))
                                          {
-                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
-                                             reduce06Data += (double)TREmpreduce.empreduce_amount;
-                                             break; 
+                                             foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                             {
+                                                 if (TREmpreduce.reduce_type.Equals("06"))
+                                                 {
+                                                     bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
+                                                     reduce06Data += (double)TREmpreduce.empreduce_amount;
+                                                     break;
+                                                 }
+                                             }
                                          }
                                      }
                                  }
-                             }
 
-                             if (reduce06Data == 0)
+                                 //if (reduce06Data == 0)
+                                 //{
+                                 //    bkData += "0.00,";
+                                 //}
+                             } if (!foundWorker40)
                              {
-                                 bkData += ","; 
+                                 bkData += "0.00,";
                              }
 
 
  
 
                            // //41	เลขประจำตัวประชาชนมารดา ผู้มีเงินได้ (ใบแนบฯ.4)
-                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             bool foundWorker41 = false;
+
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family.worker_code))
                                      {
-                                         if (TREmpreduce.reduce_type.Equals("06") && family.family_type.Equals("09"))
+                                         foundWorker41 = true;
+
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             if (TREmpreduce.reduce_type.Equals("06") && family.family_type.Equals("09"))
                                              {
-                                                 bkData += family.empfamily_code + ",";
+                                                 if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                 {
+                                                     bkData += family.empfamily_code + ",";
+                                                     break;
+                                                 }
+                                                 else
+                                                 {
+                                                     bkData += " " + ",";
+                                                 }
                                                  break;
                                              }
-                                             else
-                                             {
-                                                 bkData += " " + ",";
-                                             }
-                                             break;
                                          }
                                      }
                                  }
+                             } if (!foundWorker41)
+                             {
+                                 bkData += ",";
                              }
 
                                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                            // //42	ค่าลดหย่อนบิดา คู่สมรส (ใบแนบฯ.4)
+
                              double reduce1617Data = 0;
-                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if ((family.family_type == "17" || family.family_type.Equals("16")))
+                                 bkData += "0.00,";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family.worker_code))
                                      {
-                                         if (TREmpreduce.reduce_type.Equals("07"))
+                                         if ((family.family_type == "17"))
                                          {
-                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
-                                             reduce1617Data += (double)TREmpreduce.empreduce_amount;
-                                             break;
+                                             foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                             {
+                                                 if (TREmpreduce.reduce_type.Equals("07"))
+                                                 {
+                                                     bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
+                                                     reduce1617Data += (double)TREmpreduce.empreduce_amount;
+                                                     break;
+                                                 }
+                                             }
                                          }
                                      }
                                  }
-                             }
 
-                             if (reduce1617Data == 0)
-                             {
-                                 bkData += ","; 
+                                 if (reduce1617Data == 0)
+                                 {
+                                     bkData += "0.00,";
+                                 }
                              }
+ 
 
  
 
                           
 
                            // //43	เลขประจำตัวประชาชนบิดา คู่สมรส (ใบแนบฯ. 4)
-                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             bool foundWorker43 = false;
+
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family.worker_code))
                                      {
-                                         if (TREmpreduce.reduce_type.Equals("07") && (family.family_type.Equals("17") || family.family_type.Equals("16")))
+                                         foundWorker43 = true;
+
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             if (TREmpreduce.reduce_type.Equals("07") && (family.family_type.Equals("17")))
                                              {
-                                                 bkData += family.empfamily_code + ",";
+                                                 if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                 {
+                                                     bkData += family.empfamily_code + ",";
+                                                     break;
+                                                 }
+                                                 else
+                                                 {
+                                                     bkData += " " + ",";
+                                                 }
                                                  break;
                                              }
-                                             else
-                                             {
-                                                 bkData += " " + ",";
-                                             }
-                                             break;
                                          }
                                      }
                                  }
+                             } if (!foundWorker43)
+                             {
+                                 bkData += ",";
                              }
 
 
                            // //44	ค่าลดหย่อนมารดา คู่สมรส (ใบแนบฯ.4)
                              double reduce08Data = 0;
-                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if ((family.family_type == "17" || family.family_type.Equals("09")))
+                                 bkData += "0.00,";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family.worker_code))
                                      {
-                                         if (TREmpreduce.reduce_type.Equals("08"))
+                                         if ((family.family_type.Equals("")))//ค่าลดหย่อนมารดา คู่สมรส   ไม่มีข้อมูล
                                          {
-                                             bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
-                                             reduce08Data += (double)TREmpreduce.empreduce_amount;
-                                             break; 
+                                             foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                             {
+                                                 if (TREmpreduce.reduce_type.Equals(""))
+                                                 {
+                                                     bkData += TREmpreduce.empreduce_amount.ToString("0.00") + ",";
+                                                     reduce08Data += (double)TREmpreduce.empreduce_amount;
+                                                     break;
+                                                 }
+                                             }
                                          }
                                      }
                                  }
-                             }
 
-                             if (reduce08Data == 0)
-                             {
-                                 bkData += ","; 
+                                 if (reduce08Data == 0)
+                                 {
+                                     bkData += "0.00,";
+                                 }
                              }
 
 
@@ -2325,170 +2821,249 @@ namespace ClassLibrary_BPC.hrfocus.service
 
 
                            // //45	เลขประจำตัวประชาชนมารดา คู่สมรส (ใบแนบฯ.4)
-                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             bool foundWorker45 = false;
+
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family.worker_code))
                                      {
-                                         if (TREmpreduce.reduce_type.Equals("08") && (family.family_type.Equals(" ") || family.family_type.Equals(" ")))//ยังไม่มีข้อมูล
+                                         foundWorker45 = true;
+
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             if (TREmpreduce.reduce_type.Equals("") && (family.family_type.Equals(" ") || family.family_type.Equals(" ")))//ยังไม่มีข้อมูล
                                              {
-                                                 bkData += family.empfamily_code + ",";
+                                                 if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                 {
+                                                     bkData += family.empfamily_code + ",";
+                                                     break;
+                                                 }
+                                                 else
+                                                 {
+                                                     bkData += " " + ",";
+                                                 }
                                                  break;
                                              }
-                                             else
-                                             {
-                                                 bkData += " " + ",";
-                                             }
-                                             break;
                                          }
                                      }
                                  }
+                             } if (!foundWorker45)
+                             {
+                                 bkData += ",";
                              }
 
                            // //46	เลขประจำตัวประชาชนบิดา ผู้มีเงินได้ ที่ประกันสุขภาพ (ใบแนบฯ.6)
-                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             bool foundWorker46 = false;
+
+                             if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family.worker_code))
                                      {
-                                         if (TREmpreduce.reduce_type.Equals("10") && family.family_type.Equals("04"))
+                                         foundWorker46 = true;
+
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             if (TREmpreduce.reduce_type.Equals("10") && family.family_type.Equals("04"))
                                              {
-                                                 bkData += family.empfamily_code + ",";
+                                                 if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                 {
+                                                     bkData += family.empfamily_code + ",";
+                                                     break;
+                                                 }
+                                                 else
+                                                 {
+                                                     bkData += " " + ",";
+                                                 }
                                                  break;
                                              }
-                                             else
-                                             {
-                                                 bkData += " " + ",";
-                                             }
-                                             break;
                                          }
                                      }
                                  }
+                             } if (!foundWorker46)
+                             {
+                                 bkData += ",";
                              }
 
                            // //47	เลขประจำตัวประชาชนมารดา ผู้มีเงินได้ ที่ประกันสุขภาพ(ใบแนบฯ.6)
-                             foreach (cls_TREmpfamily family in list_Empfamily)
+                             bool foundWorker47 = false;
+
+                                if (list_Empfamily.Count == 0)
                              {
-                                 if (paytran.worker_code.Equals(family.worker_code))
+                                 bkData += ",";
+                             }
+                             else
+                             {
+                                 foreach (cls_TREmpfamily family in list_Empfamily)
                                  {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                     if (paytran.worker_code.Equals(family.worker_code))
                                      {
-                                         if (TREmpreduce.reduce_type.Equals("11") && family.family_type.Equals("09"))
+                                         foundWorker47 = true;
+
+                                         foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                          {
-                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                             if (TREmpreduce.reduce_type.Equals("11") && family.family_type.Equals("09"))
                                              {
-                                                 bkData += family.empfamily_code + ",";
+                                                 if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                 {
+                                                     bkData += family.empfamily_code + ",";
+                                                     break;
+                                                 }
+                                                 else
+                                                 {
+                                                     bkData += " " + ",";
+                                                 }
                                                  break;
                                              }
-                                             else
-                                             {
-                                                 bkData += " " + ",";
-                                             }
-                                             break;
                                          }
                                      }
                                  }
                              }
-
+                                if (!foundWorker47)
+                                {
+                                    bkData += ",";
+                                }
 
                            // //48	เบี้ยประกันสุขภาพบิดา, มารดา ผู้มีเงินได้ (ใบแนบฯ.6)
                              decimal totalInsuranceAmount = 0m;
-
-                             foreach (cls_TREmpreduce empReduce in list_Empreduce)
-                             {
-                                 if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                             
+                                 foreach (cls_TREmpreduce empReduce in list_Empreduce)
                                  {
-                                     if (empReduce.reduce_type.Equals("10"))
+                                     if (paytran.worker_code.Equals(empReduce.worker_code))
                                      {
-                                         decimal amountToAdd10 = (decimal)empReduce.empreduce_amount;
-                                         totalInsuranceAmount += amountToAdd10;
+
+                                         if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                         {
+                                             if (empReduce.reduce_type.Equals("10"))
+                                             {
+                                                 decimal amountToAdd10 = (decimal)empReduce.empreduce_amount;
+                                                 totalInsuranceAmount += amountToAdd10;
+                                             }
+                                             if (empReduce.reduce_type.Equals("11"))
+                                             {
+                                                 decimal amountToAdd11 = (decimal)empReduce.empreduce_amount;
+                                                 totalInsuranceAmount += amountToAdd11;
+                                             }
+                                         }
                                      }
-                                     if (empReduce.reduce_type.Equals("11"))
-                                     {
-                                         decimal amountToAdd11 = (decimal)empReduce.empreduce_amount;
-                                         totalInsuranceAmount += amountToAdd11;
-                                     }
-                                 }
+                                 //}
                              }
 
-                             bkData += totalInsuranceAmount.ToString("0.00") + ",";
+                                bkData += totalInsuranceAmount.ToString("0.00") + ",";
 
 
 
                            // //49	เลขประจำตัวประชาชนบิดา คู่สมรส ที่ประกันสุขภาพ (ใบแนบฯ.6)
-                             foreach (cls_TREmpfamily family in list_Empfamily)
-                             {
-                                 if (paytran.worker_code.Equals(family.worker_code))
-                                 {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                     {
-                                         if (TREmpreduce.reduce_type.Equals("12") && (family.family_type.Equals("17") || family.family_type.Equals("16")))
-                                         {
-                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
-                                             {
-                                                 bkData += family.empfamily_code + ",";
-                                                 break;
-                                             }
-                                             else
-                                             {
-                                                 bkData += " " + ",";
-                                             }
-                                             break;
-                                         }
-                                     }
-                                 }
-                             }
+                                bool foundWorker49 = false;
+
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
+                                    {
+                                        if (paytran.worker_code.Equals(family.worker_code))
+                                        {
+                                            foundWorker49 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if (TREmpreduce.reduce_type.Equals("12") && (family.family_type.Equals("17") || family.family_type.Equals("16")))
+                                                {
+                                                    if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                    {
+                                                        bkData += family.empfamily_code + ",";
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        bkData += " " + ",";
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                } if (!foundWorker49)
+                                {
+                                    bkData += ",";
+                                }
 
                            // //50	เลขประจำตัวประชาชนมารดา คู่สมรส ที่ประกันสุขภาพ (ใบแนบฯ.6)
-                          foreach (cls_TREmpfamily family in list_Empfamily)
-                             {
-                                 if (paytran.worker_code.Equals(family.worker_code))
-                                 {
-                                     foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
-                                     {
-                                         if (TREmpreduce.reduce_type.Equals("16") && family.family_type.Equals(""))//ยังไม่มีข้อมูล
-                                         {
-                                             if (family.empfamily_code != null && family.empfamily_code.Length == 13)
-                                             {
-                                                 bkData += family.empfamily_code + ",";
-                                                 break;
-                                             }
-                                             else
-                                             {
-                                                 bkData += " " + ",";
-                                             }
-                                             break;
-                                         }
-                                     }
-                                 }
-                             }
+                                bool foundWorker50 = false;
 
+                                if (list_Empfamily.Count == 0)
+                                {
+                                    bkData += ",";
+                                }
+                                else
+                                {
+                                    foreach (cls_TREmpfamily family in list_Empfamily)
+                                    {
+                                        if (paytran.worker_code.Equals(family.worker_code))
+                                        {
+                                            foundWorker50 = true;
+
+                                            foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                                            {
+                                                if (TREmpreduce.reduce_type.Equals("") && family.family_type.Equals(""))//ยังไม่มีข้อมูล
+                                                {
+                                                    if (family.empfamily_code != null && family.empfamily_code.Length == 13)
+                                                    {
+                                                        bkData += family.empfamily_code + ",";
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        bkData += " " + ",";
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (!foundWorker50)
+                                {
+                                    bkData += ",";
+                                }
 
                            // //51	เบี้ยประกันสุขภาพบิดา, มารดา คู่สมรส (ใบแนบฯ.6)
                           decimal totalSpouseAmount = 0m;
-                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
-                          {
-                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                           
+                              foreach (cls_TREmpreduce empReduce in list_Empreduce)
                               {
-                                  if (empReduce.reduce_type.Equals("12"))
+                                  if (paytran.worker_code.Equals(empReduce.worker_code))
                                   {
-                                      decimal amountToAdd10 = (decimal)empReduce.empreduce_amount;
-                                      totalSpouseAmount += amountToAdd10;
-                                  }
-                                  if (empReduce.reduce_type.Equals("13"))
-                                  {
-                                      decimal amountToAdd11 = (decimal)empReduce.empreduce_amount;
-                                      totalSpouseAmount += amountToAdd11;
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("12"))
+                                          {
+                                              decimal amountToAdd10 = (decimal)empReduce.empreduce_amount;
+                                              totalSpouseAmount += amountToAdd10;
+                                          }
+                                          if (empReduce.reduce_type.Equals("13"))
+                                          {
+                                              decimal amountToAdd11 = (decimal)empReduce.empreduce_amount;
+                                              totalSpouseAmount += amountToAdd11;
+                                          }
+                                      }
                                   }
                               }
-                          }
-
+                          //}
                           bkData += totalSpouseAmount.ToString("0.00") + ",";
 
 
@@ -2499,19 +3074,24 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                            // //52	เบี้ยประกันชีวิต (ใบแนบฯ.7)
                           decimal totalpremiumsAmount = 0m;
-                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
-                          {
-                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                          
+                              foreach (cls_TREmpreduce empReduce in list_Empreduce)
                               {
-                                  if (empReduce.reduce_type.Equals("15"))
+                                  if (paytran.worker_code.Equals(empReduce.worker_code))
                                   {
-                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                      totalpremiumsAmount += amountToAdd;
-                                      break;
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("15"))
+                                          {
+                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                              totalpremiumsAmount += amountToAdd;
+                                              break;
+                                          }
+                                      }
                                   }
                               }
-                          }
-                          bkData += totalpremiumsAmount.ToString("0.00") + ",";
+                          //}
+                              bkData += totalpremiumsAmount.ToString("0.00") + ",";
 
 
 
@@ -2519,16 +3099,21 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                            // //53	เบี้ยประกันสุขภาพผู้มีเงินได้ (ใบแนบฯ.7)
                           decimal totalpremiumsAmount16 = 0m;
-                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
-                          {
-                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                           
+                              foreach (cls_TREmpreduce empReduce in list_Empreduce)
                               {
-                                  if (empReduce.reduce_type.Equals("16"))
+                                  if (paytran.worker_code.Equals(empReduce.worker_code))
                                   {
-                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                      totalpremiumsAmount16 += amountToAdd;
-                                      break;
-                                  }
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("16"))
+                                          {
+                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                              totalpremiumsAmount16 += amountToAdd;
+                                              break;
+                                          }
+                                      }
+                                  //}
                               }
                           }
                           bkData += totalpremiumsAmount16.ToString("0.00") + ",";
@@ -2536,37 +3121,47 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                            // //54	เบี้ยประกันชีวิตแบบบำนาญ (ใบแนบฯ.7)
                           decimal totalpremiumsAmount17 = 0m;
-                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
-                          {
-                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                           
+                              foreach (cls_TREmpreduce empReduce in list_Empreduce)
                               {
-                                  if (empReduce.reduce_type.Equals("17"))
+                                  if (paytran.worker_code.Equals(empReduce.worker_code))
                                   {
-                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                      totalpremiumsAmount17 += amountToAdd;
-                                      break;
+                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      {
+                                          if (empReduce.reduce_type.Equals("17"))
+                                          {
+                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                              totalpremiumsAmount17 += amountToAdd;
+                                              break;
+                                          }
+                                      }
                                   }
                               }
-                          }
+                          //}
                           bkData += totalpremiumsAmount17.ToString("0.00") + ",";
 
                            // //55	เบี้ยประกันชีวิต คู่สมรส (ใบแนบฯ.7)
                           decimal totalpremiumsAmount15 = 0m;
-                          foreach (cls_TREmpfamily family in list_Empfamily)
-                          {
-                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                           
+                              foreach (cls_TREmpfamily family in list_Empfamily)
                               {
-                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  if (paytran.worker_code.Equals(family.worker_code))
                                   {
-                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                       {
-                                          if (empReduce.reduce_type.Equals("15"))
+                                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
                                           {
-                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                              totalpremiumsAmount15 += amountToAdd;
-                                              break;
+                                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                              {
+                                                  if (empReduce.reduce_type.Equals("15"))
+                                                  {
+                                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                      totalpremiumsAmount15 += amountToAdd;
+                                                      break;
+                                                  }
+                                              }
                                           }
-                                      }
+                                      //}
                                   }
                               }
                           }
@@ -2577,170 +3172,222 @@ namespace ClassLibrary_BPC.hrfocus.service
 
                            // //56	เงินสะสมกองทุนสำรองเลี้ยงชีพ(ส่วนที่ไม่เกิน 10,000) (ใบแนบฯ.8)
                           decimal totalpfAmount = 0m;
-                          foreach (cls_TREmpfamily family in list_Empfamily)
-                          {
-                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                           
+                              foreach (cls_TREmpfamily family in list_Empfamily)
                               {
-                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  if (paytran.worker_code.Equals(family.worker_code))
                                   {
-                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                       {
-                                          if (empReduce.reduce_type.Equals("PF"))
+                                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
                                           {
-                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                              totalpfAmount += amountToAdd;
-                                              break;
+                                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                              {
+                                                  if (empReduce.reduce_type.Equals("PF"))
+                                                  {
+                                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                      totalpfAmount += amountToAdd;
+                                                      break;
+                                                  }
+                                              }
                                           }
                                       }
                                   }
-                              }
+                              //}
                           }
-                          bkData += totalpfAmount.ToString("0.00") + ",";
+                              bkData += totalpfAmount.ToString("0.00") + ",";
 
 
 
                            // //57	ค่าซื้อหน่วยลงทุนในกองทุนรวมเพื่อการเลี้ยงชีพ (ใบแนบฯ.10)
                           decimal totalRMFAmount = 0m;
-                          foreach (cls_TREmpfamily family in list_Empfamily)
-                          {
-                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                          
+                              foreach (cls_TREmpfamily family in list_Empfamily)
                               {
-                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  if (paytran.worker_code.Equals(family.worker_code))
                                   {
-                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                       {
-                                          if (empReduce.reduce_type.Equals("RMF"))
+                                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
                                           {
-                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                              totalRMFAmount += amountToAdd;
-                                              break;
+                                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                              {
+                                                  if (empReduce.reduce_type.Equals("RMF"))
+                                                  {
+                                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                      totalRMFAmount += amountToAdd;
+                                                      break;
+                                                  }
+                                              }
                                           }
                                       }
-                                  }
+                                  //}
                               }
                           }
-                          bkData += totalRMFAmount.ToString("0.00") + ",";
+                              bkData += totalRMFAmount.ToString("0.00") + ",";
 
 
                            // //58	ค่าซื้อหน่วยลงทุนในกองทุนรวมเพื่อการออม SSF (ใบแนบฯ.11)
                           decimal totalssfAmount = 0m;
-                          foreach (cls_TREmpfamily family in list_Empfamily)
-                          {
-                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                          
+                              foreach (cls_TREmpfamily family in list_Empfamily)
                               {
-                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  if (paytran.worker_code.Equals(family.worker_code))
                                   {
-                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                       {
-                                          if (empReduce.reduce_type.Equals("SSF"))
+                                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
                                           {
-                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                              totalssfAmount += amountToAdd;
-                                              break;
+                                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                              {
+                                                  if (empReduce.reduce_type.Equals("SSF"))
+                                                  {
+                                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                      totalssfAmount += amountToAdd;
+                                                      break;
+                                                  }
+                                              }
                                           }
                                       }
                                   }
                               }
-                          }
+                          //}
                           bkData += totalssfAmount.ToString("0.00") + ",";
 
 
 
                            // //59	ดอกเบี้ยเงินกู้ยืมฯ (ใบแนบฯ.12)
                           decimal totalInterestonloansAmount = 0m;
-                          foreach (cls_TREmpfamily family in list_Empfamily)
-                          {
-                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                           
+                              foreach (cls_TREmpfamily family in list_Empfamily)
                               {
-                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  if (paytran.worker_code.Equals(family.worker_code))
                                   {
-                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                       {
-                                          if (empReduce.reduce_type.Equals("22"))
+                                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
                                           {
-                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                              totalInterestonloansAmount += amountToAdd;
-                                              break;
+                                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                              {
+                                                  if (empReduce.reduce_type.Equals("22"))
+                                                  {
+                                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                      totalInterestonloansAmount += amountToAdd;
+                                                      break;
+                                                  }
+                                              }
                                           }
                                       }
                                   }
                               }
-                          }
-                          bkData += totalInterestonloansAmount.ToString("0.00") + ",";
+                          //}
+                              bkData += totalInterestonloansAmount.ToString("0.00") + ",";
 
 
                            // //60	เงินสมทบกองทุนประกันสังคม (ใบแนบ.13)
                           decimal totalSSOAmount = 0m;
-                          foreach (cls_TREmpfamily family in list_Empfamily)
-                          {
-                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                          
+                              foreach (cls_TREmpfamily family in list_Empfamily)
                               {
-                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  if (paytran.worker_code.Equals(family.worker_code))
                                   {
-                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                       {
-                                          if (empReduce.reduce_type.Equals("SSO"))
+                                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
                                           {
-                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                              totalSSOAmount += amountToAdd;
-                                              break;
+                                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                              {
+                                                  if (empReduce.reduce_type.Equals("SSO"))
+                                                  {
+                                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                      totalSSOAmount += amountToAdd;
+                                                      break;
+                                                  }
+                                              }
                                           }
                                       }
-                                  }
+                                  //}
                               }
                           }
-                          bkData += totalSSOAmount.ToString("0.00") + ",";
+                              bkData += totalSSOAmount.ToString("0.00") + ",";
 
                            // //61	เงินสมทบกองทุนประกันสังคมคู่สมรส (สูงสุดไม่เกิน 5,100)(ใบแนบฯ.13)
+                              bool foundWorker61 = false;
+
                           decimal totalSocialsecuritycontributionsAmount = 0m;
-                          foreach (cls_TREmpfamily family in list_Empfamily)
+                          if (list_Empfamily.Count == 0)
                           {
-                              foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
+                              bkData += "0.00,";
+                          }
+                          else
+                          {
+                              foreach (cls_TREmpfamily family in list_Empfamily)
                               {
-                                  foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                  if (paytran.worker_code.Equals(family.worker_code))
                                   {
-                                      if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                      foundWorker61 = true;
+                                      foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                                       {
-                                          if (empReduce.reduce_type.Equals("SSO") && family.family_type.Equals("11"))
+                                          foreach (cls_TREmpreduce empReduce in list_Empreduce)
                                           {
-                                              decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                              totalSocialsecuritycontributionsAmount += amountToAdd;
-                                              break;
+                                              if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                              {
+                                                  if (empReduce.reduce_type.Equals("SSO") && family.family_type.Equals("11"))
+                                                  {
+                                                      decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                      totalSocialsecuritycontributionsAmount += amountToAdd;
+                                                      bkData += totalSocialsecuritycontributionsAmount + ",";
+                                                      break;
+                                                  }
+                                              }
                                           }
                                       }
                                   }
                               }
+                          } 
+
+                          if (!foundWorker61)
+                          {
+                              bkData += "0.00,";
                           }
-                          bkData += "0.00" + ",";
+                         
 
                            // //62	ค่าฝากครรภ์และค่าคลอดบุตร (ใบแนบฯ.16)
                           decimal totalAmount26 = 0m;
-                          foreach (cls_TREmpfamily family in list_Empfamily)
-                          {
-
-                              foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                       
+                              foreach (cls_TREmpfamily family in list_Empfamily)
                               {
-                                  if (obj_worker.worker_code.Equals(empReduce.worker_code))
-                                  {
-                                      if (empReduce.reduce_type.Equals("26"))
-                                      {
-                                          decimal amountToAdd = (decimal)empReduce.empreduce_amount;
-                                          totalAmount26 += amountToAdd;
-                                          break;
-                                      }
-                                  }
 
+                                  if (paytran.worker_code.Equals(family.worker_code))
+                                  {
+                                      foreach (cls_TREmpreduce empReduce in list_Empreduce)
+                                      {
+                                          if (obj_worker.worker_code.Equals(empReduce.worker_code))
+                                          {
+                                              if (empReduce.reduce_type.Equals("26"))
+                                              {
+                                                  decimal amountToAdd = (decimal)empReduce.empreduce_amount;
+                                                  totalAmount26 += amountToAdd;
+                                                  break;
+                                              }
+                                          }
+                                      }
+
+                                  }
                               }
-                          }
+                          //}
                           bkData += totalAmount26.ToString("0.00") + ",";
 
                            // //63	รวมค่าลดหย่อน (ใบแนบฯ.19)
                           double totalEmpreduceAmount = 0;
                           foreach (cls_TREmpreduce TREmpreduce in list_Empreduce)
                           {
-                              if (obj_worker.worker_code.Equals(TREmpreduce.worker_code))
+                              if (paytran.worker_code.Equals(TREmpreduce.worker_code))
                               {
-                                  totalEmpreduceAmount += (double)TREmpreduce.empreduce_amount;
+                                  if (obj_worker.worker_code.Equals(TREmpreduce.worker_code))
+                                  {
+                                      totalEmpreduceAmount += (double)TREmpreduce.empreduce_amount;
+                                  }
                               }
                           }
                           decimal resultEmpreduce = (decimal)totalEmpreduceAmount;
